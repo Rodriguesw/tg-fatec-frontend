@@ -1,0 +1,31 @@
+{
+    "theme_color": "#512940",
+    "background_color": "#512940",
+    "display": "fullscreen",
+    "scope": "/",
+    "start_url": "/",
+    "name": "Play FUT",
+    "short_name": "Play FUT",
+    "icons": [
+        {
+            "src": "/images/jpg/icon.jpg",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/jpg/icon.jpg",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/jpg/icon.jpg",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/jpg/icon.jpg",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
