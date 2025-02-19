@@ -12,9 +12,7 @@ export const Input = styled(C.Input)`
     width: 100%;
     height: auto;
     padding: 8px 16px;
-
-    flex-direction: column;
-
+    
     border-radius: 8px;
     background-color: #FFFFFF;
 `
