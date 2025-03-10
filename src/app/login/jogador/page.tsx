@@ -1,11 +1,11 @@
 "use client"
 
-import Teste1Client from '@/ContainerClient/Teste1';
+import JogadorClient from '@/ContainerClient/jogador';
 
-export default function Teste1() {
+export default function Jogador() {
   return (
     <>
-      <Teste1Client />
+      <JogadorClient />
     </>
   );
 }

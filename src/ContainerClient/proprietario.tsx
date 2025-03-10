@@ -1,19 +1,16 @@
 "use client";
 
 import Link from 'next/link';
-import * as S from './Teste1Styles';
+import * as S from './proprietarioStyles';
 
 import { Input } from '@/components/Input';
+import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
-export default function Teste1() {
+export default function Proprietario() {
   return (
     <S.Container>
       <S.Wrapper>
-         <h1>Olá, seja bem-vindo(a)!</h1>
- 
-         <Input label='Teste'/>
- 
-         <Input label='Teste'/>
+         <LoginWithBannerAndModal backgroundImage='/images/jpg/bk-login-proprietario.jpg'/>
 
           <Link href="/">VOLTAR</Link>
 

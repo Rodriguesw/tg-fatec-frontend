@@ -1,6 +1,6 @@
 "use client"
 
-import Teste2Client from '@/ContainerClient/Teste2';
+import Teste2Client from '@/ContainerClient/proprietario';
 
 export default function Teste2() {
   return (
