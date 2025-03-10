@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: 'PlayFUT',
   description: 'Descrição',
   icons: '/images/logo/logo-playfut-white.svg',
-  manifest: '/manifest.webmanifest'
+  manifest: '/manifest.json'
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {
