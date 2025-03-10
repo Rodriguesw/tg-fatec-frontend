@@ -15,9 +15,9 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: 'Play FUT',
+  title: 'PlayFUT',
   description: 'Descrição',
-  icons: '/images/jpg/icon.jpg',
+  icons: '/images/logo/logo-playfut-white.svg',
   manifest: '/manifest.webmanifest'
 }
 

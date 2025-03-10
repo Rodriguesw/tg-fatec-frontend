@@ -1,6 +1,6 @@
 {
-    "theme_color": "#AAA",
-    "background_color": "#AAA",
+    "theme_color": "#000000",
+    "background_color": "#000000",
     "display": "fullscreen",
     "scope": "/",
     "start_url": "/",
@@ -8,24 +8,24 @@
     "short_name": "Play FUT",
     "icons": [
         {
-            "src": "/images/jpg/icon.jpg",
+            "src": "/images/logo/logo-playfut-white.svg",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/svg"
         },
         {
-            "src": "/images/jpg/icon.jpg",
+            "src": "/images/logo/logo-playfut-white.svg",
             "sizes": "256x256",
-            "type": "image/png"
+            "type": "image/svg"
         },
         {
-            "src": "/images/jpg/icon.jpg",
+            "src": "/images/logo/logo-playfut-white.svg",
             "sizes": "384x384",
-            "type": "image/png"
+            "type": "image/svg"
         },
         {
-            "src": "/images/jpg/icon.jpg",
+            "src": "/images/logo/logo-playfut-white.svg",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/svg"
         }
     ]
 }
