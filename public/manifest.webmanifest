@@ -4,28 +4,28 @@
     "display": "fullscreen",
     "scope": "/",
     "start_url": "/",
-    "name": "Play FUT",
-    "short_name": "Play FUT",
+    "name": "PlayFUT",
+    "short_name": "PlayFUT",
     "icons": [
         {
-            "src": "/images/logo/logo-playfut-white.svg",
+            "src": "/images/png/teste.png",
             "sizes": "192x192",
-            "type": "image/svg"
+            "type": "image/png"
         },
         {
-            "src": "/images/logo/logo-playfut-white.svg",
+            "src": "/images/png/teste.png",
             "sizes": "256x256",
-            "type": "image/svg"
+            "type": "image/png"
         },
         {
-            "src": "/images/logo/logo-playfut-white.svg",
+            "src": "/images/png/teste.png",
             "sizes": "384x384",
-            "type": "image/svg"
+            "type": "image/png"
         },
         {
-            "src": "/images/logo/logo-playfut-white.svg",
+            "src": "/images/png/teste.png",
             "sizes": "512x512",
-            "type": "image/svg"
+            "type": "image/png"
         }
     ]
 }
