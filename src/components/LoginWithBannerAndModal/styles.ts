@@ -12,6 +12,7 @@ export const Container = styled(C.Flex)`
     height: 100%;
     max-width: 479px;
 
+    gap: 4px;
     align-items: center;
     flex-direction: column;
     justify-content: space-between;

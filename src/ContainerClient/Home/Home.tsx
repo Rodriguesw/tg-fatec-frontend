@@ -15,20 +15,20 @@ export default function Home() {
         <LoginWithBannerAndModal  minHeight="560px">
           <S.Content>
             <S.ContentHeader>
-              <H3 color={theme.colors.laranja}>Como você deseja usar o Play Fut?</H3>
+              <H3 color={theme.colors.laranja}>Como você deseja usar o PlayFUT?</H3>
 
               <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>Escolha a forma que deseja entrar:</MD>
             </S.ContentHeader>
 
             <S.ContentButtons>
-              <Link href="/login/jogador">
+              <Link href="/jogador/login">
                 <LG 
                   weight={700}
                   color={theme.colors.branco.principal} 
                   family={theme.fonts.inter}>Sou jogador</LG>
               </Link>
 
-              <Link href="/login/proprietario">
+              <Link href="/proprietario/login">
                 <LG 
                   weight={700}
                   color={theme.colors.branco.principal} 

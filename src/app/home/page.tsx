@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import * as S from './styles'
 
-import HomeClient from '@/ContainerClient/Home';
+import HomeClient from '@/ContainerClient/Home/Home';
 
 import { Input } from '@/components/Input';
 

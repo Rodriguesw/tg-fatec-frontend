@@ -59,9 +59,9 @@ export const Content = styled(C.Flex)`
     width: 100%;
     height: auto;
     max-width: 479px;
-    padding: 80px 24px 160px 24px;
+    padding: 24px 24px 64px;
 
-    gap: 40px;
+    gap: 24px;
     align-items: center;
     flex-direction: column;
 `
@@ -72,4 +72,32 @@ export const ContentHeader = styled(C.Flex)`
     
     flex-direction: column;
     align-items: flex-start;
+`
+
+export const ContentForm = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    align-items: center;
+    flex-direction: column;
+`
+
+export const Button = styled(C.Button)`
+    width: 100%;
+    height: auto;
+    max-width: 312px;
+    padding: 12px 24px;
+    
+    border-radius: 12px;
+    background-color: ${theme.colors.verde};
+`
+
+export const ContentFooter = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    align-items: center;
+    flex-direction: column;
 `

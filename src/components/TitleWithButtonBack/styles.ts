@@ -5,6 +5,7 @@ export const Container = styled(C.Flex)`
     width: 100%;
     height:  auto;
 
+    gap: 4px;
     align-items: center;
 `;
 
