@@ -1,16 +1,17 @@
 // app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Sora } from "next/font/google";
+import { Anton, Inter } from "next/font/google";
 import { Provider } from "@/components/ui/provider";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const anton = Anton({
+  weight: ["400"],
+  variable: "--font-anton",
   subsets: ["latin"],
 });
 
-const sora = Sora({
-  variable: "--font-sora-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 export default function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props;
   return (
-    <html suppressHydrationWarning>
+    <html suppressHydrationWarning className={`${anton.variable} ${inter.variable}`}>
       <body>
         <Provider>{children}</Provider>
       </body>

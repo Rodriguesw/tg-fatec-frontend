@@ -2,21 +2,20 @@ import * as S from './styles'
 
 interface LoginWithBannerAndModalProps {
     backgroundImage?: string;
+    children: React.ReactNode;
+    minHeight?: string;
 }
 
-export function LoginWithBannerAndModal ({backgroundImage}: LoginWithBannerAndModalProps) {
+export function LoginWithBannerAndModal ({backgroundImage, children, minHeight}: LoginWithBannerAndModalProps) {
     return (
-        <S.Container backgroundImage={backgroundImage}>   
-            <S.Logo>
-                <img src="/images/logo/logo-playfut-white.svg"></img>
+        <S.Container>   
+            <S.Logo backgroundImage={backgroundImage} minHeight={minHeight}>
+                <img src="/images/logo/logo-playfut-white-fina.svg"></img>
             </S.Logo>
 
-            
-
-            {/* <S.Modal>
-                
-            </S.Modal> */}
-
+            <S.Box>
+                {children}
+            </S.Box>    
         </S.Container>
     )
 }

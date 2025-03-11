@@ -1,19 +1,21 @@
 import styled from "styled-components";
 import * as C from '@chakra-ui/react'
+import { theme } from "@/styles/theme";
 
 export const Container = styled(C.Flex)`
     width: 100%;
     height: 100vh;
 
+    overflow-y: auto;
     justify-content: center;
 
-    background-color: #BBBBBB;
+    background-color: #0D1321;
 `;
 
 export const Wrapper = styled(C.Flex)`
     width: 100%;
-    height: auto;
-    max-width: 600px;
+    height: 100%;
+    max-width: 479px;       
 
     gap: 24px;
     align-items: center;
@@ -21,7 +23,6 @@ export const Wrapper = styled(C.Flex)`
     flex-direction: column;
 
     border-radius: 16px;
-    background-color: #AAAAAA;
 
     >img{
         width: 100%;
@@ -53,3 +54,41 @@ export const Wrapper = styled(C.Flex)`
         background-color: #CCCCCC;
     }
 `;
+
+export const Content = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+    max-width: 479px;
+    padding: 80px 24px 160px 24px;
+
+    gap: 40px;
+    align-items: center;
+    flex-direction: column;
+`
+
+export const ContentHeader = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+    
+    flex-direction: column;
+    align-items: flex-start;
+`
+
+export const ContentButtons = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    flex-direction: column;
+
+    >a{
+        width: 100%;
+        height: auto;
+        padding: 8px 16px;
+
+        border-radius: 12px;
+
+        background-color: ${theme.colors.verde};
+    }
+`
+

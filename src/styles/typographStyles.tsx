@@ -1,63 +1,69 @@
-import { theme } from "./theme";
+import {theme } from "./theme";
 import styled from "styled-components";
 
-export const H1 = styled.h1`
+interface TypographyProps {
+    color?: string;
+    family?: string;
+    weight?: number;
+}
+
+export const H1 = styled.h1<TypographyProps>`
     text-align: center;
 
     font-size: 2.5rem;
-    font-weight: 400;
-    line-height: 100%;
-    font-family: "Anton";
+    line-height: 60px;
+    font-weight: ${({weight}) => (weight ? weight : 400)};
+    font-family: ${({family}) => (family ? family : theme.fonts.anton)};
     color: ${({color}) => (color ? color : theme.colors.branco.principal)};
 `;
 
-export const H2 = styled.h2`
+export const H2 = styled.h2<TypographyProps>`
     text-align: center;
 
     font-size: 2rem;
-    font-weight: 400;
-    line-height: 100%;
-    font-family: "Anton";
+    line-height: 48px;
+    font-weight: ${({weight}) => (weight ? weight : 400)};
+    font-family: ${({family}) => (family ? family : theme.fonts.anton)};
     color: ${({color}) => (color ? color : theme.colors.branco.principal)};
 `;
 
-export const H3 = styled.h3`
+export const H3 = styled.h3<TypographyProps>`
     text-align: center;
 
     font-size: 1.75rem;
-    font-weight: 400;
-    line-height: 100%;
-    font-family: "Anton";
+    line-height: 42px;
+    font-weight: ${({weight}) => (weight ? weight : 400)};
+    font-family: ${({family}) => (family ? family : theme.fonts.anton)};
     color: ${({color}) => (color ? color : theme.colors.branco.principal)};
 `;
 
-export const LG = styled.p`
+export const LG = styled.p<TypographyProps>`
     text-align: center;
 
     font-size: 1.375rem;
-    font-weight: 400;
-    line-height: 100%;
-    font-family: "Anton";
+    line-height: 27px;
+    font-weight: ${({weight}) => (weight ? weight : 400)};
+    font-family: ${({family}) => (family ? family : theme.fonts.anton)};
     color: ${({color}) => (color ? color : theme.colors.branco.principal)};
 `;
 
-export const MD = styled.p`
+export const MD = styled.p<TypographyProps>`
     text-align: center;
 
     font-size: 1.125rem;
-    font-weight: 400;
-    line-height: 100%;
-    font-family: "Anton";
+    line-height: 22px;
+    font-weight: ${({weight}) => (weight ? weight : 400)};
+    font-family: ${({family}) => (family ? family : theme.fonts.anton)};
     color: ${({color}) => (color ? color : theme.colors.branco.principal)};
 `;
 
-export const SM = styled.p`
+export const SM = styled.p<TypographyProps>`
     text-align: center;
 
     font-size: 1rem;
-    font-weight: 400;
-    line-height: 100%;
-    font-family: "Anton";
+    line-height: 19px;
+    font-weight: ${({weight}) => (weight ? weight : 400)};
+    font-family: ${({family}) => (family ? family : theme.fonts.anton)};
     color: ${({color}) => (color ? color : theme.colors.branco.principal)};
 `;
 

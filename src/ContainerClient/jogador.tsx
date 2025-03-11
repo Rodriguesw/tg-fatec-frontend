@@ -1,20 +1,25 @@
 "use client";
 
 import Link from 'next/link';
-import * as S from './jogadorStyles';
 
-import { Input } from '@/components/Input';
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
+
+import * as S from './HomeStyles';
+import { theme } from '@/styles/theme';
+import { H3, LG, MD } from '@/styles/typographStyles';
+import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 
 export default function Jogador() {
   return (
     <S.Container>
       <S.Wrapper>
-        <LoginWithBannerAndModal backgroundImage='/images/jpg/bk-login-jogador.jpg'/>
-
-        <Link href="/">VOLTAR</Link>
-
-        <button>ENTRAR</button>
+        <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-jogador.jpg'>
+         <S.Content>
+            <S.ContentHeader>
+              <TitleWithButtonBack title='Jogador' />
+            </S.ContentHeader>
+          </S.Content>
+        </LoginWithBannerAndModal>
       </S.Wrapper>
     </S.Container>
   );
