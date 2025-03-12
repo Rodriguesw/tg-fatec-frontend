@@ -10,14 +10,14 @@ import { H3, LG, MD, SM } from '@/styles/typographStyles';
 import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 import { Input } from '@/components/Input';
 
-export default function JogadorLogin() {
+export default function JogadorCadastro() {
   return (
     <S.Container>
       <S.Wrapper>
         <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-jogador.jpg'>
          <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack title='Recuperar senha' />
+              <TitleWithButtonBack title='Cadastro' />
 
               <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                 Login:

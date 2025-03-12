@@ -10,14 +10,14 @@ import { H3, LG, MD, SM } from '@/styles/typographStyles';
 import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 import { Input } from '@/components/Input';
 
-export default function JogadorLogin() {
+export default function JogadorRecuperarSenha() {
   return (
     <S.Container>
       <S.Wrapper>
         <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-jogador.jpg'>
          <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack title='Jogador' />
+              <TitleWithButtonBack title='Recuperar senha' />
 
               <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                 Login:
@@ -26,18 +26,16 @@ export default function JogadorLogin() {
 
             <S.ContentForm>
               <Input placeholder='E-mail' label='E-mail' />
-
-              <Input placeholder='******' label='Senha' />
             </S.ContentForm>
 
             <S.Button>
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>Entrar</LG>
+                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>Enviar</LG>
             </S.Button>
 
             <S.ContentFooter>
-              <Link href="/jogador/recuperar-senha">
+              <Link href="/jogador/login">
                 <SM color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                  Esqueceu sua senha?
+                  Login
                 </SM>
               </Link>
 
