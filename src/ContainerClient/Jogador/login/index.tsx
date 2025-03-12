@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
@@ -11,13 +12,18 @@ import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 import { Input } from '@/components/Input';
 
 export default function JogadorLogin() {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push('/home');
+  }
   return (
     <S.Container>
       <S.Wrapper>
         <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-jogador.jpg'>
          <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack title='Jogador' />
+              <TitleWithButtonBack title='Jogador' onClick={handleClick}/>
 
               <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                 Login:
@@ -31,7 +37,12 @@ export default function JogadorLogin() {
             </S.ContentForm>
 
             <S.Button>
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>Entrar</LG>
+                <LG 
+                  weight={700} 
+                  color={theme.colors.branco.principal} 
+                  family={theme.fonts.inter}>
+                    Entrar
+                </LG>
             </S.Button>
 
             <S.ContentFooter>

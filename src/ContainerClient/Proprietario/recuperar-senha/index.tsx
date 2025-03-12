@@ -10,17 +10,17 @@ import { H3, LG, MD, SM } from '@/styles/typographStyles';
 import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 import { Input } from '@/components/Input';
 
-export default function JogadorRecuperarSenha() {
+export default function ProprietarioRecuperarSenha() {
   return (
     <S.Container>
       <S.Wrapper>
-        <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-jogador.jpg'>
+        <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-proprietario.jpg'>
          <S.Content>
             <S.ContentHeader>
               <TitleWithButtonBack title='Recuperar senha' />
 
               <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                Recuperar senha
+              Recuperar senha
               </MD>
             </S.ContentHeader>
 
@@ -38,13 +38,13 @@ export default function JogadorRecuperarSenha() {
             </S.Button>
 
             <S.ContentFooter>
-              <Link href="/jogador/login">
+              <Link href="/proprietario/login">
                 <SM color={theme.colors.branco.principal} family={theme.fonts.inter}>
                   Login
                 </SM>
               </Link>
 
-              <Link href="/jogador/cadastro">
+              <Link href="/proprietario/cadastro">
                 <SM color={theme.colors.branco.principal} family={theme.fonts.inter}>
                   Cadastre-se
                 </SM>

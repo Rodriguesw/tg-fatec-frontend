@@ -4,16 +4,17 @@ import { theme } from '@/styles/theme';
 
 interface TitleWithButtonBackProps {
     title: string;
+    onClick?: () => void;  // Tornando onClick opcional com '?'
 }
 
 const ButtonBack = () => {
     window.history.back();
 }
 
-export function TitleWithButtonBack({ title }: TitleWithButtonBackProps) {
+export function TitleWithButtonBack({ title, onClick }: TitleWithButtonBackProps) {
     return (
         <S.Container>
-            <S.ButtonBack onClick={ButtonBack}>
+            <S.ButtonBack onClick={onClick || ButtonBack}>
                 <img src="/images/svg/icon-arrow-left.svg" alt="Voltar" />
             </S.ButtonBack>
 

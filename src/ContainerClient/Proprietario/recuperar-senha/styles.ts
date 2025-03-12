@@ -55,18 +55,6 @@ export const Wrapper = styled(C.Flex)`
     }
 `;
 
-export const ContainerLogo = styled(C.Flex)`
-    width: 100%;
-    height: auto;
-    padding: 8px 40px;
-
-    >img{
-        width: 100%;
-        height: auto;
-        max-width: 59px;
-    }
-`
-
 export const Content = styled(C.Flex)`
     width: 100%;
     height: auto;

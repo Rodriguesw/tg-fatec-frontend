@@ -55,6 +55,17 @@ export const Wrapper = styled(C.Flex)`
     }
 `;
 
+export const Content = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+    max-width: 479px;
+    padding: 24px 24px 64px;
+
+    gap: 24px;
+    align-items: center;
+    flex-direction: column;
+`
+
 export const ContainerLogo = styled(C.Flex)`
     width: 100%;
     height: auto;
@@ -65,17 +76,6 @@ export const ContainerLogo = styled(C.Flex)`
         height: auto;
         max-width: 59px;
     }
-`
-
-export const Content = styled(C.Flex)`
-    width: 100%;
-    height: auto;
-    max-width: 479px;
-    padding: 24px 24px 64px;
-
-    gap: 24px;
-    align-items: center;
-    flex-direction: column;
 `
 
 export const ContentHeader = styled(C.Flex)`

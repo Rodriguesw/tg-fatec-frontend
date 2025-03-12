@@ -2,7 +2,7 @@
 
 import JogadorCadastroClient from '@/ContainerClient/Jogador/cadastro/index';  
 
-export default function JogadorRecuperarSenha() {
+export default function JogadorCadastro() {
   return (
     <>
       <JogadorCadastroClient />

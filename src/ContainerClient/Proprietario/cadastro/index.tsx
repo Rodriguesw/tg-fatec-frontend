@@ -10,11 +10,11 @@ import { H3, LG, MD, SM } from '@/styles/typographStyles';
 import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 import { Input } from '@/components/Input';
 
-export default function JogadorCadastro() {
+export default function ProprietarioCadastro() {
   return (
     <S.Container>
       <S.Wrapper>
-      <S.ContainerLogo>
+        <S.ContainerLogo>
           <img src="/images/logo/logo-playfut-white-fina.svg"/>
         </S.ContainerLogo>
 
@@ -24,15 +24,15 @@ export default function JogadorCadastro() {
           </S.ContentHeader>
 
           <S.ContentForm>
-            <Input placeholder='Email Jogador' label='Email Jogador' />
+            <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
 
-            <Input placeholder='Email Jogador' label='Email Jogador' />
+            <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
 
-            <Input placeholder='Email Jogador' label='Email Jogador' />
+            <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
 
-            <Input placeholder='Email Jogador' label='Email Jogador' />
+            <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
 
-            <Input placeholder='Email Jogador' label='Email Jogador' />
+            <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
           </S.ContentForm>
         </S.Content>
 
