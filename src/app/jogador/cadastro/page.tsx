@@ -12,6 +12,7 @@ import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { H3, LG, MD, SM } from '@/styles/typographStyles';
 import { useEffect, useState } from 'react';
+import { Header } from '@/components/Header';
 
 export default function JogadorCadastro() {
    const [isMounted, setIsMounted] = useState(false);
@@ -33,9 +34,7 @@ export default function JogadorCadastro() {
 
        <S.Container>
             <S.Wrapper>
-              <S.ContainerLogo>
-                <img src="/images/logo/logo-playfut-white-fina.svg"/>
-              </S.ContainerLogo>
+              <Header></Header>
       
               <S.Content>
                 <S.ContentHeader>

@@ -44,7 +44,7 @@ export default function JogadorLogin() {
               <Input placeholder="******" label="Senha" />
             </S.ContentForm>
 
-            <S.Button>
+            <S.Button onClick={() => router.push('/jogador/home')}>
               <LG weight={700} color={theme.colors.branco.principal} family={theme.fonts.inter}>
                 Entrar
               </LG>

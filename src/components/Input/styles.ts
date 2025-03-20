@@ -22,9 +22,9 @@ export const Label = styled(C.Flex)`
 export const Input = styled(C.Input)`
     width: 100%;
     height: 46px;
-    padding: 8px 16px;
+    padding: 8px 12px;
     
-    border-radius: 8px;
+    border-radius: 12px;
     background-color: transparent;
     border: 1px solid #FFFFFF25;
     
