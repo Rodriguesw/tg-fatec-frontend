@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react';
 
-import { Input } from '@/components/Input';
 import { Header } from '@/components/Header';
+import { Input } from '@/components/Input';
 import { Navbar } from '@/components/Navbar';
+import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { MD, LG, SM } from '@/styles/typographStyles';
 
-export default function JogadorHome() {
+export default function JogadorReservas() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -29,11 +30,9 @@ export default function JogadorHome() {
                 <Input placeholder='Buscar' />
               </S.ContainerInput>
             
-              <S.ContainerMap>
-                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d7312.476746004791!2d-48.052434666515325!3d-23.595782540096398!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1spt-PT!2sbr!4v1742487428017!5m2!1spt-PT!2sbr" width="100%" height="500px" />
-              </S.ContainerMap>
-          </S.Content>          
-
+              <TitleWithButtonBack title='Minhas reservas' />
+            </S.Content>          
+            
           <Navbar />
       </S.Wrapper>
     </S.Container>

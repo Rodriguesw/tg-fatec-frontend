@@ -4,7 +4,7 @@ import { theme } from "@/styles/theme";
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: auto;
+    height: 100vh;
 
     overflow-y: auto;
     justify-content: center;

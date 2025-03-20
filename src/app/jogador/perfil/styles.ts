@@ -4,7 +4,7 @@ import { theme } from "@/styles/theme";
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: auto;
+    height: 100vh;
 
     overflow-y: auto;
     justify-content: center;
@@ -31,8 +31,6 @@ export const Content = styled(C.Flex)`
     align-items: center;
     flex-direction: column;
     justify-content: flex-start;
-
-  
 `
 
 export const ContainerInput = styled(C.Flex)`
@@ -48,4 +46,14 @@ export const ContainerMap = styled(C.Flex)`
     >iframe{
         border-radius: 6px;
     }
+`
+
+export const Button = styled(C.Button)`
+    width: 100%;
+    height: auto;
+    max-width: 312px;
+    padding: 12px 24px;
+    
+    border-radius: 12px;
+    background-color: #BBBB;
 `

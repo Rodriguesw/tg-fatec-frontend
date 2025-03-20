@@ -17,14 +17,14 @@ export default function JogadorLogin() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true); // Garante que o componente seja montado no cliente
+    setIsMounted(true);
   }, []);
 
   const handleClick = () => {
     router.push('/');
   };
 
-  if (!isMounted) return null; // Evita renderizar no servidor
+  if (!isMounted) return null; 
 
   return (
     <S.Container>
