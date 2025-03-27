@@ -13,8 +13,8 @@ export const Container = styled(C.Flex)`
 
 export const Wrapper = styled(C.Flex)`
     width: 100%;
-    height: 103px;
-    padding: 12px 16px 32px;
+    height: auto;
+    padding: 12px 16px 24px;
 
     display: flex;
     align-items: flex-end;

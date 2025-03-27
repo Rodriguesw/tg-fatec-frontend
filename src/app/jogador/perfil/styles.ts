@@ -25,35 +25,41 @@ export const Wrapper = styled(C.Flex)`
 export const Content = styled(C.Flex)`
     width: 100%;
     height: auto;
-    padding: 16px;
+    padding: 40px;
 
-    gap: 16px;
+    gap: 24px;
     align-items: center;
     flex-direction: column;
     justify-content: flex-start;
 `
 
-export const ContainerInput = styled(C.Flex)`
+export const ContainerPhoto = styled(C.Flex)`
     width: 100%;
     height: auto;
-    padding: 0 8px;
-`
 
-export const ContainerMap = styled(C.Flex)`
-    width: 100%;
-    height: 100%;
+    align-items: center;
+    justify-content: center;
 
-    >iframe{
-        border-radius: 6px;
+    >img{
+        width: 160px;
+        height: auto;
     }
 `
 
+export const ContainerButtons = styled(C.Flex)`
+    width: 100%;
+    height: calc(100vh - 441px);
+
+    gap: 24px;
+    flex-direction: column;
+`
+
 export const Button = styled(C.Button)`
+    all: unset;
+
     width: 100%;
     height: auto;
-    max-width: 312px;
-    padding: 12px 24px;
-    
-    border-radius: 12px;
-    background-color: #BBBB;
+
+    display: flex;
+    align-items: flex-start;
 `

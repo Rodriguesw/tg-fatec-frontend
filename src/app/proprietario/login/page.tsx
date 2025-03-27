@@ -35,7 +35,7 @@ export default function LoginProprietario() {
           <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-proprietario.jpg'>
             <S.Content>
               <S.ContentHeader>
-                <TitleWithButtonBack title='Proprietário'  onClick={handleClick}/>
+                <TitleWithButtonBack title='Proprietário' buttonBack={true} onClick={handleClick}/>
                   <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                   Login:
                 </MD>

@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Header } from '@/components/Header';
-import { Input } from '@/components/Input';
 import { Navbar } from '@/components/Navbar';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { MD, LG, SM } from '@/styles/typographStyles';
+import { LG } from '@/styles/typographStyles';
 
 export default function JogadorPerfil() {
   const router = useRouter();
@@ -27,15 +26,35 @@ export default function JogadorPerfil() {
           <Header />
 
           <S.Content>
-              <S.ContainerInput>
-                <Input placeholder='Buscar' />
-              </S.ContainerInput>
-            
-              <S.Button onClick={() => router.push('/')}>
-                <LG weight={700} color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                  Sair
-                </LG>
-              </S.Button>
+              <S.ContainerPhoto>
+                <img src="/images/png/user-photo.png" alt="Foto do usuário"/>
+              </S.ContainerPhoto>
+
+              <S.ContainerButtons>
+                <S.Button>
+                  <LG  
+                    color={theme.colors.branco.secundario} 
+                    family={theme.fonts.inter}>
+                    Meu cadastro
+                  </LG>
+                </S.Button>
+
+                <S.Button >
+                  <LG  
+                    color={theme.colors.branco.secundario} 
+                    family={theme.fonts.inter}>
+                    Segurança
+                  </LG>
+                </S.Button>
+          
+                <S.Button onClick={() => router.push('/')}>
+                  <LG  
+                    color={theme.colors.branco.secundario} 
+                    family={theme.fonts.inter}>
+                    Sair
+                  </LG>
+                </S.Button>
+              </S.ContainerButtons>
             </S.Content>          
             
           <Navbar />

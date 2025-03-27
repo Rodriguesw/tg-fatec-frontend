@@ -17,7 +17,6 @@ export const Wrapper = styled(C.Flex)`
     height: 100%;
     max-width: 479px;       
 
-    gap: 24px;
     align-items: center;
     justify-content: flex-start;
     flex-direction: column;

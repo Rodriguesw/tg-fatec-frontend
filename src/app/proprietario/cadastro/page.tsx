@@ -36,7 +36,7 @@ export default function ProprietarioCadastroClient() {
   
           <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack title='Dados cadastrais' onClick={handleClick} />
+              <TitleWithButtonBack title='Dados cadastrais' buttonBack={true} onClick={handleClick} />
             </S.ContentHeader>
   
             <S.ContentForm>

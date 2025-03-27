@@ -10,6 +10,7 @@ import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { MD, LG, SM } from '@/styles/typographStyles';
+import { CardReserved } from '@/components/CardReserved';
 
 export default function JogadorReservas() {
   const [isMounted, setIsMounted] = useState(false);
@@ -26,12 +27,10 @@ export default function JogadorReservas() {
           <Header />
 
           <S.Content>
-              <S.ContainerInput>
-                <Input placeholder='Buscar' />
-              </S.ContainerInput>
-            
-              <TitleWithButtonBack title='Minhas reservas' />
-            </S.Content>          
+            <TitleWithButtonBack title='Minhas reservas' />
+
+            <CardReserved />
+          </S.Content>          
             
           <Navbar />
       </S.Wrapper>

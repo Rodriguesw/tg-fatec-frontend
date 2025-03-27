@@ -32,7 +32,7 @@ export default function JogadorLogin() {
         <LoginWithBannerAndModal minHeight="560px" backgroundImage="/images/jpg/bk-login-jogador.jpg">
           <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack title="Jogador" onClick={handleClick} />
+              <TitleWithButtonBack title="Jogador" buttonBack={true} onClick={handleClick} />
 
               <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                 Login:

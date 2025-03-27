@@ -29,7 +29,7 @@ export default function JogadorRecuperarSenha() {
           <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-jogador.jpg'>
             <S.Content>
               <S.ContentHeader>
-                <TitleWithButtonBack title='Recuperar senha' onClick={handleClick}  />
+                <TitleWithButtonBack title='Recuperar senha' buttonBack={true} onClick={handleClick}  />
   
                 <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                   Recuperar senha

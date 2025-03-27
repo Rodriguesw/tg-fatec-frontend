@@ -4,13 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Header } from '@/components/Header';
-import { Input } from '@/components/Input';
 import { Navbar } from '@/components/Navbar';
-import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { MD, LG, SM } from '@/styles/typographStyles';
+import { LG } from '@/styles/typographStyles';
 
 export default function ProprietarioPerfil() {
   const router = useRouter();
@@ -28,16 +26,36 @@ export default function ProprietarioPerfil() {
           <Header />
 
           <S.Content>
-              <S.ContainerInput>
-                <Input placeholder='Buscar' />
-              </S.ContainerInput>
-            
+            <S.ContainerPhoto>
+              <img src="/images/png/user-photo.png" alt="Foto do usuário"/>
+            </S.ContainerPhoto>
+
+            <S.ContainerButtons>
+              <S.Button>
+                <LG  
+                  color={theme.colors.branco.secundario} 
+                  family={theme.fonts.inter}>
+                  Meu cadastro
+                </LG>
+              </S.Button>
+
+              <S.Button >
+                <LG  
+                  color={theme.colors.branco.secundario} 
+                  family={theme.fonts.inter}>
+                  Segurança
+                </LG>
+              </S.Button>
+        
               <S.Button onClick={() => router.push('/')}>
-                <LG weight={700} color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                <LG  
+                  color={theme.colors.branco.secundario} 
+                  family={theme.fonts.inter}>
                   Sair
                 </LG>
               </S.Button>
-            </S.Content>          
+            </S.ContainerButtons>
+          </S.Content>                
             
           <Navbar />
       </S.Wrapper>
