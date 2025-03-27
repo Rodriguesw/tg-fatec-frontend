@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -23,6 +23,15 @@ export default function JogadorLogin() {
   const handleClick = () => {
     router.push('/');
   };
+
+  const teste = async () => {
+    const response = await fetch('https://tg-fatec-backend.vercel.app/example');
+    console.log(response);
+  };
+
+  useEffect(() => {
+    teste()
+  }, []);
 
   if (!isMounted) return null; 
 
