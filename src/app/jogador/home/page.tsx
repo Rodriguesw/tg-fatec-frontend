@@ -48,7 +48,7 @@ export default function JogadorHome() {
 
           <S.Content>
               <S.ContainerInput>
-                <Input placeholder="Buscar" />
+                <Input type='text' placeholder="Buscar" />
               </S.ContainerInput>
             
               <S.ContainerMap>

@@ -79,6 +79,7 @@ export const ContentForm = styled(C.Flex)`
     height: auto;
 
     gap: 16px;
+    display: flex;
     align-items: center;
     flex-direction: column;
 `

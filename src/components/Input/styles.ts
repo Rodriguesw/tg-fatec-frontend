@@ -34,4 +34,12 @@ export const Input = styled(C.Input)`
     font-size: 18px;
     line-height: auto;
 
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+        -webkit-text-fill-color: #FFFFFF40 !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
 `

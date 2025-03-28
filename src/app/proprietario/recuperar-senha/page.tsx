@@ -1,18 +1,24 @@
 "use client"
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+import { Spinner } from "@chakra-ui/react"
 
 import { Input } from '@/components/Input';
+import { showToast } from '@/components/ToastAlert';
 import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { H3, LG, MD, SM } from '@/styles/typographStyles';
-import { useEffect, useState } from 'react';
+import { LG, MD, SM } from '@/styles/typographStyles';
 
 export default function ProprietarioRecuperarSenha() {
+  const [emailRecover, setEmailRecover] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const [isMounted, setIsMounted] = useState(false);
         
   useEffect(() => {
@@ -23,7 +29,53 @@ export default function ProprietarioRecuperarSenha() {
     window.history.back();
   }
 
+  const handleRecover = async () => {
+    setIsLoading(true);
+    
+    try {
+      if (!emailRecover.trim()) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        showToast({
+          type: 'error',
+          message: 'Preencha o campo de e-mail'
+        });
+        return;
+      }
+      
+      const payload = {
+        email_recover: emailRecover.trim() 
+      };
+
+      await new Promise(resolve => setTimeout(resolve, 1000)); 
+      
+      if (emailRecover.toLowerCase() === 'admin@admin.com') {
+        console.log("Payload:", payload); 
+
+        showToast({
+          type: 'success',
+          message: 'E-mail de recuperação enviado com sucesso!'
+        });
+
+        setEmailRecover('');
+      } else {
+        showToast({
+          type: 'error',
+          message: 'Email de recuperação inválido'
+        });
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: 'Ocorreu um erro ao enviar o e-mail de recuperação'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (!isMounted) return null;
+
   return (
     <S.Container>
       <S.Wrapper>
@@ -38,15 +90,15 @@ export default function ProprietarioRecuperarSenha() {
             </S.ContentHeader>
 
             <S.ContentForm>
-              <Input placeholder='E-mail' label='E-mail' />
+              <Input type='text' placeholder='E-mail' label='E-mail' value={emailRecover} onChange={(e) => setEmailRecover(e.target.value)}/>
             </S.ContentForm>
 
-            <S.Button>
+            <S.Button onClick={handleRecover}>
                 <LG 
                   weight={700} 
                   color={theme.colors.branco.principal} 
                   family={theme.fonts.inter}>
-                    Enviar
+                    {isLoading ?  <Spinner/> : "Enviar"}
                 </LG>
             </S.Button>
 

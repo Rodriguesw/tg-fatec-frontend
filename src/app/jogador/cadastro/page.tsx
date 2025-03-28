@@ -34,15 +34,15 @@ return (
             </S.ContentHeader>
   
             <S.ContentForm>
-              <Input placeholder='Email Jogador' label='Email Jogador' />
+              <Input type='text' placeholder='Email Jogador' label='Email Jogador' />
   
-              <Input placeholder='Email Jogador' label='Email Jogador' />
+              <Input type='text' placeholder='Email Jogador' label='Email Jogador' />
   
-              <Input placeholder='Email Jogador' label='Email Jogador' />
+              <Input type='text' placeholder='Email Jogador' label='Email Jogador' />
   
-              <Input placeholder='Email Jogador' label='Email Jogador' />
+              <Input type='text' placeholder='Email Jogador' label='Email Jogador' />
   
-              <Input placeholder='Email Jogador' label='Email Jogador' />
+              <Input type='text' placeholder='Email Jogador' label='Email Jogador' />
             </S.ContentForm>
           </S.Content>
   

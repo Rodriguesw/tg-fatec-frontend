@@ -40,15 +40,15 @@ export default function ProprietarioCadastroClient() {
             </S.ContentHeader>
   
             <S.ContentForm>
-              <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
+              <Input type='text' placeholder='E-mail Proprietario' label='E-mail Proprietario' />
   
-              <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
+              <Input type='text' placeholder='E-mail Proprietario' label='E-mail Proprietario' />
   
-              <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
+              <Input type='text' placeholder='E-mail Proprietario' label='E-mail Proprietario' />
   
-              <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
+              <Input type='text' placeholder='E-mail Proprietario' label='E-mail Proprietario' />
   
-              <Input placeholder='E-mail Proprietario' label='E-mail Proprietario' />
+              <Input type='text' placeholder='E-mail Proprietario' label='E-mail Proprietario' />
             </S.ContentForm>
           </S.Content>
   
