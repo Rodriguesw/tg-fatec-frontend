@@ -43,6 +43,7 @@ export const ContainerPhoto = styled(C.Flex)`
     >img{
         width: 160px;
         height: auto;
+        border-radius: 50%;
     }
 `
 
