@@ -36,36 +36,37 @@ export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    setIsMounted(true); 
   }, []);
 
-  if (!isMounted) return null;
+  if (!isMounted) return null; 
 
   return (
     <S.Container>
       <S.Wrapper>
-        <Header />
+          <Header />
 
-        <S.Content>
-          <S.ContainerInput>
-            <Input placeholder="Buscar" />
-          </S.ContainerInput>
+          <S.Content>
+              <S.ContainerInput>
+                <Input placeholder="Buscar" />
+              </S.ContainerInput>
+            
+              <S.ContainerMap>
+                <LoadScriptNext googleMapsApiKey="AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0">
+                  <GoogleMap
+                      mapContainerStyle={mapContainerStyle}
+                      center={center}
+                      zoom={14}
+                      options={mapOptions}
+                    >
 
-          <S.ContainerMap>
-            <LoadScriptNext googleMapsApiKey="AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0">
-              <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={center}
-                zoom={14}
-                options={mapOptions}
-              >
-                <Marker position={markerPosition} title="Localização do marcador" />
-              </GoogleMap>
-            </LoadScriptNext>
-          </S.ContainerMap>
-        </S.Content>
+                    <Marker position={markerPosition} title="Localização do marcador" />
+                  </GoogleMap>
+                </LoadScriptNext>
+              </S.ContainerMap>
+          </S.Content>          
 
-        <Navbar />
+          <Navbar />
       </S.Wrapper>
     </S.Container>
   );

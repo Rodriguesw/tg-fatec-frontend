@@ -26,6 +26,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props;
   return (
     <html suppressHydrationWarning className={`${anton.variable} ${inter.variable}`}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </head>
       <body>
         <Provider>{children}</Provider>
       </body>
