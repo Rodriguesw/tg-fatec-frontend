@@ -70,7 +70,7 @@ export const Content = styled(C.Flex)`
     width: 100%;
     height: auto;
     max-width: 479px;
-    padding: 24px 24px 64px;
+    padding: 24px 24px 40px;
 
     gap: 24px;
     align-items: center;
@@ -94,12 +94,21 @@ export const ContentForm = styled(C.Flex)`
     flex-direction: column;
 `
 
+export const ContainerButton = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+    padding: 0 0 40px;
+
+    align-items: center;
+    justify-content: center;
+`
+
 export const Button = styled(C.Button)`
     width: 100%;
     height: auto;
     max-width: 312px;
     padding: 12px 24px;
-    
+
     border-radius: 12px;
     background-color: ${theme.colors.verde};
 `

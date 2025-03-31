@@ -14,7 +14,6 @@ import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { LG, MD, SM } from '@/styles/typographStyles';
 
-
 export default function JogadorRecuperarSenha() {
   const [emailRecover, setEmailRecover] = useState('');
   const [isLoading, setIsLoading] = useState(false);
