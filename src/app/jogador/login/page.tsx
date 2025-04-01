@@ -34,13 +34,8 @@ interface LoginErrors {
 }
 
 const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|net|yahoo|org|org\.br)$/;
   
-  const commonDomains = [
-    '.com', '.com.br', '.org', '.net', '.edu', '.gov', '.mil',
-    '.int', '.io', '.co', '.me', '.app', '.dev', '.cloud'
-  ];
-
   if (!email || email.length < 5 || email.length > 254) {
     return false;
   }
@@ -49,15 +44,7 @@ const validateEmail = (email: string): boolean => {
     return false;
   }
 
-  if (!emailRegex.test(email)) {
-    return false;
-  }
-
-  const domain = email.split('@')[1];
-  
-  const hasValidDomain = commonDomains.some(ext => domain.endsWith(ext));
-  
-  return hasValidDomain;
+  return regex.test(email);
 };
 
 export default function JogadorLogin() {
@@ -110,8 +97,12 @@ export default function JogadorLogin() {
       email: !email.trim(),
       password: !password.trim(),
       form: false,
-      emailFormat: !validateEmail(email)
+      emailFormat: false
     };
+
+    if (email.trim()) {
+      newErrors.emailFormat = !validateEmail(email);
+    }
     
     setErrors(newErrors);
 
@@ -119,11 +110,22 @@ export default function JogadorLogin() {
   };
 
   const handleLogin = async () => {
+
     if (!validateFields()) {
-      if (errors.emailFormat) {
+      if(email === "" && password === "") {
         showToast({
           type: 'error',
-          message: 'Por favor, insira um email válido'
+          message: 'Preencha todos os campos'
+        });
+      }else if (email !== null || errors.emailFormat) {
+        showToast({
+          type: 'error',
+          message: 'Insira um email válido'
+        });
+      } else if (errors.password) {
+        showToast({
+          type: 'error',
+          message: 'E-mail ou senha inválidos'
         });
       } else {
         showToast({
@@ -131,6 +133,7 @@ export default function JogadorLogin() {
           message: 'Preencha todos os campos'
         });
       }
+
       return;
     }
 
@@ -144,8 +147,6 @@ export default function JogadorLogin() {
       
       if (user && user.password === password) {
         localStorage.setItem("currentUser", JSON.stringify(user));
-        router.push('/jogador/home');
-      } else if (email.toLowerCase() === 'admin@admin.com' && password === 'admin') {
         router.push('/jogador/home');
       } else {
         setErrors(prev => ({ ...prev, form: true }));
@@ -174,9 +175,9 @@ export default function JogadorLogin() {
     
     setErrors(prev => ({ 
       ...prev, 
-      email: false, 
+      email: false,
       form: false,
-      emailFormat: !validateEmail(value)
+      emailFormat: false
     }));
   };
 

@@ -5,6 +5,8 @@ import { theme } from '@/styles/theme'
 export function Header() {
     const currentPath = window.location.pathname
 
+    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "{}");
+
     const HeaderWithText = () => {
         if (currentPath === '/jogador/cadastro' || currentPath === '/proprietario/cadastro') {
             return(
@@ -17,7 +19,7 @@ export function Header() {
                 <>
                     <img src="/images/logo/logo-playfut-white-fina.svg"/>
         
-                    <H3 color={theme.colors.branco.principal}>Olá, Matheus!</H3>
+                    <H3 color={theme.colors.branco.secundario}>Olá, {currentUser.name}!</H3>
                 </>
             )
         }
