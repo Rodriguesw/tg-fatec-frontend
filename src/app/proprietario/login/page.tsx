@@ -97,7 +97,7 @@ export default function LoginProprietario() {
                 placeholder="E-mail"
                 label="E-mail"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={setEmail}
               />
 
               <Input
@@ -105,7 +105,7 @@ export default function LoginProprietario() {
                 placeholder="******"
                 label="Senha"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={setPassword}
               />
             </S.ContentForm>
 

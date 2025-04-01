@@ -89,7 +89,13 @@ export default function JogadorRecuperarSenha() {
               </S.ContentHeader>
   
               <S.ContentForm>
-                <Input type="text" placeholder='E-mail' label='E-mail' value={emailRecover} onChange={(e) => setEmailRecover(e.target.value)}/>
+                <Input 
+                  type="text" 
+                  placeholder='E-mail' 
+                  label='E-mail' 
+                  value={emailRecover} 
+                  onChange={setEmailRecover}
+                />
               </S.ContentForm>
   
               <S.Button onClick={handleRecover}>

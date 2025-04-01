@@ -1,14 +1,38 @@
 "use client"
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import { Spinner } from '@chakra-ui/react';
 
 import { Input } from '@/components/Input';
 import { Header } from '@/components/Header';
+import { showToast } from '@/components/ToastAlert';
 import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { LG, } from '@/styles/typographStyles';
+
+interface User {
+  id: number;
+  name: string;
+  birth_date: string;
+  gender: string;
+  team: string;
+  email: string;
+  password: string;
+}
+
+interface FormErrors {
+  name: boolean;
+  birthDate: boolean;
+  gender: boolean;
+  team: boolean;
+  email: boolean;
+  password: boolean;
+  passwordConfirmation: boolean;
+}
 
 export default function JogadorCadastro() {
   const [name, setName] = useState('');
@@ -18,19 +42,34 @@ export default function JogadorCadastro() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isMounted, setIsMounted] = useState(false);
-    
+
+  const [errors, setErrors] = useState<FormErrors>({
+    name: false,
+    birthDate: false,
+    gender: false,
+    team: false,
+    email: false,
+    password: false,
+    passwordConfirmation: false,
+  });
+
+  const router = useRouter();
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  
-  // Opções para os selects
+
+  const handleClick = () => {
+    window.history.back();
+  }
+
   const genderOptions = [
     { label: 'Masculino', value: 'male' },
     { label: 'Feminino', value: 'female' },
-    { label: 'Outro', value: 'other' },
-    { label: 'Prefiro não dizer', value: 'prefer_not_to_say' }
   ];
 
   const teamOptions = [
@@ -41,30 +80,136 @@ export default function JogadorCadastro() {
     { label: 'Outro', value: 'other' }
   ];
 
-  const handleClick = () => {
-    window.history.back();
-  }
+  const handleNameChange = (value: string) => {
+    setName(value);
+    setErrors(prev => ({ ...prev, name: false }));
+  };
+
+  const handleBirthDateChange = (value: string) => {
+    setBirthDate(value);
+    setErrors(prev => ({ ...prev, birthDate: false }));
+  };
+
+  const handleGenderChange = (value: string) => {
+    setGender(value);
+    setErrors(prev => ({ ...prev, gender: false }));
+  };
+
+  const handleTeamChange = (value: string) => {
+    setTeam(value);
+    setErrors(prev => ({ ...prev, team: false }));
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setErrors(prev => ({ ...prev, email: false }));
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    setErrors(prev => ({ ...prev, password: false }));
+  };
+
+  const handlePasswordConfirmationChange = (value: string) => {
+    setPasswordConfirmation(value);
+    setErrors(prev => ({ ...prev, passwordConfirmation: false }));
+  };
+
+  const validateFields = (): boolean => {
+    const newErrors: FormErrors = {
+      name: !name.trim(),
+      birthDate: !birthDate.trim(),
+      gender: !gender.trim(),
+      team: !team.trim(),
+      email: !email.trim(),
+      password: !password.trim(),
+      passwordConfirmation: !passwordConfirmation.trim(),
+    };
+    
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(error => error);
+  };
+
+  const validatePasswordMatch = (): boolean => {
+    const match = password === passwordConfirmation;
+
+    if (!match) {
+      showToast({
+        type: 'error',
+        message: 'As senhas não coincidem'
+      });
+    }
+    return match;
+  };
 
   const handleCreateUser = async () => {
-    const payload = {
-      name: name,
-      birth_date: birthDate,
-      gender: gender,
-      team: team,
-      email: email,
-      password: password,
-      password_confirmation: passwordConfirmation,
+    if (!validateFields() || !validatePasswordMatch()) {
+      showToast({
+        type: 'error',
+        message: 'Preencha todos os campos'
+      });
+      return;
     }
+  
+    try {
+      setIsLoading(true);
+  
+      const existingUsers: Record<number, User> = JSON.parse(localStorage.getItem("infoUser") || "{}");
+      const emailExists = Object.values<User>(existingUsers).some(user => user.email === email);
+      
+      if (emailExists) {
+        setErrors(prev => ({
+          ...prev,
+          email: true
+        }));
+        
+        showToast({
+          type: 'error',
+          message: 'Este e-mail já está cadastrado'
+        });
+        return;
+      }
 
-    console.log("Payload:", payload);
-  }
+      const ids = Object.keys(existingUsers).map(Number);
+      const newId = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+  
+      const payload: User = {
+        id: newId,
+        name,
+        birth_date: birthDate,
+        gender,
+        team,
+        email,
+        password,
+      };
+  
+      await new Promise(resolve => setTimeout(resolve, 500));
+  
+      existingUsers[newId] = payload;
+      localStorage.setItem("infoUser", JSON.stringify(existingUsers));
+  
+      showToast({
+        type: 'success',
+        message: 'Cadastro feito com sucesso!'
+      });
+  
+      router.push('/jogador/login');
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: 'Ocorreu um erro ao realizar o cadastro. Tente novamente.'
+      });
+    } finally {
+      setIsLoading(false); 
+    }
+  };
 
   if (!isMounted) return null;
 
   return (
     <S.Container>
         <S.Wrapper>
-          <Header></Header>
+          <Header/>
   
           <S.Content>
             <S.ContentHeader>
@@ -76,53 +221,60 @@ export default function JogadorCadastro() {
                 type='text' 
                 placeholder='Nome completo' 
                 label='Nome completo *' 
-                onChange={(value) => setName(value)}
+                onChange={handleNameChange}
+                hasError ={errors.name}
               />
-  
+
               <Input 
-                type='text' 
+                type='date' 
                 placeholder='00/00/0000' 
                 label='Data de nascimento *' 
-                onChange={(value) => setBirthDate(value)}
+                onChange={handleBirthDateChange}
+                hasError ={errors.birthDate}
               />
-  
+
               <Input 
                 type='select' 
                 placeholder='Selecionar' 
                 label='Sexo' 
-                onChange={(value) => setGender(value)}
+                onChange={handleGenderChange}
                 options={genderOptions}
                 value={gender}
+                hasError ={errors.gender}
               />
-  
+
               <Input 
                 type='select' 
                 placeholder='Selecionar' 
                 label='Para que time torce?' 
-                onChange={(value) => setTeam(value)}
+                onChange={handleTeamChange}
                 options={teamOptions}
                 value={team}
+                hasError ={errors.team}
               />
-  
+
               <Input 
                 type='text' 
                 placeholder='email@mail.com' 
                 label='E-mail *' 
-                onChange={(value) => setEmail(value)}
+                onChange={handleEmailChange}
+                hasError ={errors.email}
               />
 
               <Input 
                 type='password' 
                 placeholder='********' 
                 label='Senha *' 
-                onChange={(value) => setPassword(value)}
+                onChange={handlePasswordChange}
+                hasError ={errors.password}
               />
 
               <Input 
                 type='password' 
                 placeholder='********' 
                 label='Confirmar senha *' 
-                onChange={(value) => setPasswordConfirmation(value)}
+                onChange={handlePasswordConfirmationChange}
+                hasError ={errors.passwordConfirmation}
               />
             </S.ContentForm>
           </S.Content>
@@ -133,7 +285,7 @@ export default function JogadorCadastro() {
                   weight={700}  
                   color={theme.colors.branco.principal} 
                   family={theme.fonts.inter}>
-                    Cadastrar
+                    {isLoading ? <Spinner /> : 'Cadastrar'}
                 </LG>
             </S.Button>
           </S.ContainerButton>

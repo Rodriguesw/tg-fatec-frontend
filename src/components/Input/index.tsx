@@ -1,5 +1,5 @@
-import { theme } from '@/styles/theme'
 import * as S from './styles'
+import { theme } from '@/styles/theme'
 import { SM } from '@/styles/typographStyles'
 
 interface Option {
@@ -8,15 +8,24 @@ interface Option {
 }
 
 interface InputProps {
-    type: 'text' | 'password' | 'select'
+    type: 'text' | 'password' | 'select' | 'date' 
     label?: string
     placeholder?: string
     value?: string
     onChange?: (value: string) => void 
+    hasError?: boolean
     options?: Option[]
 }
 
-export function Input({ type, label, placeholder, value, onChange, options }: InputProps) {
+export function Input({ 
+    type, 
+    label, 
+    placeholder, 
+    value, 
+    onChange, 
+    hasError = false, 
+    options 
+}: InputProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (onChange) {
             onChange(e.target.value);
@@ -30,20 +39,27 @@ export function Input({ type, label, placeholder, value, onChange, options }: In
             </S.Label>
 
             {type === 'select' ? (
-                <select value={value} onChange={handleChange}>
+                <S.Select 
+                    value={value} 
+                    onChange={handleChange}
+                    $hasError={hasError}
+                >
                     <option value="">{placeholder}</option>
+
                     {options?.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
                         </option>
                     ))}
-                </select>
+                </S.Select>
             ) : (
                 <S.Input
-                    type={type}
+                    type={type === 'date' ? 'date' : type} 
                     placeholder={placeholder}
                     value={value}
                     onChange={handleChange}
+                    $hasError={hasError}
+                    max={type === 'date' ? new Date().toISOString().split('T')[0] : undefined}
                 />
             )}
         </S.Container>
