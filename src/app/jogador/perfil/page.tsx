@@ -18,6 +18,12 @@ export default function JogadorPerfil() {
     setIsMounted(true); 
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('currentUser');
+    
+    router.push('/jogador/login');
+  }
+
   if (!isMounted) return null; 
 
   return (
@@ -47,7 +53,7 @@ export default function JogadorPerfil() {
                   </LG>
                 </S.Button>
           
-                <S.Button onClick={() => router.push('/')}>
+                <S.Button onClick={handleLogout}>
                   <LG  
                     color={theme.colors.branco.secundario} 
                     family={theme.fonts.inter}>

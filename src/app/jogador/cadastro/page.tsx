@@ -59,6 +59,12 @@ export default function JogadorCadastro() {
 
   const router = useRouter();
 
+  const validateEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|org|org\.br|yahoo|net)$/;
+
+    return regex.test(email);
+  };
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -121,33 +127,57 @@ export default function JogadorCadastro() {
       birthDate: !birthDate.trim(),
       gender: !gender.trim(),
       team: !team.trim(),
-      email: !email.trim(),
+      email: !email.trim() || !validateEmail(email),
       password: !password.trim(),
       passwordConfirmation: !passwordConfirmation.trim(),
     };
     
-    setErrors(newErrors);
-    return !Object.values(newErrors).some(error => error);
-  };
+    const hasEmptyFields = Object.values(newErrors).some(error => error);
+    
+    const hasInvalidEmail = !validateEmail(email) && email.trim();
+    
+    const hasPasswordError = password !== passwordConfirmation && password.trim() && passwordConfirmation.trim();
 
-  const validatePasswordMatch = (): boolean => {
-    const match = password === passwordConfirmation;
-
-    if (!match) {
-      showToast({
-        type: 'error',
-        message: 'As senhas não coincidem'
-      });
+    if (hasPasswordError) {
+      newErrors.password = true;
+      newErrors.passwordConfirmation = true;
     }
-    return match;
-  };
+    
+    setErrors(newErrors);
 
-  const handleCreateUser = async () => {
-    if (!validateFields() || !validatePasswordMatch()) {
+    if (hasEmptyFields) {
       showToast({
         type: 'error',
         message: 'Preencha todos os campos'
       });
+      return false;
+    }
+
+    if (hasInvalidEmail) {
+      showToast({
+        type: 'error',
+        message: 'Insira um e-mail válido'
+      });
+      return false;
+    }
+
+    if (hasPasswordError) {
+      showToast({
+        type: 'error',
+        message: 'As senhas não coincidem'
+      });
+      return false;
+    }
+
+    return true;
+  };
+
+  const validatePasswordMatch = (): boolean => {
+    return password === passwordConfirmation;
+  };
+
+  const handleCreateUser = async () => {
+    if (!validateFields()) {
       return;
     }
   

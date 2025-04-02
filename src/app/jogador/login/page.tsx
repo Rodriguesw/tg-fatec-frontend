@@ -80,7 +80,7 @@ export default function JogadorLogin() {
     if (Object.keys(users).length === 0) {
       const dataUserTest: User = {
         id: 1,
-        name: "Matheus JGDR",
+        name: "Matheus Henrique",
         birth_date: "2025-03-31",
         gender: "male",
         team: "sao_paulo",

@@ -81,20 +81,28 @@ export const Input = styled(C.Input)<InputContainerProps>`
     font-size: 18px;
     line-height: auto;
 
-    &[type="date"] {
-        &::-webkit-calendar-picker-indicator {
+     &[type="date"] {
+          &::-webkit-calendar-picker-indicator {
             filter: invert(0.4); 
-            opacity: 0.7; 
+            opacity: 0; 
         }
 
         &::-moz-calendar-picker-indicator {
             filter: invert(0.8);
-            opacity: 0.7;
+            opacity: 0;
         }
 
         &::-ms-clear {
             color: rgba(255, 255, 255, 0.7);
         }
+        
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url('/images/png/icons-calendar.png');
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.25rem;
     }
 
     &:-webkit-autofill,

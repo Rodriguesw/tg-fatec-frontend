@@ -21,4 +21,10 @@ export const Wrapper = styled(C.Flex)`
         height: auto;
         max-width: 59px;
     }
+
+    @media (max-width: 350px) {
+        >p{
+            font-size: 18px;
+        }
+    }
 `
