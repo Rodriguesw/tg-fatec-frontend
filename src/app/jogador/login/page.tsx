@@ -84,7 +84,7 @@ export default function JogadorLogin() {
         birth_date: "2025-03-31",
         gender: "male",
         team: "sao_paulo",
-        email: "teste@teste.com",
+        email: "matheushr39@gmail.com",
         password: "teste",
       };
 

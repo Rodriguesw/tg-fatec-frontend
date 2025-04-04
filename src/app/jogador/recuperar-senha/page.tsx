@@ -3,9 +3,12 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import emailjs from '@emailjs/browser';
+
 import { Spinner } from "@chakra-ui/react"
 
 import { Input } from '@/components/Input';
+import { Modal } from '@/components/Modal';
 import { showToast } from '@/components/ToastAlert';
 import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
@@ -17,6 +20,7 @@ import { LG, MD, SM } from '@/styles/typographStyles';
 export default function JogadorRecuperarSenha() {
   const [emailRecover, setEmailRecover] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(true);
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -30,7 +34,7 @@ export default function JogadorRecuperarSenha() {
 
   const handleRecover = async () => {
     setIsLoading(true);
-    
+  
     try {
       if (!emailRecover.trim()) {
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -41,32 +45,34 @@ export default function JogadorRecuperarSenha() {
         });
         return;
       }
-      
-      const payload = {
-        email_recover: emailRecover.trim() 
+  
+      const templateParams = {
+        title: "Códido de redefinição de senha",
+        message: "Oi!",       
+        email_to: emailRecover.trim() 
       };
+  
+      await emailjs.send(
+        'service_yi6goia',   
+        'template_r40brri',      
+        templateParams,
+        'Ur1rsXibVG5IklzEx'   
+      );
 
-      await new Promise(resolve => setTimeout(resolve, 1000)); 
-      
-      if (emailRecover.toLowerCase() === 'admin@admin.com') {
-        console.log("Payload:", payload); 
+      console.log("payload", templateParams)
 
-        showToast({
-          type: 'success',
-          message: 'E-mail de recuperação enviado com sucesso!'
-        });
+      setIsOpenModal(true);
 
-        setEmailRecover('');
-      } else {
-        showToast({
-          type: 'error',
-          message: 'Email de recuperação inválido'
-        });
-      }
+      showToast({
+        type: 'success',
+        message: 'Código de redefinição enviado com sucesso!'
+      });
+  
+      setEmailRecover('');
     } catch (error) {
       showToast({
         type: 'error',
-        message: 'Ocorreu um erro ao enviar o e-mail de recuperação'
+        message: 'Erro ao enviar o código de redefinição'
       });
     } finally {
       setIsLoading(false);
@@ -123,6 +129,8 @@ export default function JogadorRecuperarSenha() {
             </S.Content>
           </LoginWithBannerAndModal>
         </S.Wrapper>
+
+        {isOpenModal && <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)} />}
     </S.Container>
   );
 }
