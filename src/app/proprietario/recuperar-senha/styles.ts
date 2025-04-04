@@ -90,7 +90,7 @@ export const Button = styled(C.Button)`
     padding: 12px 24px;
     
     border-radius: 12px;
-    background-color: ${theme.colors.verde};
+    background-color: ${theme.colors.verde.principal};
 `
 
 export const ContentFooter = styled(C.Flex)`

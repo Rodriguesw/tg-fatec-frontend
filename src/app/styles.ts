@@ -88,7 +88,7 @@ export const ContentButtons = styled(C.Flex)`
 
         border-radius: 12px;
 
-        background-color: ${theme.colors.verde};
+        background-color: ${theme.colors.verde.principal};
     }
 `
 

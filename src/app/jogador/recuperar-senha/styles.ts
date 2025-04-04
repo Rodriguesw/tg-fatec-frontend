@@ -90,7 +90,7 @@ export const Button = styled(C.Button)`
     padding: 12px 24px;
     
     border-radius: 12px;
-    background-color: ${theme.colors.verde};
+    background-color: ${theme.colors.verde.principal};
 `
 
 export const ContentFooter = styled(C.Flex)`
@@ -101,3 +101,81 @@ export const ContentFooter = styled(C.Flex)`
     align-items: center;
     flex-direction: column;
 `
+
+export const ContainerModalCode = styled(C.Flex)`
+    width: auto;
+    height: auto;
+    padding: 16px;
+    
+    gap: 16px;
+    border-radius: 5px;
+    flex-direction: column;
+
+    background-color: #0D1321;
+`
+
+export const ContainerButtonModalCode = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+
+    >button{
+        width: 100%;
+        height: 48px;
+        max-width: 112px;
+        padding: 8px 4px;
+
+        border-radius: 8px;
+    }
+
+    >button:first-child{
+        background-color: ${theme.colors.vermelho};
+    }
+
+    >button:last-child{
+        background-color: ${theme.colors.verde.secundario};
+    }
+`
+
+export const ContainerModalNewPassword = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+    padding: 16px;
+    max-width: 320px;
+    
+    gap: 16px;
+    border-radius: 8px;
+    flex-direction: column;
+
+    background-color: #0D1321;
+`
+
+export const ContainerButtonModalNewPassword = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+
+    >button{
+        width: 100%;
+        height: 48px;
+        max-width: 112px;
+        padding: 8px 4px;
+
+        border-radius: 8px;
+    }
+
+    >button:first-child{
+        background-color: ${theme.colors.vermelho};
+    }
+
+    >button:last-child{
+        background-color: ${theme.colors.verde.secundario};
+    }
+`
+

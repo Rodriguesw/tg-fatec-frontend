@@ -20,10 +20,16 @@ import { LG, MD, SM } from '@/styles/typographStyles';
 
 export default function JogadorRecuperarSenha() {
   const [emailRecover, setEmailRecover] = useState('');
+  const [emailToRecover, setEmailToRecover] = useState('');
+
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isOpenModalCode, setIsOpenModalCode] = useState(false);
+  const [isLoadingVerifyCode, setIsLoadingVerifyCode] = useState(false);
+  const [isOpenModalNewPassword, setIsOpenModalNewPassword] = useState(false);
 
   const [isMounted, setIsMounted] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   const [userCodeInput, setUserCodeInput] = useState<string[]>([]);
   const [verificationCode, setVerificationCode] = useState<string | null>(null); 
@@ -53,13 +59,31 @@ export default function JogadorRecuperarSenha() {
         });
         return;
       }
+
+      const infoUser = localStorage.getItem("infoUser");
+      const users = infoUser ? JSON.parse(infoUser) : [];
+      
+      const userExists = Object.values(users).some((user: any) => 
+        user.email === emailRecover.trim()
+      );
+
+      if (!userExists) {
+        showToast({
+          type: 'error',
+          message: 'Esse e-mail não tem cadastro'
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      setEmailToRecover(emailRecover.trim());
   
-      const code = generateCode(); // Gerar código aleatório
-      setVerificationCode(code); // Armazenar o código no estado
+      const code = generateCode();
+      setVerificationCode(code);
   
       const templateParams = {
         title: "Código de redefinição de senha",
-        code,  // Enviando o código gerado para o usuário
+        code, 
         email_to: emailRecover.trim()
       };
   
@@ -70,13 +94,13 @@ export default function JogadorRecuperarSenha() {
         'Ur1rsXibVG5IklzEx'   
       );
   
-      console.log("Código gerado:", code); // Para debug
+      console.log("Código gerado:", code);
   
-      setIsOpenModal(true);
+      setIsOpenModalCode(true);
   
       showToast({
         type: 'success',
-        message: 'Código de redefinição enviado com sucesso!'
+        message: 'Código de redefinição enviado com sucesso!',
       });
   
       setEmailRecover('');
@@ -90,7 +114,9 @@ export default function JogadorRecuperarSenha() {
     }
   };
 
-  const handleVerifyCode = (userInputArray: string[]) => {
+  const handleVerifyCode = async (userInputArray: string[]) => {
+    setIsLoadingVerifyCode(true);
+
     const userInput = userInputArray.join("");
 
     console.log("Valor inserido nos pins:", userInput);
@@ -106,7 +132,68 @@ export default function JogadorRecuperarSenha() {
         message: 'Código incorreto! Tente novamente.'
       });
     }
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    setIsLoadingVerifyCode(false);
+    setIsOpenModalCode(false);
+    setIsOpenModalNewPassword(true);
   };
+
+  const handleNewPassword = async () => {
+    setIsLoading(true);
+
+    try {
+      if (!newPassword.trim()) {
+        showToast({
+          type: 'error',
+          message: 'Preencha o campo de nova senha'
+        });
+        return;
+      }
+
+      if (newPassword !== confirmNewPassword) {
+        showToast({
+          type: 'error',
+          message: 'As senhas não coincidem'
+        }); 
+        return;
+      }
+
+      const infoUser = localStorage.getItem("infoUser");
+      const users = infoUser ? JSON.parse(infoUser) : [];
+
+      const updatedUsers = Object.entries(users).reduce((acc: any, [key, user]: [string, any]) => {
+        if (user.email === emailToRecover) {
+          acc[key] = {
+            ...user,
+            password: newPassword
+          };
+        } else {
+          acc[key] = user;
+        }
+        return acc;
+      }, {});
+
+      localStorage.setItem("infoUser", JSON.stringify(updatedUsers));
+   
+      showToast({
+        type: 'success',
+        message: 'Senha redefinida com sucesso'
+      });
+
+      setIsOpenModalNewPassword(false);
+
+      window.location.href = '/jogador/login';
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: 'Erro ao redefinir a senha'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   if (!isMounted) return null;
   
@@ -159,38 +246,119 @@ export default function JogadorRecuperarSenha() {
           </LoginWithBannerAndModal>
         </S.Wrapper>
 
-        {isOpenModal && <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)}>
-            <Dialog.Header>
-                <Dialog.Title textAlign="center">Digite seu código de recuperação</Dialog.Title>
-            </Dialog.Header>
+        {isOpenModalCode && 
+          <Modal isOpen={isOpenModalCode} onClose={() => setIsOpenModalCode(false)}>
+            <S.ContainerModalCode>
+              <Dialog.Header>
+                  <Dialog.Title textAlign="center">
+                    <LG 
+                    color={theme.colors.branco.principal} 
+                    family={theme.fonts.inter}>
+                      Digite seu código de recuperação
+                    </LG>
+                  </Dialog.Title>
+              </Dialog.Header>
 
-            <Dialog.Body>
-                <PinInput.Root 
-                 value={userCodeInput}
-                 onValueChange={(value) => setUserCodeInput(value.value)}
-                >
-                    <PinInput.HiddenInput />
+              <Dialog.Body>
+                  <PinInput.Root 
+                  value={userCodeInput}
+                  onValueChange={(value) => setUserCodeInput(value.value)}
+                  >
+                      <PinInput.HiddenInput />
 
-                    <PinInput.Control display="flex" gap="8px" justifyContent="center">
-                    <PinInput.Input index={0} />
+                      <PinInput.Control display="flex" gap="8px" justifyContent="center">
+                        <PinInput.Input index={0} color={theme.colors.branco.principal}/>
 
-                    <PinInput.Input index={1} />
+                        <PinInput.Input index={1} color={theme.colors.branco.principal}/>
 
-                    <PinInput.Input index={2} />
+                        <PinInput.Input index={2} color={theme.colors.branco.principal}/>
 
-                    <PinInput.Input index={3} />
-                    </PinInput.Control>
-                </PinInput.Root>
-            </Dialog.Body>
+                        <PinInput.Input index={3} color={theme.colors.branco.principal}/>
+                      </PinInput.Control>
+                  </PinInput.Root>
+              </Dialog.Body>
 
-            <Dialog.Footer justifyContent="center">
-                <Dialog.ActionTrigger asChild>
-                    <Button variant="outline" onClick={() => setIsOpenModal(false)} padding="16px">Cancelar</Button>
-                </Dialog.ActionTrigger>
+              <Dialog.Footer justifyContent="center">
+              <S.ContainerButtonModalCode>
+                    <S.Button 
+                    onClick={() => setIsOpenModalCode(false)} 
+                    >
+                      <MD 
+                      color={theme.colors.branco.principal} 
+                      family={theme.fonts.inter}>
+                        Cancelar
+                      </MD>
+                    </S.Button> 
 
-                <Button padding="16px" onClick={() => handleVerifyCode(userCodeInput)}>Enviar</Button>
-            </Dialog.Footer>
-        </Modal>}
+                    <S.Button onClick={() => handleVerifyCode(userCodeInput)}>
+                      <MD 
+                      color={theme.colors.branco.principal} 
+                      family={theme.fonts.inter}>
+                        {isLoadingVerifyCode ? <Spinner /> : 'Salvar'}
+                    </MD>
+                  </S.Button>
+                </S.ContainerButtonModalCode>
+              </Dialog.Footer>
+          </S.ContainerModalCode>
+          </Modal>}
+
+        {isOpenModalNewPassword && 
+          <Modal isOpen={isOpenModalNewPassword} onClose={() => setIsOpenModalNewPassword(false)}>
+            <S.ContainerModalNewPassword>
+              <Dialog.Header>
+                  <Dialog.Title textAlign="center">
+                    <LG 
+                    color={theme.colors.branco.principal} 
+                    family={theme.fonts.inter}>
+                      Redefina sua senha
+                      </LG>
+                  </Dialog.Title>
+              </Dialog.Header>
+              
+              <Dialog.Body 
+                gap="16px"
+                display="flex" 
+                justifyContent="center" 
+                alignItems="center" 
+                flexDirection="column">
+                  <Input 
+                    type="password" 
+                    placeholder='Nova senha' 
+                    label='Nova senha' 
+                    value={newPassword} 
+                    onChange={setNewPassword}
+                  />
+
+                  <Input 
+                    type="password" 
+                    placeholder='Confirmar senha' 
+                    label='Confirmar senha' 
+                    value={confirmNewPassword} 
+                    onChange={setConfirmNewPassword}
+                  />
+
+                  <S.ContainerButtonModalNewPassword>
+                    <S.Button 
+                    onClick={() => setIsOpenModalNewPassword(false)} 
+                    >
+                      <MD 
+                      color={theme.colors.branco.principal} 
+                      family={theme.fonts.inter}>
+                        Cancelar
+                      </MD>
+                    </S.Button> 
+
+                    <S.Button onClick={handleNewPassword}>
+                      <MD 
+                      color={theme.colors.branco.principal} 
+                      family={theme.fonts.inter}>
+                        {isLoading ? <Spinner /> : 'Salvar'}
+                    </MD>
+                  </S.Button>
+                </S.ContainerButtonModalNewPassword>
+              </Dialog.Body>
+            </S.ContainerModalNewPassword>
+          </Modal>}
     </S.Container>
   );
 }

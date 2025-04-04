@@ -39,7 +39,7 @@ export const Card = styled(C.Flex)`
     align-items: flex-start;
     
     border-radius: 8px;
-    border: 2px solid ${theme.colors.verde};
+    border: 2px solid ${theme.colors.verde.principal};
 
     >p{
         text-align: start;
