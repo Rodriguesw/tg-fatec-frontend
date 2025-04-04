@@ -101,3 +101,84 @@ export const ContentFooter = styled(C.Flex)`
     align-items: center;
     flex-direction: column;
 `
+
+export const ContainerModalCode = styled.div`
+    width: auto;
+    height: auto;
+    padding: 16px;
+    
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+
+    border-radius: 5px;
+    background-color: #0D1321;
+`;
+
+export const ContainerButtonModalCode = styled.div`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    >button{
+        width: 100%;
+        height: 48px;
+        max-width: 112px;
+        padding: 8px 4px;
+
+        border-radius: 8px;
+    }
+
+    >button:first-child{
+        background-color: ${theme.colors.vermelho};
+    }
+
+    >button:last-child{
+        background-color: ${theme.colors.verde.secundario};
+    }
+`;
+
+export const ContainerModalNewPassword = styled.div`
+    width: 100%;
+    height: auto;
+    padding: 16px;
+    max-width: 320px;
+    
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    
+    border-radius: 8px;
+    background-color: #0D1321;
+`;
+
+export const ContainerButtonModalNewPassword = styled.div`
+       width: 100%;
+    height: auto;
+
+    gap: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    >button{
+        width: 100%;
+        height: 48px;
+        max-width: 112px;
+        padding: 8px 4px;
+
+        border-radius: 8px;
+    }
+
+    >button:first-child{
+        background-color: ${theme.colors.vermelho};
+    }
+
+    >button:last-child{
+        background-color: ${theme.colors.verde.secundario};
+    }
+`;

@@ -13,45 +13,143 @@ import { LoginWithBannerAndModal } from "@/components/LoginWithBannerAndModal";
 
 import * as S from "./styles";
 import { theme } from "@/styles/theme";
-import { LG, MD,SM } from "@/styles/typographStyles";
+import { LG, MD, SM } from "@/styles/typographStyles";
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  cnpj: string;
+  phone: string;
+}
+
+interface LoginErrors {
+  email: boolean;
+  password: boolean;
+  form: boolean;
+  emailFormat: boolean;
+}
+
+const validateEmail = (email: string): boolean => {
+  const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|net|yahoo|org|org\.br)$/;
+  
+  if (!email || email.length < 5 || email.length > 254) {
+    return false;
+  }
+
+  if (email.includes(' ')) {
+    return false;
+  }
+
+  return regex.test(email);
+};
 
 export default function LoginProprietario() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const [isMounted, setIsMounted] = useState(false);
+
+  const [errors, setErrors] = useState<LoginErrors>({
+    email: false,
+    password: false,
+    form: false,
+    emailFormat: false
+  });
+
+  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
+
+    const getUsersFromStorage = (): Record<number, User> => {
+      try {
+        const data = localStorage.getItem("infoUserProprietario");
+        return data ? JSON.parse(data) : {};
+      } catch {
+        return {};
+      }
+    };
+
+    const users = getUsersFromStorage();
+    if (Object.keys(users).length === 0) {
+      const dataUserTest: User = {
+        id: 1,
+        name: "Admin",
+        email: "matheushr39@gmail.com",
+        password: "admin",
+        cnpj: "12345678901234",
+        phone: "11999999999"
+      };
+
+      localStorage.setItem("infoUserProprietario", JSON.stringify({1: dataUserTest}));
+    }
   }, []);
 
-  const router = useRouter();
+  const validateFields = (): boolean => {
+    const newErrors = {
+      email: !email.trim(),
+      password: !password.trim(),
+      form: false,
+      emailFormat: false
+    };
+
+    if (email.trim()) {
+      newErrors.emailFormat = !validateEmail(email);
+    }
+    
+    setErrors(newErrors);
+
+    return !newErrors.email && !newErrors.password && !newErrors.emailFormat;
+  };
 
   const handleClick = () => {
     router.push("/");
   };
 
   const handleLogin = async () => {
-    setIsLoading(true);
-
-    try {
-      if (!email.trim() || !password.trim()) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
+    if (!validateFields()) {
+      if(email === "" && password === "") {
         showToast({
           type: "error",
           message: "Preencha todos os campos",
         });
-        return;
+      } else if (email !== null || errors.emailFormat) {
+        showToast({
+          type: "error",
+          message: "Insira um email válido",
+        });
+      } else if (errors.password) {
+        showToast({
+          type: "error",
+          message: "E-mail ou senha inválidos",
+        });
+      } else {
+        showToast({
+          type: "error",
+          message: "Preencha todos os campos",
+        });
       }
+      return;
+    }
 
+    setIsLoading(true);
+
+    try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      if (email.toLowerCase() === "admin@admin.com" && password === "admin") {
+      const users: Record<number, User> = JSON.parse(
+        localStorage.getItem("infoUserProprietario") || "{}"
+      );
+      const user = Object.values<User>(users).find((u: User) => u.email === email);
+
+      if (user && user.password === password) {
+        localStorage.setItem("currentUserProprietario", JSON.stringify(user));
         router.push("/proprietario/home");
       } else {
+        setErrors((prev) => ({ ...prev, form: true }));
+
         showToast({
           type: "error",
           message: "Email ou senha inválidos",
@@ -65,6 +163,21 @@ export default function LoginProprietario() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setErrors(prev => ({ 
+      ...prev, 
+      email: false,
+      form: false,
+      emailFormat: false
+    }));
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    setErrors(prev => ({ ...prev, password: false, form: false }));
   };
 
   if (!isMounted) return null;
@@ -97,7 +210,8 @@ export default function LoginProprietario() {
                 placeholder="E-mail"
                 label="E-mail"
                 value={email}
-                onChange={setEmail}
+                onChange={handleEmailChange}
+                hasError={errors.email || errors.form || errors.emailFormat}
               />
 
               <Input
@@ -105,7 +219,8 @@ export default function LoginProprietario() {
                 placeholder="******"
                 label="Senha"
                 value={password}
-                onChange={setPassword}
+                onChange={handlePasswordChange}
+                hasError={errors.password || errors.form}
               />
             </S.ContentForm>
 

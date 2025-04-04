@@ -18,6 +18,12 @@ export default function ProprietarioPerfil() {
     setIsMounted(true); 
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("currentUserProprietario");
+
+    router.push("/");
+  }
+
   if (!isMounted) return null; 
 
   return (
@@ -47,7 +53,7 @@ export default function ProprietarioPerfil() {
                 </LG>
               </S.Button>
         
-              <S.Button onClick={() => router.push('/')}>
+              <S.Button onClick={handleLogout}>
                 <LG  
                   color={theme.colors.branco.secundario} 
                   family={theme.fonts.inter}>
