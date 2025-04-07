@@ -20,6 +20,7 @@ import { LG, MD, SM } from '@/styles/typographStyles';
 export default function ProprietarioRecuperarSenha() {
   const [emailRecover, setEmailRecover] = useState('');
   const [emailToRecover, setEmailToRecover] = useState('');
+  const [errors, setErrors] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenModalCode, setIsOpenModalCode] = useState(false);
@@ -52,6 +53,8 @@ export default function ProprietarioRecuperarSenha() {
       if (!emailRecover.trim()) {
         await new Promise(resolve => setTimeout(resolve, 500));
 
+        setErrors(true);
+
         showToast({
           type: 'error',
           message: 'Preencha o campo de e-mail'
@@ -67,6 +70,8 @@ export default function ProprietarioRecuperarSenha() {
       );
 
       if (!userExists) {
+        setErrors(true);
+
         showToast({
           type: 'error',
           message: 'Esse e-mail não tem cadastro'
@@ -125,18 +130,23 @@ export default function ProprietarioRecuperarSenha() {
         type: 'success',
         message: 'Código válido! Você pode redefinir sua senha.'
       });
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      setIsLoadingVerifyCode(false);
+      setIsOpenModalCode(false);
+      setIsOpenModalNewPassword(true);
+
+      setUserCodeInput([]);
     } else {
       showToast({
         type: 'error',
         message: 'Código incorreto! Tente novamente.'
       });
+
+      setIsLoadingVerifyCode(false);
     }
 
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    setIsLoadingVerifyCode(false);
-    setIsOpenModalCode(false);
-    setIsOpenModalNewPassword(true);
   };
 
   const handleNewPassword = async () => {
@@ -215,7 +225,11 @@ export default function ProprietarioRecuperarSenha() {
                 placeholder='E-mail' 
                 label='E-mail' 
                 value={emailRecover} 
-                onChange={setEmailRecover}
+                onChange={(value) => {
+                  setEmailRecover(value);
+                  setErrors(false);
+                }}
+                hasError={errors}
               />
             </S.ContentForm>
 
