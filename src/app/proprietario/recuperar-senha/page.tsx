@@ -221,6 +221,7 @@ export default function ProprietarioRecuperarSenha() {
 
             <S.ContentForm>
               <Input 
+                id="email"
                 type="text" 
                 placeholder='E-mail' 
                 label='E-mail' 
@@ -281,8 +282,11 @@ export default function ProprietarioRecuperarSenha() {
 
                 <PinInput.Control display="flex" gap="8px" justifyContent="center">
                   <PinInput.Input index={0} color={theme.colors.branco.principal}/>
+
                   <PinInput.Input index={1} color={theme.colors.branco.principal}/>
+
                   <PinInput.Input index={2} color={theme.colors.branco.principal}/>
+
                   <PinInput.Input index={3} color={theme.colors.branco.principal}/>
                 </PinInput.Control>
               </PinInput.Root>
@@ -332,6 +336,7 @@ export default function ProprietarioRecuperarSenha() {
               alignItems="center" 
               flexDirection="column">
               <Input 
+                id="password"
                 type="password" 
                 placeholder='Nova senha' 
                 label='Nova senha' 
@@ -340,6 +345,7 @@ export default function ProprietarioRecuperarSenha() {
               />
 
               <Input 
+                id="confirmPassword"
                 type="password" 
                 placeholder='Confirmar senha' 
                 label='Confirmar senha' 

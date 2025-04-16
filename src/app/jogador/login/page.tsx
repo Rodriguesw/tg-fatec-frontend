@@ -203,6 +203,7 @@ export default function JogadorLogin() {
 
             <S.ContentForm as="form">
               <Input 
+                id="email"
                 type="text" 
                 placeholder="E-mail" 
                 label="E-mail" 
@@ -212,6 +213,7 @@ export default function JogadorLogin() {
               />
               
               <Input 
+                id="password"
                 type="password" 
                 placeholder="******" 
                 label="Senha" 

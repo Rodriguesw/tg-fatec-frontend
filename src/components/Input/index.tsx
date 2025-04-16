@@ -8,6 +8,7 @@ interface Option {
 }
 
 interface InputProps {
+    id?: string
     type: 'text' | 'password' | 'select' | 'date' 
     label?: string
     placeholder?: string
@@ -18,6 +19,7 @@ interface InputProps {
 }
 
 export function Input({ 
+    id,
     type, 
     label, 
     placeholder, 
@@ -40,6 +42,7 @@ export function Input({
 
             {type === 'select' ? (
                 <S.Select 
+                    id={id}
                     value={value} 
                     onChange={handleChange}
                     $hasError={hasError}
@@ -54,6 +57,7 @@ export function Input({
                 </S.Select>
             ) : (
                 <S.Input
+                    id={id}
                     type={type === 'date' ? 'date' : type} 
                     placeholder={placeholder}
                     value={value}

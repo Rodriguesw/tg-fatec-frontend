@@ -1,7 +1,10 @@
 export const theme = {
   colors: {
     vermelho: '#CF3F3F',
-    azul: '#0D1321',
+    azul: {
+      principal: '#0D1321',
+      segundario: '#5656D9'
+    },
     verde: {
       principal: '#1E5631',
       secundario: '#40BC40',

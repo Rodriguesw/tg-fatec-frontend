@@ -248,6 +248,7 @@ export default function JogadorCadastro() {
   
             <S.ContentForm>
               <Input 
+                id="name"
                 type='text' 
                 placeholder='Nome completo' 
                 label='Nome completo *' 
@@ -256,6 +257,7 @@ export default function JogadorCadastro() {
               />
 
               <Input 
+                id="birthDate"
                 type='date' 
                 placeholder='00/00/0000' 
                 label='Data de nascimento *' 
@@ -264,6 +266,7 @@ export default function JogadorCadastro() {
               />
 
               <Input 
+                id="gender"
                 type='select' 
                 placeholder='Selecionar' 
                 label='Sexo' 
@@ -274,6 +277,7 @@ export default function JogadorCadastro() {
               />
 
               <Input 
+                id="team"
                 type='select' 
                 placeholder='Selecionar' 
                 label='Para que time torce?' 
@@ -284,6 +288,7 @@ export default function JogadorCadastro() {
               />
 
               <Input 
+                id="email"
                 type='text' 
                 placeholder='email@mail.com' 
                 label='E-mail *' 
@@ -292,6 +297,7 @@ export default function JogadorCadastro() {
               />
 
               <Input 
+                id="password"
                 type='password' 
                 placeholder='********' 
                 label='Senha *' 
@@ -300,6 +306,7 @@ export default function JogadorCadastro() {
               />
 
               <Input 
+                id="passwordConfirmation"
                 type='password' 
                 placeholder='********' 
                 label='Confirmar senha *' 

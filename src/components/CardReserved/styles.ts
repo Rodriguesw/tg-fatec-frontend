@@ -45,3 +45,28 @@ export const Card = styled(C.Flex)`
         text-align: start;
     }
 `
+
+export const ContainerButton = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+    max-width: 376px;
+
+    align-self: center;
+    justify-content: center;
+`
+
+export const ButtonEdit = styled(C.Button)`
+    width: 100%;
+    height: auto;
+    max-width: 180px;
+
+    background-color: transparent;
+`
+
+export const ButtonCancel = styled(C.Button)`
+    width: 100%;    
+    height: auto;
+    max-width: 180px;
+
+    background-color: transparent;
+`

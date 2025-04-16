@@ -49,5 +49,5 @@ export const Box = styled(C.Flex)`
     max-width: 479px;
 
     border-radius: 16px 16px 0 0;
-    background-color: ${theme.colors.azul};
+    background-color: ${theme.colors.azul.principal};
 `

@@ -221,6 +221,7 @@ export default function JogadorRecuperarSenha() {
   
               <S.ContentForm>
                 <Input 
+                  id="email"
                   type="text" 
                   placeholder='E-mail' 
                   label='E-mail' 
@@ -335,6 +336,7 @@ export default function JogadorRecuperarSenha() {
                 alignItems="center" 
                 flexDirection="column">
                   <Input 
+                    id="password"
                     type="password" 
                     placeholder='Nova senha' 
                     label='Nova senha' 
@@ -343,6 +345,7 @@ export default function JogadorRecuperarSenha() {
                   />
 
                   <Input 
+                    id="confirmPassword"
                     type="password" 
                     placeholder='Confirmar senha' 
                     label='Confirmar senha' 

@@ -11,8 +11,10 @@ import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { MD, LG, SM } from '@/styles/typographStyles';
 import { CardReserved } from '@/components/CardReserved';
+import { CardData } from '@/components/CardReserved/cardData';
 
 export default function JogadorReservas() {
+  const hasEvents = CardData.length > 0;
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -29,7 +31,19 @@ export default function JogadorReservas() {
           <S.Content>
             <TitleWithButtonBack title='Minhas reservas' />
 
-            <CardReserved />
+            {hasEvents ? (
+              <CardReserved />
+            ):(
+              <S.NotFoundEvent>
+                <img src="/images/svg/icon-not-found.svg" alt="Nenhuma reserva encontrada"/>
+
+                <LG 
+                family={theme.fonts.inter}
+                color={theme.colors.branco.secundario}>
+                  Você ainda não tem nenhuma reserva feita!
+                </LG>
+              </S.NotFoundEvent>
+            )}
           </S.Content>          
             
           <Navbar />

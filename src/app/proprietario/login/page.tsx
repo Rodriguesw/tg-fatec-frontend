@@ -206,6 +206,7 @@ export default function LoginProprietario() {
 
             <S.ContentForm as="form">
               <Input
+                id="email"
                 type="text"
                 placeholder="E-mail"
                 label="E-mail"
@@ -215,6 +216,7 @@ export default function LoginProprietario() {
               />
 
               <Input
+                id="password"
                 type="password"
                 placeholder="******"
                 label="Senha"
