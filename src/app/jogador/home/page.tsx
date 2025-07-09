@@ -3,20 +3,17 @@
 import { useEffect, useState } from 'react';
 import { GoogleMap, LoadScriptNext, Marker } from '@react-google-maps/api';
 
+import {
+  mapContainerStyle,
+  mapOptions,
+  extraMarkers,
+} from '@/utils/MapConfig';
+
 import { Input } from '@/components/Input';
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
 
 import * as S from './styles';
-
-const mapContainerStyle = {
-  width: '100%',
-  height: '100%',
-};
-
-const mapOptions = {
-  disableDefaultUI: true,
-};
 
 export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
@@ -25,7 +22,6 @@ export default function JogadorHome() {
   useEffect(() => {
     setIsMounted(true);
 
-    // Verifica o estado da permissão
     navigator.permissions.query({ name: "geolocation" }).then((result) => {
       if (result.state === "granted" || result.state === "prompt") {
         navigator.geolocation.getCurrentPosition(
@@ -73,8 +69,19 @@ export default function JogadorHome() {
                 center={userLocation}
                 zoom={14}
                 options={mapOptions}
+
               >
-                <Marker position={userLocation} title="Você está aqui" />
+                <Marker position={userLocation} title="Você está aqui" icon={"/images/png/icon-marker-player-white.png"} />
+
+                {extraMarkers.map((marker, index) => (
+                  <Marker
+                    key={index}
+                    position={{ lat: marker.lat, lng: marker.lng }}
+                    title={marker.title}
+
+                    icon={marker.icon}
+                  />
+                ))}
               </GoogleMap>
             </LoadScriptNext>
           </S.ContainerMap>
