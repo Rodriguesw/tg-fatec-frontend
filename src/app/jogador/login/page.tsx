@@ -24,6 +24,12 @@ interface User {
   team: string;
   email: string;
   password: string;
+  sports_courts: {
+    id?: number;
+    name?: string;
+    address?: string;
+    booking_day_time?: string;
+  }[];
 }
 
 interface LoginErrors {
@@ -81,11 +87,17 @@ export default function JogadorLogin() {
       const dataUserTest: User = {
         id: 1,
         name: "Matheus Henrique",
-        birth_date: "2025-03-31",
+        birth_date: "2004-02-04",
         gender: "male",
         team: "sao_paulo",
         email: "matheushr39@gmail.com",
         password: "teste",
+        sports_courts: [{
+          id: 1782,
+          name: "Arena KS Society",
+          address: "R. Alceu Corrêa de Morães, 305 - Vila Macia, Itapetininga - SP, 18213-110",
+          booking_day_time: "29/03/2025 - 20:00 ás 23:00",
+        }]
       };
 
       localStorage.setItem("infoUser", JSON.stringify({1: dataUserTest}));

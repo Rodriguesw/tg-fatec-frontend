@@ -9,64 +9,66 @@ import { Navbar } from '@/components/Navbar';
 
 import * as S from './styles';
 
-// Configurações do mapa
 const mapContainerStyle = {
   width: '100%',
-  height: '100%'
+  height: '100%',
 };
 
-// Coordenadas do centro do mapa
-const center = {
-  lat: -23.5017,
-  lng: -47.4581
-};
-
-// Coordenadas do marcador
-const markerPosition = {
-  lat: -23.5017,
-  lng: -47.4581
-};
-
-// Opções do mapa para desativar a UI padrão
 const mapOptions = {
   disableDefaultUI: true,
 };
 
 export default function JogadorHome() {
+  const [center, setCenter] = useState({ lat: -23.5017, lng: -47.4581 });
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true); 
+    setIsMounted(true);
+
+    // Tenta obter a localização atual do usuário
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCenter({ lat: latitude, lng: longitude });
+        },
+        (error) => {
+          console.error("Erro ao obter localização:", error);
+          // Você pode manter o valor default ou mostrar alguma mensagem
+        }
+      );
+    } else {
+      console.error("Geolocalização não suportada pelo navegador.");
+    }
   }, []);
 
-  if (!isMounted) return null; 
+  if (!isMounted) return null;
 
   return (
     <S.Container>
       <S.Wrapper>
-          <Header />
+        <Header />
 
-          <S.Content>
-              <S.ContainerInput>
-                <Input type='text' placeholder="Buscar" />
-              </S.ContainerInput>
-            
-              <S.ContainerMap>
-                <LoadScriptNext googleMapsApiKey="AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0">
-                  <GoogleMap
-                      mapContainerStyle={mapContainerStyle}
-                      center={center}
-                      zoom={14}
-                      options={mapOptions}
-                    >
+        <S.Content>
+          <S.ContainerInput>
+            <Input type="text" placeholder="Buscar" />
+          </S.ContainerInput>
 
-                    <Marker position={markerPosition} title="Localização do marcador" />
-                  </GoogleMap>
-                </LoadScriptNext>
-              </S.ContainerMap>
-          </S.Content>          
+          <S.ContainerMap>
+            <LoadScriptNext googleMapsApiKey="AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0">
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={center}
+                zoom={14}
+                options={mapOptions}
+              >
+                <Marker position={center} title="Sua localização" />
+              </GoogleMap>
+            </LoadScriptNext>
+          </S.ContainerMap>
+        </S.Content>
 
-          <Navbar />
+        <Navbar />
       </S.Wrapper>
     </S.Container>
   );
