@@ -99,7 +99,9 @@ export const mapContainerStyle = {
     styles: darkMapStyle,
     scrollwheel: false,       
     gestureHandling: 'greedy',  
-    zoomControl: false,       
+    zoomControl: false,      
+    minZoom: 14,
+    maxZoom: 14,  
   };
   
   export const extraMarkers = [
