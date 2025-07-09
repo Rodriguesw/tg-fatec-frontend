@@ -16,30 +16,42 @@ import { Modal } from '@/components/Modal';
 import { Dialog } from "@chakra-ui/react"
 
 export default function JogadorReservas() {
+  const [birthDate, setBirthDate] = useState('');
+  const [errors, setErrors] = useState({ birthDate: false });
   const [selectedCourtId, setSelectedCourtId] = useState<number | null>(null);
 
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
   const [isOpenModalCancel, setIsOpenModalCancel] = useState(false);
 
-  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-  const hasEvents = currentUser.sports_courts.length > 0;
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true); 
+    setIsMounted(true);
+
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        try {
+          setCurrentUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error('Erro ao fazer parse do currentUser:', error);
+        }
+      }
+    }
   }, []);
 
-  if (!isMounted) return null; 
+  if (!isMounted || !currentUser) return null;
 
-  const selectedCourt = currentUser.sports_courts.find(
+  const hasEvents = currentUser.sports_courts?.length > 0;
+  const selectedCourt = currentUser.sports_courts?.find(
     (court: any) => court.id === selectedCourtId
   );
 
-  const handleBirthDateChange = (value: string) => {
-    setBirthDate(value);
-    setErrors(prev => ({ ...prev, birthDate: false }));
-  };
+  // const handleBirthDateChange = (value: string) => {
+  //   setBirthDate(value);
+  //   setErrors(prev => ({ ...prev, birthDate: false }));
+  // };
 
   return (
     <S.Container>
@@ -106,7 +118,7 @@ export default function JogadorReservas() {
                 type='date' 
                 placeholder='00/00/0000' 
                 label='Data' 
-                onChange={handleBirthDateChange}
+                // onChange={handleBirthDateChange}
               />
 
               <S.ContainerButtonModalEdit>
