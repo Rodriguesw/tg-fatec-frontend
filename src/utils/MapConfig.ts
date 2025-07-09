@@ -97,6 +97,9 @@ export const mapContainerStyle = {
   export const mapOptions = {
     disableDefaultUI: true,
     styles: darkMapStyle,
+    scrollwheel: false,       
+    gestureHandling: 'greedy',  
+    zoomControl: false,       
   };
   
   export const extraMarkers = [
