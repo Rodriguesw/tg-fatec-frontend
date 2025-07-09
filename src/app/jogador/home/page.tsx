@@ -20,31 +20,41 @@ const mapOptions = {
 
 export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
-  const [currentPosition, setCurrentPosition] = useState<google.maps.LatLngLiteral | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
-  // Obtém a localização atual do usuário
   useEffect(() => {
     setIsMounted(true);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setCurrentPosition({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-      },
-      (error) => {
-        console.error("Erro ao obter localização:", error);
-        // Fallback para uma localização padrão
-        setCurrentPosition({
-          lat: -23.5017,
-          lng: -47.4581,
-        });
+    // Verifica o estado da permissão
+    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+      if (result.state === "granted" || result.state === "prompt") {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log('Coords:', position.coords);
+            console.log('Precisão:', position.coords.accuracy, 'metros');
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          },
+          (error) => {
+            alert('Não foi possível obter sua localização.');
+            setUserLocation({
+              lat: -23.5017,
+              lng: -47.4581,
+            });
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          }
+        );
       }
-    );
+    });
   }, []);
 
-  if (!isMounted || !currentPosition) return null;
+  if (!isMounted || !userLocation) return null;
 
   return (
     <S.Container>
@@ -60,11 +70,11 @@ export default function JogadorHome() {
             <LoadScriptNext googleMapsApiKey="AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0">
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
-                center={currentPosition}
+                center={userLocation}
                 zoom={14}
                 options={mapOptions}
               >
-                <Marker position={currentPosition} title="Você está aqui" />
+                <Marker position={userLocation} title="Você está aqui" />
               </GoogleMap>
             </LoadScriptNext>
           </S.ContainerMap>
