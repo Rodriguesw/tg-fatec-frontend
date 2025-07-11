@@ -110,7 +110,7 @@ export const mapContainerStyle = {
       lng: -48.0532,
       title: 'Campo do Bairro',
       icon: {
-        url: '/images/png/icon-marker-map.png',
+        url: '/images/svg/icon-marker-map-green.svg',
       },
     },
     {
@@ -118,7 +118,7 @@ export const mapContainerStyle = {
       lng: -48.0435,
       title: 'Ginásio Central',
       icon: {
-        url: '/images/png/icon-marker-map.png',
+        url: '/images/svg/icon-marker-map-blue.svg',
       },
     },
     {
