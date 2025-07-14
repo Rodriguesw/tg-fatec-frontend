@@ -108,41 +108,49 @@ export const mapContainerStyle = {
     {
       lat: -23.5889,
       lng: -48.0532,
-      title: 'Campo do Bairro',
+      title: 'Exemplo campo futebol',
       icon: {
         url: '/images/svg/icon-marker-map-green.svg',
       },
     },
     {
-      lat: -23.6042,
-      lng: -48.0435,
-      title: 'Ginásio Central',
+      lat: -23.5943951,
+      lng: -48.0580052,
+      title: 'Ginásio Municipal de Esportes Ayrton Senna da Silva',
       icon: {
         url: '/images/svg/icon-marker-map-blue.svg',
       },
     },
-    {
-      lat: -23.5851,
-      lng: -48.0723,
-      title: 'Parque da Cidade',
+    { 
+      lat: -23.600375,
+      lng: -48.063587,
+      title: 'Quadra de Futebol Socyte',
       icon: {
-        url: '/images/png/icon-marker-map.png',
+        url: '/images/png/icon-marker-map-orange.png',
       },
     },
     {
-      lat: -23.5964,
-      lng: -48.0611,
-      title: 'Quadra Coberta',
+      lat: -23.605519,
+      lng: -48.0680583,
+      title: 'Quadra do Cambuí',
       icon: {
-        url: '/images/png/icon-marker-map.png',
+        url: '/images/png/icon-marker-map-orange.png',
       },
     },
     {
-      lat: -23.5798,
-      lng: -48.0557,
-      title: 'Estádio Municipal',
+      lat: -23.5761249,
+      lng: -48.0290791,
+      title: 'Arena KS Society',
       icon: {
-        url: '/images/png/icon-marker-map.png',
+        url: '/images/png/icon-marker-map-orange.png',
+      },
+    },
+    {
+      lat: -23.577428,
+      lng: -48.0289618,
+      title: 'Arena KF Futsal',
+      icon: {
+        url: '/images/svg/icon-marker-map-blue.svg',
       },
     },
   ];
