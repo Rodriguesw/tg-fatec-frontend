@@ -12,12 +12,19 @@ import {
 import { Input } from '@/components/Input';
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
+import { Modal } from '@/components/Modal';
+
+import { Dialog } from "@chakra-ui/react"
 
 import * as S from './styles';
+import { LG, MD } from '@/styles/typographStyles';
+import { theme } from '@/styles/theme';
 
 export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [selectedMarker, setSelectedMarker] = useState<any>(null);
+  const [isModalLocalization, setIsModalLocalization] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -50,6 +57,16 @@ export default function JogadorHome() {
     });
   }, []);
 
+  const handleMarkerClick = (marker: any) => {
+    setSelectedMarker(marker);
+    setIsModalLocalization(true);
+  };
+
+  const closeModal = () => {
+    setIsModalLocalization(false);
+    setSelectedMarker(null);
+  };
+
   if (!isMounted || !userLocation) return null;
 
   return (
@@ -69,17 +86,20 @@ export default function JogadorHome() {
                 center={userLocation}
                 zoom={14}
                 options={mapOptions}
-
               >
-                <Marker position={userLocation} title="Você está aqui" icon={"/images/png/icon-marker-player-white.png"} />
+                <Marker 
+                  position={userLocation} 
+                  title="Você está aqui" 
+                  icon={"/images/png/icon-marker-player-white.png"} 
+                />
 
                 {extraMarkers.map((marker, index) => (
                   <Marker
                     key={index}
                     position={{ lat: marker.lat, lng: marker.lng }}
                     title={marker.title}
-
                     icon={marker.icon}
+                    onClick={() => handleMarkerClick(marker)}
                   />
                 ))}
               </GoogleMap>
@@ -88,6 +108,36 @@ export default function JogadorHome() {
         </S.Content>
 
         <Navbar />
+
+        {/* Modal para exibir informações do marcador */}
+        {isModalLocalization && selectedMarker && (
+          <Modal isOpen={true} onClose={closeModal}>
+             <Dialog.Header>
+              <Dialog.Title textAlign="center">
+                <LG 
+                  weight={700} 
+                  color={theme.colors.azul.principal} 
+                  family={theme.fonts.inter}>
+                    {selectedMarker.title}
+                </LG>
+              </Dialog.Title>
+             </Dialog.Header>
+           
+             <Dialog.Body>
+                <p>Local: {selectedMarker.title}</p>
+
+                <button
+                  onClick={() => setIsModalLocalization(false)} 
+                >
+                  <MD 
+                    color={theme.colors.vermelho} 
+                    family={theme.fonts.inter}>
+                    Cancelar
+                  </MD>
+                </button> 
+             </Dialog.Body>
+          </Modal>
+        )}
       </S.Wrapper>
     </S.Container>
   );

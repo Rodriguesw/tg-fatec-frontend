@@ -106,6 +106,7 @@ export const mapContainerStyle = {
   
   export const extraMarkers = [
     {
+      id: 1,
       lat: -23.5889,
       lng: -48.0532,
       title: 'Exemplo campo futebol',
@@ -114,6 +115,7 @@ export const mapContainerStyle = {
       },
     },
     {
+      id: 2,
       lat: -23.5943951,
       lng: -48.0580052,
       title: 'Ginásio Municipal de Esportes Ayrton Senna da Silva',
@@ -122,6 +124,7 @@ export const mapContainerStyle = {
       },
     },
     { 
+      id: 3,
       lat: -23.600375,
       lng: -48.063587,
       title: 'Quadra de Futebol Socyte',
@@ -130,6 +133,7 @@ export const mapContainerStyle = {
       },
     },
     {
+      id: 4,
       lat: -23.605519,
       lng: -48.0680583,
       title: 'Quadra do Cambuí',
@@ -138,6 +142,7 @@ export const mapContainerStyle = {
       },
     },
     {
+      id: 5,
       lat: -23.5761249,
       lng: -48.0290791,
       title: 'Arena KS Society',
@@ -146,6 +151,7 @@ export const mapContainerStyle = {
       },
     },
     {
+      id: 6,
       lat: -23.577428,
       lng: -48.0289618,
       title: 'Arena KF Futsal',
