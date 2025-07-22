@@ -113,14 +113,22 @@ export const mapContainerStyle = {
       icon: {
         url: '/images/svg/icon-marker-map-green.svg',
       },
+      address: {
+        cep: '18207390',
+        number: '123',
+      },
     },
     {
       id: 2,
-      lat: -23.5943951,
-      lng: -48.0580052,
-      title: 'Ginásio Municipal de Esportes Ayrton Senna da Silva',
+      lat: -23.575531,
+      lng: -48.027288,
+      title: 'Arena Star Soccer',
       icon: {
         url: '/images/svg/icon-marker-map-blue.svg',
+      },
+      address: {
+        cep: '18213110',
+        number: '280',
       },
     },
     { 
@@ -131,6 +139,10 @@ export const mapContainerStyle = {
       icon: {
         url: '/images/png/icon-marker-map-orange.png',
       },
+      address: {
+        cep: '18207500',
+        number: '403',
+      },
     },
     {
       id: 4,
@@ -139,6 +151,9 @@ export const mapContainerStyle = {
       title: 'Quadra do Cambuí',
       icon: {
         url: '/images/png/icon-marker-map-orange.png',
+      },
+      address: {
+        cep: '18207601',
       },
     },
     {
@@ -149,6 +164,10 @@ export const mapContainerStyle = {
       icon: {
         url: '/images/png/icon-marker-map-orange.png',
       },
+      address: {
+        cep: '18213110',
+        number: '305',
+      },
     },
     {
       id: 6,
@@ -157,6 +176,10 @@ export const mapContainerStyle = {
       title: 'Arena KF Futsal',
       icon: {
         url: '/images/svg/icon-marker-map-blue.svg',
+      },
+      address: {
+        cep: '18200000',
+        number: '85',
       },
     },
   ];

@@ -25,7 +25,7 @@ import {
 
                 <Dialog.Positioner>
                     <S.Container>
-                        <Dialog.Content gap="16px" borderRadius="8px">
+                        <Dialog.Content gap="16px" borderRadius="20px">
                            {children}
                         </Dialog.Content>
                     </S.Container>

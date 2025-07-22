@@ -111,7 +111,7 @@ export const ContainerModalCode = styled.div`
     display: flex;
     flex-direction: column;
 
-    border-radius: 5px;
+    border-radius: 16px;
     background-color: #0D1321;
 `;
 
@@ -152,7 +152,7 @@ export const ContainerModalNewPassword = styled.div`
     display: flex;
     flex-direction: column;
     
-    border-radius: 8px;
+    border-radius: 16px;
     background-color: #0D1321;
 `;
 

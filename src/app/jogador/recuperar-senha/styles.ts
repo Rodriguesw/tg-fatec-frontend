@@ -108,7 +108,7 @@ export const ContainerModalCode = styled(C.Flex)`
     padding: 16px;
     
     gap: 16px;
-    border-radius: 5px;
+    border-radius: 16px;
     flex-direction: column;
 
     background-color: #0D1321;
@@ -147,7 +147,7 @@ export const ContainerModalNewPassword = styled(C.Flex)`
     max-width: 320px;
     
     gap: 16px;
-    border-radius: 8px;
+    border-radius: 16px;
     flex-direction: column;
 
     background-color: #0D1321;

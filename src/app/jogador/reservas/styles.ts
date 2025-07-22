@@ -61,7 +61,7 @@ export const ContainerModalEdit = styled(C.Flex)`
     padding: 16px;
     
     gap: 16px;
-    border-radius: 8px;
+    border-radius: 16px;
     flex-direction: column;
 
     background-color: #0D1321;

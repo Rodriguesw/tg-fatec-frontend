@@ -47,3 +47,16 @@ export const ContainerMap = styled(C.Flex)`
         border-radius: 6px;
     }
 `
+
+export const ContainerModalContent = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+    padding: 16px 16px 40px;
+
+    gap: 24px;
+    flex-direction: column;
+
+    border-radius: 16px;
+    background-color: ${theme.colors.azul.principal};
+`
+

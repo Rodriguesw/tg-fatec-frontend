@@ -17,14 +17,18 @@ import { Modal } from '@/components/Modal';
 import { Dialog } from "@chakra-ui/react"
 
 import * as S from './styles';
-import { LG, MD } from '@/styles/typographStyles';
+import { H3, LG, MD } from '@/styles/typographStyles';
 import { theme } from '@/styles/theme';
+import { RatingStars } from '@/components/RatingStars';
+import { fetchCEP } from '@/services/BuscaCep';
 
 export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [isModalLocalization, setIsModalLocalization] = useState(false);
+
+  const [cepData, setCepData] = useState<any>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -57,9 +61,26 @@ export default function JogadorHome() {
     });
   }, []);
 
-  const handleMarkerClick = (marker: any) => {
+  const handleMarkerClick = async (marker: any) => {
     setSelectedMarker(marker);
     setIsModalLocalization(true);
+
+    console.log('Marker clicked:', marker);
+
+    if (marker.address?.cep) {
+      try {
+        const data = await fetchCEP(marker.address.cep);
+        setCepData({
+        ...data,
+        numero: marker.address.number // Adiciona o número aqui
+      });
+      } catch (error) {
+        // setCepError(error instanceof Error ? error.message : 'Erro ao buscar CEP');
+        console.error('Erro na busca do CEP:', error);
+      } finally {
+        // setLoadingCEP(false);
+      }
+    }
   };
 
   const closeModal = () => {
@@ -111,32 +132,38 @@ export default function JogadorHome() {
 
         {/* Modal para exibir informações do marcador */}
         {isModalLocalization && selectedMarker && (
-          <Modal isOpen={true} onClose={closeModal}>
-             <Dialog.Header>
-              <Dialog.Title textAlign="center">
-                <LG 
-                  weight={700} 
-                  color={theme.colors.azul.principal} 
-                  family={theme.fonts.inter}>
-                    {selectedMarker.title}
-                </LG>
-              </Dialog.Title>
-             </Dialog.Header>
-           
-             <Dialog.Body>
-                <p>Local: {selectedMarker.title}</p>
+            <Modal isOpen={true} onClose={closeModal}>
+              <S.ContainerModalContent>
+                <Dialog.Header display="flex" flexDirection="row">
+                  <H3
+                    color={theme.colors.laranja}>
+                      {selectedMarker.title}
+                  </H3>
 
-                <button
-                  onClick={() => setIsModalLocalization(false)} 
-                >
-                  <MD 
-                    color={theme.colors.vermelho} 
-                    family={theme.fonts.inter}>
-                    Cancelar
-                  </MD>
-                </button> 
-             </Dialog.Body>
-          </Modal>
+                  <button
+                      onClick={() => setIsModalLocalization(false)} 
+                    >
+                      <img src="/images/svg/icon-close-white.svg" alt="Fechar"/>
+                    </button> 
+                </Dialog.Header>
+              
+                <Dialog.Body>
+                    <RatingStars 
+                      value={1.5}
+                      />
+
+                    <MD 
+                      family={theme.fonts.inter}
+                      color={theme.colors.branco.secundario}
+                      >
+                        {console.log('CEP Data:', cepData)}
+                        {cepData?.logradouro} {cepData?.numero ? `, ${cepData?.numero}` : ''} - {cepData?.localidade}, {cepData?.uf}
+                    </MD>
+
+                    
+                </Dialog.Body>
+              </S.ContainerModalContent>
+            </Modal>
         )}
       </S.Wrapper>
     </S.Container>
