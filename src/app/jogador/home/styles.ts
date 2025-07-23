@@ -51,6 +51,7 @@ export const ContainerMap = styled(C.Flex)`
 export const ContainerModalContent = styled(C.Flex)`
     width: 100%;
     height: auto;
+    max-width: 360px;
     padding: 16px 16px 40px;
 
     gap: 24px;
@@ -60,3 +61,14 @@ export const ContainerModalContent = styled(C.Flex)`
     background-color: ${theme.colors.azul.principal};
 `
 
+export const ContainerModalRatingAndAdress = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 8px;
+    flex-direction: column;
+
+    >p{
+        text-align: start;
+    }
+`

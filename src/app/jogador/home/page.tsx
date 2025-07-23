@@ -134,7 +134,7 @@ export default function JogadorHome() {
         {isModalLocalization && selectedMarker && (
             <Modal isOpen={true} onClose={closeModal}>
               <S.ContainerModalContent>
-                <Dialog.Header display="flex" flexDirection="row">
+                <Dialog.Header display="flex" flexDirection="row" justifyContent="space-between">
                   <H3
                     color={theme.colors.laranja}>
                       {selectedMarker.title}
@@ -148,6 +148,7 @@ export default function JogadorHome() {
                 </Dialog.Header>
               
                 <Dialog.Body>
+                  <S.ContainerModalRatingAndAdress>
                     <RatingStars 
                       value={1.5}
                       />
@@ -159,6 +160,7 @@ export default function JogadorHome() {
                         {console.log('CEP Data:', cepData)}
                         {cepData?.logradouro} {cepData?.numero ? `, ${cepData?.numero}` : ''} - {cepData?.localidade}, {cepData?.uf}
                     </MD>
+                  </S.ContainerModalRatingAndAdress>
 
                     
                 </Dialog.Body>

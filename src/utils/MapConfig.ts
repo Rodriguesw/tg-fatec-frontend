@@ -178,7 +178,7 @@ export const mapContainerStyle = {
         url: '/images/svg/icon-marker-map-blue.svg',
       },
       address: {
-        cep: '18200000',
+        cep: '18213080',
         number: '85',
       },
     },
