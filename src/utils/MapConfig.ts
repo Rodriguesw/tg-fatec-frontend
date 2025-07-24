@@ -104,6 +104,7 @@ export const mapContainerStyle = {
     maxZoom: 14,  
   };
   
+  // RATING = 0.29, 1.44, 2.31, 3.48, 4.52
   export const extraMarkers = [
     {
       id: 1,
@@ -117,6 +118,7 @@ export const mapContainerStyle = {
         cep: '18207390',
         number: '123',
       },
+      rating: 1.44
     },
     {
       id: 2,
@@ -130,6 +132,7 @@ export const mapContainerStyle = {
         cep: '18213110',
         number: '280',
       },
+      rating: 3
     },
     { 
       id: 3,
@@ -143,6 +146,7 @@ export const mapContainerStyle = {
         cep: '18207500',
         number: '403',
       },
+      rating: 5
     },
     {
       id: 4,
@@ -155,6 +159,7 @@ export const mapContainerStyle = {
       address: {
         cep: '18207601',
       },
+      rating: 4.52
     },
     {
       id: 5,
@@ -168,6 +173,7 @@ export const mapContainerStyle = {
         cep: '18213110',
         number: '305',
       },
+      rating: 2.31
     },
     {
       id: 6,
@@ -181,6 +187,7 @@ export const mapContainerStyle = {
         cep: '18213080',
         number: '85',
       },
+      rating: 3.48
     },
   ];
   

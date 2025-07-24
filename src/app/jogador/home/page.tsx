@@ -14,7 +14,7 @@ import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
 import { Modal } from '@/components/Modal';
 
-import { Dialog } from "@chakra-ui/react"
+import { Dialog, Spinner } from "@chakra-ui/react"
 
 import * as S from './styles';
 import { H3, LG, MD } from '@/styles/typographStyles';
@@ -28,6 +28,7 @@ export default function JogadorHome() {
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [isModalLocalization, setIsModalLocalization] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
   const [cepData, setCepData] = useState<any>(null);
 
   useEffect(() => {
@@ -62,6 +63,7 @@ export default function JogadorHome() {
   }, []);
 
   const handleMarkerClick = async (marker: any) => {
+    setIsLoading(true)
     setSelectedMarker(marker);
     setIsModalLocalization(true);
 
@@ -79,6 +81,7 @@ export default function JogadorHome() {
         console.error('Erro na busca do CEP:', error);
       } finally {
         // setLoadingCEP(false);
+        setIsLoading(false)
       }
     }
   };
@@ -133,38 +136,57 @@ export default function JogadorHome() {
         {/* Modal para exibir informações do marcador */}
         {isModalLocalization && selectedMarker && (
             <Modal isOpen={true} onClose={closeModal}>
-              <S.ContainerModalContent>
-                <Dialog.Header display="flex" flexDirection="row" justifyContent="space-between">
-                  <H3
-                    color={theme.colors.laranja}>
-                      {selectedMarker.title}
-                  </H3>
-
-                  <button
-                      onClick={() => setIsModalLocalization(false)} 
-                    >
-                      <img src="/images/svg/icon-close-white.svg" alt="Fechar"/>
-                    </button> 
-                </Dialog.Header>
-              
-                <Dialog.Body>
-                  <S.ContainerModalRatingAndAdress>
-                    <RatingStars 
-                      value={1.5}
-                      />
-
-                    <MD 
-                      family={theme.fonts.inter}
-                      color={theme.colors.branco.secundario}
-                      >
-                        {console.log('CEP Data:', cepData)}
-                        {cepData?.logradouro} {cepData?.numero ? `, ${cepData?.numero}` : ''} - {cepData?.localidade}, {cepData?.uf}
-                    </MD>
-                  </S.ContainerModalRatingAndAdress>
-
+                <S.ContainerModalContent isLoading={isLoading}>
+                  <Dialog.Header width="100%" display="flex" flexDirection="row" justifyContent="space-between">
                     
-                </Dialog.Body>
-              </S.ContainerModalContent>
+                  {isLoading ? (
+                      <S.ContainerLoading>
+                        <Spinner color={theme.colors.branco.principal} />
+                      </S.ContainerLoading>
+                    ) : (
+                      <H3
+                        color={theme.colors.laranja}>
+                          {selectedMarker.title}
+                      </H3>
+                    )}
+
+                    <button
+                        onClick={() => setIsModalLocalization(false)} 
+                      >
+                        <img src="/images/svg/icon-close-white.svg" alt="Fechar"/>
+                      </button> 
+                  </Dialog.Header>
+                
+                  {isLoading ? (
+                      <Spinner color={theme.colors.branco.principal} />
+                    ) : (
+                        <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
+                          <S.ContainerModalRatingAndAdress>
+                            <RatingStars 
+                              value={selectedMarker.rating}
+                              />
+
+                            <MD 
+                              family={theme.fonts.inter}
+                              color={theme.colors.branco.secundario}
+                              >
+                                {console.log('CEP Data:', cepData)}
+                                {cepData?.logradouro} {cepData?.numero ? `, ${cepData?.numero}` : ''} - {cepData?.localidade}, {cepData?.uf}
+                            </MD>
+                          </S.ContainerModalRatingAndAdress>
+
+                          <S.Button >
+                              <LG 
+                                weight={700} 
+                                color={theme.colors.branco.principal} 
+                                family={theme.fonts.inter}>
+                                  Solicitar reserva
+                              </LG>
+                          </S.Button>
+                        </Dialog.Body>
+                    )}
+                </S.ContainerModalContent>
+              
             </Modal>
         )}
       </S.Wrapper>
