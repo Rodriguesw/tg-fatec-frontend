@@ -140,7 +140,7 @@ export const mapContainerStyle = {
       lng: -48.063587,
       title: 'Quadra de Futebol Socyte',
       icon: {
-        url: '/images/png/icon-marker-map-orange.png',
+        url: '/images/svg/icon-marker-map-orange.svg',
       },
       address: {
         cep: '18207500',
@@ -154,7 +154,7 @@ export const mapContainerStyle = {
       lng: -48.0680583,
       title: 'Quadra do Cambuí',
       icon: {
-        url: '/images/png/icon-marker-map-orange.png',
+        url: '/images/svg/icon-marker-map-orange.svg',
       },
       address: {
         cep: '18207601',
@@ -167,7 +167,7 @@ export const mapContainerStyle = {
       lng: -48.0290791,
       title: 'Arena KS Society',
       icon: {
-        url: '/images/png/icon-marker-map-orange.png',
+        url: '/images/svg/icon-marker-map-orange.svg',
       },
       address: {
         cep: '18213110',

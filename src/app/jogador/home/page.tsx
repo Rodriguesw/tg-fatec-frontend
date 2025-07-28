@@ -24,7 +24,11 @@ import { fetchCEP } from '@/services/BuscaCep';
 
 export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
+
+  const [valueInputSearch, setValueInputSearch] = useState("");
+
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [isModalLocalization, setIsModalLocalization] = useState(false);
 
@@ -62,6 +66,10 @@ export default function JogadorHome() {
     });
   }, []);
 
+  const handleSearchChange = (value: string) => {
+    setValueInputSearch(value);
+  };
+
   const handleMarkerClick = async (marker: any) => {
     setIsLoading(true)
     setSelectedMarker(marker);
@@ -74,7 +82,7 @@ export default function JogadorHome() {
         const data = await fetchCEP(marker.address.cep);
         setCepData({
         ...data,
-        numero: marker.address.number // Adiciona o número aqui
+        numero: marker.address.number 
       });
       } catch (error) {
         // setCepError(error instanceof Error ? error.message : 'Erro ao buscar CEP');
@@ -91,6 +99,46 @@ export default function JogadorHome() {
     setSelectedMarker(null);
   };
 
+  const geocodeAddress = async (address: string): Promise<{ lat: number; lng: number } | null> => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0`
+      );
+      const data = await response.json();
+  
+      if (data.status === "OK") {
+        const location = data.results[0].geometry.location;
+        
+        return {
+          lat: location.lat,
+          lng: location.lng,
+        };
+      } else {
+        // console.error("Geocoding error:", data.status);
+        return null;
+      }
+    } catch (error) {
+      // console.error("Erro ao geocodificar endereço:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const timeout = setTimeout(async () => {
+      if (valueInputSearch.trim().length > 3) {
+        const coords = await geocodeAddress(valueInputSearch);
+
+        if (coords) {
+          setSearchLocation(coords);
+        }
+      } else {
+        setSearchLocation(null)
+      }
+    }, 800);
+  
+    return () => clearTimeout(timeout);
+  }, [valueInputSearch]);
+
   if (!isMounted || !userLocation) return null;
 
   return (
@@ -100,14 +148,19 @@ export default function JogadorHome() {
 
         <S.Content>
           <S.ContainerInput>
-            <Input type="text" placeholder="Buscar" />
+            <Input 
+              type="text" 
+              placeholder="Buscar"
+              value={valueInputSearch}
+              onChange={handleSearchChange}
+              />
           </S.ContainerInput>
 
           <S.ContainerMap>
             <LoadScriptNext googleMapsApiKey="AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0">
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
-                center={userLocation}
+                center={searchLocation ? searchLocation : userLocation}
                 zoom={14}
                 options={mapOptions}
               >
@@ -116,6 +169,14 @@ export default function JogadorHome() {
                   title="Você está aqui" 
                   icon={"/images/png/icon-marker-player-white.png"} 
                 />
+
+                {searchLocation && (
+                  <Marker
+                    position={searchLocation}
+                    title="Endereço buscado"
+                    icon={"/images/png/icon-search-localization.png"}
+                  />
+                )}
 
                 {extraMarkers.map((marker, index) => (
                   <Marker
@@ -133,7 +194,7 @@ export default function JogadorHome() {
 
         <Navbar />
 
-        {/* Modal para exibir informações do marcador */}
+        {/* Modal para exibir informações do marcador selecionado */}
         {isModalLocalization && selectedMarker && (
             <Modal isOpen={true} onClose={closeModal}>
                 <S.ContainerModalContent isLoading={isLoading}>
