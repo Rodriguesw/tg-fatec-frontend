@@ -6,7 +6,7 @@ interface InputContainerProps  {
 }
 
 export const Container = styled(C.Flex)`
-    width: 100%;
+    width: auto;
     height: auto;
 
     gap: 4px;
@@ -14,62 +14,41 @@ export const Container = styled(C.Flex)`
     position: relative; 
 `
 
-export const Label = styled(C.Flex)`
-    width: 100%;
-    height: auto;
+// Componente estilizado para <select>
+export const Select = styled.select<InputContainerProps>`
+  width: 80px;
+  height: 46px;
+  padding: 8px 12px;
 
-    padding-left: 12px;
-    >p{
-        color: #FFFFFF75;
-    }
-`
+  border-radius: 12px;
+  background-color: transparent;
+  border: 2px solid ${props => props.$hasError ? "#D93131" : "#FFFFFF25"};
 
-export const Select = styled.select<InputContainerProps >`
-    width: 100%;
-    height: 46px;
-    padding: 8px 12px;
+  color: #FFFFFF70;
+  font-family: "Inter";
+  font-weight: 400;
+  font-size: 18px;
+  line-height: auto;
 
-    font-size: 18px;
-    color: #FFFFFF40;
-    font-weight: 400;
-    line-height: auto;
-    font-family: "Inter";
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 
-    border-radius: 12px;
-    background-color: transparent;
-    border: 2px solid ${props => props.$hasError ? "#D93131" :  "#FFFFFF25"};
+  &:focus {
+    outline: none;
+    border-color: #FFFFFF70;
+  }
 
-    appearance: none;
-    -webkit-appearance: none; 
-    -moz-appearance: none; 
-    background-image: url("/images/svg/icon-arrow-down.svg");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    background-size: 20px;
-
-    >option{
-        color: #FFFFFF75;
-        background-color: #0D1321;
-    }
-
-    &:focus{
-        outline: none;
-    }
-
-    &:-webkit-autofill,
-    &:-webkit-autofill:hover,
-    &:-webkit-autofill:focus,
-    &:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0 30px transparent inset !important;
-        -webkit-text-fill-color: #FFFFFF40 !important;
-        transition: background-color 5000s ease-in-out 0s;
-    }
+  option {
+    background-color: #1c1c1c; // Cor de fundo do dropdown
+    color: #FFFFFF;
+  }
 `
 
 export const Input = styled(C.Input)<InputContainerProps>`
-    width: 100%;
     height: 46px;
     padding: 8px 12px;
+    width: ${props => props.type === 'time' ? '115px' : "175px"};
 
     border-radius: 12px;
     background-color: transparent;
@@ -81,7 +60,7 @@ export const Input = styled(C.Input)<InputContainerProps>`
     font-size: 18px;
     line-height: auto;
 
-     &[type="date"] {
+    &[type="date"] {
           &::-webkit-calendar-picker-indicator {
             filter: invert(0.4); 
             opacity: 0; 
@@ -104,6 +83,8 @@ export const Input = styled(C.Input)<InputContainerProps>`
         background-position: right 1rem center;
         background-size: 1.25rem;
     }
+
+    
 
     &:-webkit-autofill,
     &:-webkit-autofill:hover,

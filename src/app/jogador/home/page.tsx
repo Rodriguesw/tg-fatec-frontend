@@ -3,24 +3,29 @@
 import { useEffect, useState } from 'react';
 import { GoogleMap, LoadScriptNext, Marker } from '@react-google-maps/api';
 
+import { Tooltip } from 'react-tooltip';
+
 import {
   mapContainerStyle,
   mapOptions,
   extraMarkers,
 } from '@/utils/MapConfig';
 
+import { fetchCEP } from '@/services/BuscaCep';
+
 import { Input } from '@/components/Input';
+import { Modal } from '@/components/Modal';
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
-import { Modal } from '@/components/Modal';
+import  InputDays  from '@/components/inputDays';
+import { InputHours } from '@/components/inputHours';
+import { RatingStars } from '@/components/RatingStars';
 
 import { Dialog, Spinner } from "@chakra-ui/react"
 
 import * as S from './styles';
-import { H3, LG, MD } from '@/styles/typographStyles';
 import { theme } from '@/styles/theme';
-import { RatingStars } from '@/components/RatingStars';
-import { fetchCEP } from '@/services/BuscaCep';
+import { H3, LG, MD } from '@/styles/typographStyles';
 
 export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
@@ -34,6 +39,13 @@ export default function JogadorHome() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [cepData, setCepData] = useState<any>(null);
+
+  const [isModalReserva, setIsModalReserva] = useState(false);
+  const [valueInputDate, setValueInputDate] = useState("");
+  const [valueInputStartHours, setValueInputStartHours] = useState("");
+  const [valueInputEndHours, setValueInputEndHours] = useState("");
+
+  const [metodoPagamento, setMetodoPagamento] = useState<string | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -139,6 +151,26 @@ export default function JogadorHome() {
     return () => clearTimeout(timeout);
   }, [valueInputSearch]);
 
+  // Converte o valor do horário para número (ex: "13:00" => 13)
+  const getHourAsNumber = (time: string) => {
+    const [hourStr] = time.split(':')
+    return parseInt(hourStr, 10)
+  }
+
+  const minEndHour = getHourAsNumber(valueInputStartHours) + 1
+
+  const formatToHtmlDate = (raw: string) => {
+    if (raw.length !== 8) return ''
+    const day = raw.slice(0, 2)
+    const month = raw.slice(2, 4)
+    const year = raw.slice(4)
+    return `${year}-${month}-${day}` // Ex: "2025-07-28"
+  }
+
+  const todayDate = new Date().toISOString().split('T')[0] // "2025-07-28"
+
+  const isToday = formatToHtmlDate(valueInputDate) === todayDate
+
   if (!isMounted || !userLocation) return null;
 
   return (
@@ -231,7 +263,7 @@ export default function JogadorHome() {
                               family={theme.fonts.inter}
                               color={theme.colors.branco.secundario}
                               >
-                                {console.log('CEP Data:', cepData)}
+                                {/* {console.log('CEP Data:', cepData)} */}
                                 {cepData?.logradouro} {cepData?.numero ? `, ${cepData?.numero}` : ''} - {cepData?.localidade}, {cepData?.uf}
                             </MD>
                           </S.ContainerModalRatingAndAdress>
@@ -240,7 +272,9 @@ export default function JogadorHome() {
                               <LG 
                                 weight={700} 
                                 color={theme.colors.branco.principal} 
-                                family={theme.fonts.inter}>
+                                family={theme.fonts.inter}
+                                onClick={() => setIsModalReserva(true)}
+                                >
                                   Solicitar reserva
                               </LG>
                           </S.Button>
@@ -249,6 +283,139 @@ export default function JogadorHome() {
                 </S.ContainerModalContent>
               
             </Modal>
+        )}
+
+        {isModalReserva  && (
+          <Modal isOpen={true} onClose={closeModal} width="350px" >
+            <S.ContainerModalReserva>
+              <Dialog.Header width="100%" display="flex" flexDirection="row" justifyContent="space-between">
+                  <H3 color={theme.colors.laranja}>
+                      Data e forma de pagamento
+                  </H3>
+
+                  <button onClick={() => setIsModalReserva(false)}>
+                    <img src="/images/svg/icon-close-white.svg" alt="Fechar"/>
+                  </button> 
+              </Dialog.Header>
+            
+              <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
+                <S.ContainerModalFormPayment>
+                   <MD 
+                      family={theme.fonts.inter}
+                      color={theme.colors.branco.secundario}
+                      >
+                      Selecione o método de pagamento:
+                    </MD>
+
+                  <S.ContainerModalPaymentOptions>
+                    <S.ContainerModalPayment  
+                      selected={metodoPagamento === "pix"}
+                      onClick={() => setMetodoPagamento("pix")}
+                      >
+                      <MD 
+                        family={theme.fonts.inter}
+                        color={theme.colors.branco.secundario}
+                        >
+                        Pix
+                      </MD>
+
+                      <img src="/images/svg/icons-pix.svg" alt="Pagamento Pix"/>
+                    </S.ContainerModalPayment>
+
+                    <S.ContainerModalPayment 
+                      selected={metodoPagamento === "avista"}
+                      onClick={() => setMetodoPagamento("avista")}
+                      >
+                      <MD 
+                        family={theme.fonts.inter}
+                        color={theme.colors.branco.secundario}
+                        >
+                        À vista
+                      </MD>
+
+                      <img src="/images/png/icons-payment-method-2.png" alt=" Pagamento à vista"/>
+                    </S.ContainerModalPayment>
+
+                    <S.ContainerModalFormTooltip>
+                      <img src="/images/png/icons-question-mark.png" alt=" Pagamento à vista" data-tooltip-id="avista-tooltip"/>
+
+                      <Tooltip 
+                        id="avista-tooltip" 
+                        place="top"
+                        content="Pagamento em dinheiro ou transferência com 5% de desconto"
+                        style={{ 
+                          backgroundColor: "#0D1321",
+                          color: theme.colors.branco.principal,
+                          borderRadius: '8px',
+                          padding: '8px',
+                          fontSize: '14px',
+                          maxWidth: '200px'
+                        }}
+                      />
+                    </S.ContainerModalFormTooltip>
+                  </S.ContainerModalPaymentOptions>
+                </S.ContainerModalFormPayment>
+
+
+                <S.ContainerModalFormReserva>
+                  <S.ContainerModalFormInputs>
+                    <MD 
+                      family={theme.fonts.inter}
+                      color={theme.colors.branco.secundario}
+                      >
+                      Início:
+                    </MD>
+
+                    <InputHours 
+                      value={valueInputStartHours} 
+                      onChange={setValueInputStartHours}  
+                      minHour={6}
+                      maxHour={22}
+                      isToday={isToday}
+                    />
+                  </S.ContainerModalFormInputs>
+
+                  <S.ContainerModalFormInputs>
+                    <MD 
+                      family={theme.fonts.inter}
+                      color={theme.colors.branco.secundario}
+                      >
+                      Término:
+                    </MD>
+
+                    <InputHours 
+                      value={valueInputEndHours} 
+                      onChange={setValueInputEndHours}
+                      minHour={minEndHour}
+                      maxHour={23}/>
+                      
+                  </S.ContainerModalFormInputs>
+
+                  <S.ContainerModalFormInputs>
+                    <MD 
+                      family={theme.fonts.inter}
+                      color={theme.colors.branco.secundario}
+                      >
+                      Dia da reserva:
+                    </MD>
+
+                    <InputDays onChange={setValueInputDate} />
+                  </S.ContainerModalFormInputs>
+                </S.ContainerModalFormReserva>
+
+                <S.Button >
+                    <LG 
+                      weight={700} 
+                      color={theme.colors.branco.principal} 
+                      family={theme.fonts.inter}
+                      onClick={() => setIsModalReserva(true)}
+                      >
+                        Confirmar reserva
+                    </LG>
+                </S.Button>
+              </Dialog.Body>
+            </S.ContainerModalReserva>
+          </Modal>
         )}
       </S.Wrapper>
     </S.Container>
