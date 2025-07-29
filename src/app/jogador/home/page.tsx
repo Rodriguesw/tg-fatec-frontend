@@ -389,7 +389,7 @@ export default function JogadorHome() {
                     <S.ContainerModalPayment 
                       hasError={hasErrorMethodPayment}
                       selected={metodoPagamento === "pix"}
-                      onClick={() => setMetodoPagamento("pix")}
+                      onClick={() => {setMetodoPagamento("pix"), setHasErrorMethodPayment(false)}}
                       >
                       <MD 
                         family={theme.fonts.inter}
@@ -424,7 +424,7 @@ export default function JogadorHome() {
                     <S.ContainerModalPayment 
                       hasError={hasErrorMethodPayment}
                       selected={metodoPagamento === "avista"}
-                      onClick={() => setMetodoPagamento("avista")}
+                      onClick={() => {setMetodoPagamento("avista"), setHasErrorMethodPayment(false)}}
                       >
                       <MD 
                         family={theme.fonts.inter}
