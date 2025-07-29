@@ -9,10 +9,11 @@ import "react-datepicker/dist/react-datepicker.css"
 import * as S from "./styles"
 
 interface InputDaysProps {
+  hasError?: boolean
   onChange: (value: string) => void
 }
 
-export default function InputDays({ onChange }: InputDaysProps) {
+export default function InputDays({ onChange, hasError = false }: InputDaysProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const today = new Date()
 
@@ -26,8 +27,8 @@ export default function InputDays({ onChange }: InputDaysProps) {
   }
 
   return (
-    <S.Container>
-        <S.CustomDatePicker
+    <S.Container $hasError={hasError}>
+      <DatePicker
         selected={selectedDate}
         onChange={handleChange}
         minDate={today}

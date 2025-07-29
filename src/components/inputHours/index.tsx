@@ -10,6 +10,7 @@ interface InputHoursProps {
   minHour?: number // Hora mínima (0-23)
   maxHour?: number // Hora máxima (0-23)
   isToday?: boolean // Se o dia selecionado é hoje
+  disabled?: boolean 
 }
 
 export function InputHours({
@@ -19,7 +20,9 @@ export function InputHours({
   hasError = false,
   minHour = 6,
   maxHour = 22,
-  isToday = false
+  isToday = false,
+  placeholder = '00:00',
+  disabled = false
 }: InputHoursProps) {
   const [timeValue, setTimeValue] = useState('00:00')
 
@@ -49,13 +52,21 @@ export function InputHours({
   const hourOptions = generateHourOptions()
 
   // Inicializa o valor
+  // useEffect(() => {
+  //   if (value && isValidHour(value)) {
+  //     setTimeValue(value)
+  //   } else {
+  //     const defaultValue = hourOptions[0] || '00:00'
+  //     setTimeValue(defaultValue)
+  //     if (onChange) onChange(defaultValue)
+  //   }
+  // }, [value, minHour, maxHour, isToday])
+
   useEffect(() => {
     if (value && isValidHour(value)) {
       setTimeValue(value)
     } else {
-      const defaultValue = hourOptions[0] || '00:00'
-      setTimeValue(defaultValue)
-      if (onChange) onChange(defaultValue)
+      setTimeValue('') // Não seleciona nenhum valor por padrão
     }
   }, [value, minHour, maxHour, isToday])
 
@@ -80,7 +91,9 @@ export function InputHours({
         value={timeValue}
         onChange={handleChange}
         $hasError={hasError}
+        disabled={disabled}
       >
+        <option value="" disabled hidden>{placeholder}</option>
         {hourOptions.map((hour) => (
           <option key={hour} value={hour}>{hour}</option>
         ))}

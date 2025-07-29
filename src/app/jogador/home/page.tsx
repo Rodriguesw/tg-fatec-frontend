@@ -26,6 +26,7 @@ import { Dialog, Spinner } from "@chakra-ui/react"
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { H3, LG, MD } from '@/styles/typographStyles';
+import { showToast } from '@/components/ToastAlert';
 
 export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
@@ -46,6 +47,11 @@ export default function JogadorHome() {
   const [valueInputEndHours, setValueInputEndHours] = useState("");
 
   const [metodoPagamento, setMetodoPagamento] = useState<string | null>(null);
+
+  const [hasErrorMethodPayment, setHasErrorMethodPayment] = useState(false);
+  const [hasErrorDate, setHasErrorDate] = useState(false);
+  const [hasErrorStartHours, setHasErrorStartHours] = useState(false);
+  const [hasErrorEndHours, setHasErrorEndHours] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -164,12 +170,85 @@ export default function JogadorHome() {
     const day = raw.slice(0, 2)
     const month = raw.slice(2, 4)
     const year = raw.slice(4)
-    return `${year}-${month}-${day}` // Ex: "2025-07-28"
+    return `${year}-${month}-${day}`
   }
 
-  const todayDate = new Date().toISOString().split('T')[0] // "2025-07-28"
-
+  const todayDate = new Date().toISOString().split('T')[0]
   const isToday = formatToHtmlDate(valueInputDate) === todayDate
+
+  const handleCloseModal = () => {
+    setIsModalReserva(false)
+    clearInputs()
+  }
+
+  const clearInputs = () => {
+    setMetodoPagamento(null)
+    setValueInputDate('')
+    setValueInputStartHours('')
+    setValueInputEndHours('')
+
+    setHasErrorMethodPayment(false)
+    setHasErrorDate(false)
+    setHasErrorStartHours(false)
+    setHasErrorEndHours(false)
+  }
+
+  const handleSubmitReserva = () => {
+    console.log("metodoPagamento", metodoPagamento)
+    const hasMethodPaymentError = metodoPagamento === null
+    const hasDateError = valueInputDate === ''
+    const hasStartHourError = valueInputStartHours === ''
+    const hasEndHourError = valueInputEndHours === ''
+  
+    const hasAnyError = hasMethodPaymentError || hasDateError || hasStartHourError || hasEndHourError
+  
+    // Aplica os erros para mostrar visualmente nos inputs
+    setHasErrorMethodPayment(hasMethodPaymentError)
+    setHasErrorDate(hasDateError)
+    setHasErrorStartHours(hasStartHourError)
+    setHasErrorEndHours(hasEndHourError)
+  
+    if (hasAnyError) {
+      showToast({
+        type: 'error',
+        message: 'Verifique todos os campos em vermelho.'
+      })
+      return
+    }
+  
+    // Sucesso
+    showToast({
+      type: 'success',
+      message: 'Reserva feita com sucesso!'
+    })
+
+    setIsModalReserva(false)
+  
+    // Aqui você pode continuar com a lógica da reserva, ex:
+    console.log("==============QUADRA==============")
+    console.log("nome", selectedMarker.title)
+    console.log("cepData", cepData)
+    console.log("==============PAGAMENTO==============")
+    console.log("metodoPagamento", metodoPagamento)
+    console.log("valueInputStartHours", valueInputStartHours)
+    console.log("valueInputEndHours", valueInputEndHours)
+    console.log("formatToHtmlDate(valueInputDate)", formatToHtmlDate(valueInputDate))
+  }
+  
+  const handleDateChange = (value: string) => {
+    setValueInputDate(value)
+    setHasErrorDate(false) // remove o erro ao escolher uma data válida
+  }
+
+  const handleHoursStartChange = (value: string) => {
+    setValueInputStartHours(value)
+    setHasErrorStartHours(false) // remove o erro ao escolher uma data válida
+  }
+
+  const handleHoursEndChange = (value: string) => {
+    setValueInputEndHours(value)
+    setHasErrorEndHours(false) // remove o erro ao escolher uma data válida
+  }
 
   if (!isMounted || !userLocation) return null;
 
@@ -268,12 +347,11 @@ export default function JogadorHome() {
                             </MD>
                           </S.ContainerModalRatingAndAdress>
 
-                          <S.Button >
+                          <S.Button onClick={() => setIsModalReserva(true)}>
                               <LG 
                                 weight={700} 
                                 color={theme.colors.branco.principal} 
                                 family={theme.fonts.inter}
-                                onClick={() => setIsModalReserva(true)}
                                 >
                                   Solicitar reserva
                               </LG>
@@ -293,7 +371,7 @@ export default function JogadorHome() {
                       Data e forma de pagamento
                   </H3>
 
-                  <button onClick={() => setIsModalReserva(false)}>
+                  <button onClick={() => {setIsModalReserva(false), handleCloseModal()}}>
                     <img src="/images/svg/icon-close-white.svg" alt="Fechar"/>
                   </button> 
               </Dialog.Header>
@@ -308,7 +386,8 @@ export default function JogadorHome() {
                     </MD>
 
                   <S.ContainerModalPaymentOptions>
-                    <S.ContainerModalPayment  
+                    <S.ContainerModalPayment 
+                      hasError={hasErrorMethodPayment}
                       selected={metodoPagamento === "pix"}
                       onClick={() => setMetodoPagamento("pix")}
                       >
@@ -322,7 +401,28 @@ export default function JogadorHome() {
                       <img src="/images/svg/icons-pix.svg" alt="Pagamento Pix"/>
                     </S.ContainerModalPayment>
 
+                    <S.ContainerModalFormTooltip>
+                      <img src="/images/png/icons-question-mark-1.png" alt=" Pagamento à vista" data-tooltip-id="pix-tooltip"/>
+
+                      <Tooltip 
+                        id="pix-tooltip" 
+                        place="top"
+                        content="Ao selecionar o pix, você receberá o código pix do proprietário. 
+                        O pagamento é processado instantaneamente, e a reserva será confirmada após a validação. Para ter direito ao reembolso, 
+                        você precisa cancelar com até 24 horas de antecedência da data da reserva."
+                        style={{ 
+                          backgroundColor: "#0D1321",
+                          color: theme.colors.branco.principal,
+                          borderRadius: '8px',
+                          padding: '8px',
+                          fontSize: '14px',
+                          maxWidth: '200px'
+                        }}
+                      />
+                    </S.ContainerModalFormTooltip>
+
                     <S.ContainerModalPayment 
+                      hasError={hasErrorMethodPayment}
                       selected={metodoPagamento === "avista"}
                       onClick={() => setMetodoPagamento("avista")}
                       >
@@ -337,12 +437,12 @@ export default function JogadorHome() {
                     </S.ContainerModalPayment>
 
                     <S.ContainerModalFormTooltip>
-                      <img src="/images/png/icons-question-mark.png" alt=" Pagamento à vista" data-tooltip-id="avista-tooltip"/>
+                      <img src="/images/png/icons-question-mark-1.png" alt=" Pagamento à vista" data-tooltip-id="avista-tooltip"/>
 
                       <Tooltip 
                         id="avista-tooltip" 
                         place="top"
-                        content="Pagamento em dinheiro ou transferência com 5% de desconto"
+                        content="O pagamento à vista deverá ser realizado diretamente com o proprietário do local. Ao selecionar essa opção, o proprietário será notificado sobre o método de pagamento escolhido."
                         style={{ 
                           backgroundColor: "#0D1321",
                           color: theme.colors.branco.principal,
@@ -363,15 +463,28 @@ export default function JogadorHome() {
                       family={theme.fonts.inter}
                       color={theme.colors.branco.secundario}
                       >
+                      Data:
+                    </MD>
+
+                    <InputDays onChange={handleDateChange} hasError={hasErrorDate}/>
+                  </S.ContainerModalFormInputs>
+
+                  <S.ContainerModalFormInputs>
+                    <MD 
+                      family={theme.fonts.inter}
+                      color={theme.colors.branco.secundario}
+                      >
                       Início:
                     </MD>
 
                     <InputHours 
+                      disabled={valueInputDate !== '' ? false : true}
                       value={valueInputStartHours} 
-                      onChange={setValueInputStartHours}  
+                      onChange={handleHoursStartChange}  
                       minHour={6}
                       maxHour={22}
                       isToday={isToday}
+                      hasError={hasErrorStartHours}
                     />
                   </S.ContainerModalFormInputs>
 
@@ -384,26 +497,20 @@ export default function JogadorHome() {
                     </MD>
 
                     <InputHours 
+                      disabled={valueInputStartHours !== '' ? false : true}
                       value={valueInputEndHours} 
-                      onChange={setValueInputEndHours}
+                      onChange={handleHoursEndChange}
                       minHour={minEndHour}
-                      maxHour={23}/>
+                      maxHour={23}
+                      hasError={hasErrorEndHours}
+                      />
                       
                   </S.ContainerModalFormInputs>
 
-                  <S.ContainerModalFormInputs>
-                    <MD 
-                      family={theme.fonts.inter}
-                      color={theme.colors.branco.secundario}
-                      >
-                      Dia da reserva:
-                    </MD>
-
-                    <InputDays onChange={setValueInputDate} />
-                  </S.ContainerModalFormInputs>
+                  
                 </S.ContainerModalFormReserva>
 
-                <S.Button >
+                <S.Button onClick={handleSubmitReserva}>
                     <LG 
                       weight={700} 
                       color={theme.colors.branco.principal} 

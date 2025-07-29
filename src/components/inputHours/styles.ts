@@ -43,6 +43,11 @@ export const Select = styled.select<InputContainerProps>`
     background-color: #1c1c1c; // Cor de fundo do dropdown
     color: #FFFFFF;
   }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `
 
 export const Input = styled(C.Input)<InputContainerProps>`

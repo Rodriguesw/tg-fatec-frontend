@@ -8,6 +8,7 @@ interface modalProps {
 
 interface modalReservaProps {
     selected?: boolean;
+    hasError?: boolean
 }
 
 export const Container = styled(C.Flex)`
@@ -142,7 +143,7 @@ export const ContainerModalPayment = styled(C.Button)<modalReservaProps>`
     justify-content: center;
 
     border-radius: 5rem;
-    border: ${props => props.selected ? `2px solid #2FBB69` : "2px solid #FFFFFF40"};
+    border: ${props => props.hasError ? `2px solid #D93131` : props.selected ? `2px solid #2FBB69` : "2px solid #FFFFFF40"};
     background-color: transparent;
 
     >img{
@@ -160,7 +161,7 @@ export const ContainerModalFormTooltip = styled(C.Flex)`
     flex-direction: column;
 
     >img{
-        width: 16px;
+        width: 17px;
         height: auto;
     }
 `
