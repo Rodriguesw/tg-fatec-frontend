@@ -14,10 +14,28 @@ import { CardReserved } from '@/components/CardReserved';
 import { Modal } from '@/components/Modal';
 
 import { Dialog } from "@chakra-ui/react"
+import { it } from 'node:test';
+
+interface ReservedSportLocation {
+  id: number;
+  name: string;
+  address: {
+    id: number;
+    cep: string;
+    number: string;
+    city: string;
+    neighborhood: string;
+    state: string;
+    street: string;
+  };
+  start_time: string;
+  end_time: string;
+  price: string;
+  payment_method: string;
+  reserved_date: string;
+}
 
 export default function JogadorReservas() {
-  const [birthDate, setBirthDate] = useState('');
-  const [errors, setErrors] = useState({ birthDate: false });
   const [selectedCourtId, setSelectedCourtId] = useState<number | null>(null);
 
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
@@ -43,15 +61,12 @@ export default function JogadorReservas() {
 
   if (!isMounted || !currentUser) return null;
 
-  const hasEvents = currentUser.sports_courts?.length > 0;
-  const selectedCourt = currentUser.sports_courts?.find(
+  const hasEvents = currentUser.reserved_sports_location?.length > 0;
+  const selectedCourt = currentUser.reserved_sports_location?.find(
     (court: any) => court.id === selectedCourtId
   );
 
-  // const handleBirthDateChange = (value: string) => {
-  //   setBirthDate(value);
-  //   setErrors(prev => ({ ...prev, birthDate: false }));
-  // };
+  console.log("currentUser",currentUser)
 
   return (
     <S.Container>
@@ -62,17 +77,28 @@ export default function JogadorReservas() {
             <TitleWithButtonBack title='Minhas reservas' />
 
             {hasEvents ? (
-              <CardReserved 
-                onClickEdit={
-                  (id) => {
+              currentUser?.reserved_sports_location?.map((item: ReservedSportLocation) => (
+                <CardReserved
+                  key={item.id}
+                  id={item.id} 
+                  name={item.name}
+                  address={item.address}
+                  start_time={item.start_time}
+                  end_time={item.end_time}
+                  price={item.price}
+                  reserved_date={item.reserved_date}
+                  payment_method={item.payment_method}
+                  onClickEdit={(id) => {
                     setSelectedCourtId(id); 
-                    setIsOpenModalEdit(true)
-                  }} 
-                onClickCancel={
-                  (id) => {
+                    setIsOpenModalEdit(true);
+                  }}
+                  onClickCancel={(id) => {
                     setSelectedCourtId(id);
-                    setIsOpenModalCancel(true)
-                  }}/>
+                    setIsOpenModalCancel(true);
+                  }}
+                />
+              ))
+              
             ):(
               <S.NotFoundEvent>
                 <img src="/images/svg/icon-not-found.svg" alt="Nenhuma reserva encontrada"/>
@@ -110,7 +136,7 @@ export default function JogadorReservas() {
               <SM
                 family={theme.fonts.inter}
                 color={theme.colors.branco.secundario}>
-                Deseja solicitar a alteração da data da reserva da quadra {selectedCourt?.name}?
+                Deseja solicitar a alteração da data da reserva {selectedCourt?.name}?
               </SM>
 
               <Input 
@@ -157,7 +183,14 @@ export default function JogadorReservas() {
               display="flex" 
               justifyContent="center" 
               alignItems="center" 
-              flexDirection="column">
+              flexDirection="column"
+              >
+                <SM
+                  family={theme.fonts.inter}
+                  color={theme.colors.branco.secundario}>
+                  Deseja realmente cancelar a reserva?
+                </SM>
+
                 <S.ContainerButtonModalCancel>
                   <S.Button 
                     onClick={() => setIsOpenModalCancel(false)} 

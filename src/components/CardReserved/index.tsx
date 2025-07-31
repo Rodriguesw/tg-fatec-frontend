@@ -2,62 +2,77 @@ import * as S from './styles'
 import { theme } from '@/styles/theme'
 import { LG, SM } from '@/styles/typographStyles'
 
-interface CardReservedProps {
-    onClickEdit?: (id: number) => void;
-    onClickCancel?: (id: number) => void;
+interface Address {
+  id: number;
+  cep: string;
+  number: string;
+  city: string;
+  neighborhood: string;
+  state: string;
+  street: string;
 }
 
-interface SportsCourt {
-    id: number;
-    name: string;
-    address: string; 
-    booking_day_time: string;
-  }
+interface CardReservedProps {
+  id: number;
+  name: string;
+  address: Address;
+  start_time: string;
+  end_time: string;
+  price: string;
+  payment_method: string;
+  reserved_date: string;
+  onClickEdit: (id: number) => void;
+  onClickCancel: (id: number) => void;
+}
 
-export function CardReserved({onClickEdit, onClickCancel}: CardReservedProps) {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
+export function CardReserved({
+  id, 
+  name,
+  address,
+  start_time,
+  end_time,
+  price,
+  payment_method,
+  reserved_date,
+  onClickEdit, 
+  onClickCancel
+}: CardReservedProps) {
+  const formattedAddress = `${address.street}, ${address.number} - ${address.city}, ${address.state}`;
+  const dateAndTime = `${reserved_date} ${start_time} - ${end_time}`;
 
-    return (
-        <S.Container>
-           {currentUser.sports_courts?.map((item: SportsCourt) => (
-                <S.Card key={item.id}>
-                    <LG 
-                    color={theme.colors.branco.principal} 
-                    family={theme.fonts.inter}>
-                        {item.name}
-                    </LG>
+  return (
+    <S.Container>
+      <S.Card>
+        <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+          {name}
+        </LG>
 
-                    <SM 
-                    color={theme.colors.branco.secundario}
-                    family={theme.fonts.inter}>
-                        {item.address}
-                    </SM>     
+        <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+          {formattedAddress}
+        </SM>
 
-                    <SM 
-                    color={theme.colors.branco.secundario}
-                    family={theme.fonts.inter}>
-                        {item.booking_day_time}
-                    </SM>      
+        <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+          {dateAndTime}
+        </SM>
 
-                    <S.ContainerButton>
-                        <S.ButtonEdit onClick={() => onClickEdit && onClickEdit(item.id)}>
-                            <SM 
-                            family={theme.fonts.inter} 
-                            color={theme.colors.azul.segundario}>
-                                Alterar
-                            </SM> 
-                        </S.ButtonEdit>
+        <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+          Valor: {price} - Pagamento: {payment_method}
+        </SM>
 
-                        <S.ButtonCancel onClick={() => onClickCancel && onClickCancel(item.id)}>
-                            <SM 
-                            family={theme.fonts.inter} 
-                            color={theme.colors.vermelho}>
-                                Cancelar
-                            </SM>
-                        </S.ButtonCancel>
-                    </S.ContainerButton>     
-                </S.Card>
-            ))}
-        </S.Container>
-    )
+        <S.ContainerButton>
+          <S.ButtonEdit onClick={() => onClickEdit(id)}>
+            <SM family={theme.fonts.inter} color={theme.colors.azul.segundario}>
+              Alterar
+            </SM> 
+          </S.ButtonEdit>
+
+          <S.ButtonCancel onClick={() => onClickCancel(id)}>
+            <SM family={theme.fonts.inter} color={theme.colors.vermelho}>
+              Cancelar
+            </SM>
+          </S.ButtonCancel>
+        </S.ContainerButton>     
+      </S.Card>
+    </S.Container>
+  )
 }

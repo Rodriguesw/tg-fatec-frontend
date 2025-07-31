@@ -24,11 +24,23 @@ interface User {
   team: string;
   email: string;
   password: string;
-  sports_courts: {
+  reserved_sports_location: {
     id?: number;
     name?: string;
-    address?: string;
-    booking_day_time?: string;
+    address?: {
+      id?: number;
+      cep?: string;
+      number?: string;
+      city?: string;
+      neighborhood?: string;
+      state?: string;
+      street?: string;
+    };
+    start_time?: string;
+    end_time?: string;
+    price?: string;
+    payment_method?: string;
+    reserved_date?: string;
   }[];
 }
 
@@ -92,11 +104,23 @@ export default function JogadorLogin() {
         team: "sao_paulo",
         email: "matheushr39@gmail.com",
         password: "teste",
-        sports_courts: [{
+        reserved_sports_location: [{
           id: 1782,
           name: "Arena KS Society",
-          address: "R. Alceu Corrêa de Morães, 305 - Vila Macia, Itapetininga - SP, 18213-110",
-          booking_day_time: "29/03/2025 - 20:00 ás 23:00",
+          address: {
+            id: 12,
+            cep: "18213110",
+            number: "305",
+            street: "Rua Alceu Correa de Moraes",
+            city: "Itapetininga",
+            neighborhood: "Vila Macia",
+            state: "SP"
+          },
+          start_time: "20:00",
+          end_time: "23:00",
+          price: "R$ 300,00",
+          payment_method: "Dinheiro",
+          reserved_date: "29/03/2025",
         }]
       };
 

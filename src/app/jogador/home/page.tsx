@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { GoogleMap, LoadScriptNext, Marker } from '@react-google-maps/api';
 
 import { Tooltip } from 'react-tooltip';
+import { QRCodeSVG } from 'qrcode.react';
+
 
 import {
   mapContainerStyle,
@@ -25,7 +27,7 @@ import { Dialog, Spinner } from "@chakra-ui/react"
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { H3, LG, MD } from '@/styles/typographStyles';
+import { H3, LG, MD, SM } from '@/styles/typographStyles';
 import { showToast } from '@/components/ToastAlert';
 
 export default function JogadorHome() {
@@ -41,17 +43,22 @@ export default function JogadorHome() {
   const [isLoading, setIsLoading] = useState(false);
   const [cepData, setCepData] = useState<any>(null);
 
+  //Modal de Reserva
   const [isModalReserva, setIsModalReserva] = useState(false);
   const [valueInputDate, setValueInputDate] = useState("");
   const [valueInputStartHours, setValueInputStartHours] = useState("");
   const [valueInputEndHours, setValueInputEndHours] = useState("");
 
-  const [metodoPagamento, setMetodoPagamento] = useState<string | null>(null);
+  const [methodPayment, setMethodPayment] = useState('dinheiro');
+  const [methodPaymentMoneyError, setMethodPaymentMoneyError] = useState(false);
 
   const [hasErrorMethodPayment, setHasErrorMethodPayment] = useState(false);
   const [hasErrorDate, setHasErrorDate] = useState(false);
   const [hasErrorStartHours, setHasErrorStartHours] = useState(false);
   const [hasErrorEndHours, setHasErrorEndHours] = useState(false);
+
+  //Modal de Pagamento Pix
+  const [isModalPix, setIsModalPix] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -182,7 +189,6 @@ export default function JogadorHome() {
   }
 
   const clearInputs = () => {
-    setMetodoPagamento(null)
     setValueInputDate('')
     setValueInputStartHours('')
     setValueInputEndHours('')
@@ -194,19 +200,24 @@ export default function JogadorHome() {
   }
 
   const handleSubmitReserva = () => {
-    console.log("metodoPagamento", metodoPagamento)
-    const hasMethodPaymentError = metodoPagamento === null
+    console.log("methodPaymentPix", methodPayment)
+    const hasMethodPaymentMoneyError = methodPayment !== 'dinheiro'
+
     const hasDateError = valueInputDate === ''
     const hasStartHourError = valueInputStartHours === ''
     const hasEndHourError = valueInputEndHours === ''
+
+    const hasIgualHours = valueInputStartHours === valueInputEndHours
   
-    const hasAnyError = hasMethodPaymentError || hasDateError || hasStartHourError || hasEndHourError
+    const hasAnyError = hasMethodPaymentMoneyError || hasDateError || hasStartHourError || hasEndHourError || hasIgualHours
   
     // Aplica os erros para mostrar visualmente nos inputs
-    setHasErrorMethodPayment(hasMethodPaymentError)
+    setMethodPaymentMoneyError(hasMethodPaymentMoneyError)
     setHasErrorDate(hasDateError)
     setHasErrorStartHours(hasStartHourError)
     setHasErrorEndHours(hasEndHourError)
+    setHasErrorStartHours(hasIgualHours)
+    setHasErrorEndHours(hasIgualHours)
   
     if (hasAnyError) {
       showToast({
@@ -215,7 +226,17 @@ export default function JogadorHome() {
       })
       return
     }
-  
+
+    // Aqui você pode continuar com a lógica da reserva, ex:
+    console.log("==============QUADRA==============")
+    console.log("nome", selectedMarker.title)
+    console.log("cepData", cepData)
+    console.log("==============PAGAMENTO==============")
+    console.log("methodPayment", methodPayment)
+    console.log("valueInputStartHours", valueInputStartHours)
+    console.log("valueInputEndHours", valueInputEndHours)
+    console.log("formatToHtmlDate(valueInputDate)", formatToHtmlDate(valueInputDate))
+
     // Sucesso
     showToast({
       type: 'success',
@@ -223,16 +244,9 @@ export default function JogadorHome() {
     })
 
     setIsModalReserva(false)
+    setIsModalLocalization(false)
   
-    // Aqui você pode continuar com a lógica da reserva, ex:
-    console.log("==============QUADRA==============")
-    console.log("nome", selectedMarker.title)
-    console.log("cepData", cepData)
-    console.log("==============PAGAMENTO==============")
-    console.log("metodoPagamento", metodoPagamento)
-    console.log("valueInputStartHours", valueInputStartHours)
-    console.log("valueInputEndHours", valueInputEndHours)
-    console.log("formatToHtmlDate(valueInputDate)", formatToHtmlDate(valueInputDate))
+    clearInputs()
   }
   
   const handleDateChange = (value: string) => {
@@ -249,6 +263,27 @@ export default function JogadorHome() {
     setValueInputEndHours(value)
     setHasErrorEndHours(false) // remove o erro ao escolher uma data válida
   }
+
+  const valorHora = 100;
+
+function calcularHorasReservadas(inicio: string, fim: string): number {
+  const [startHour, startMinute] = inicio.split(':').map(Number);
+  const [endHour, endMinute] = fim.split(':').map(Number);
+
+  const startTotalMinutes = startHour * 60 + startMinute;
+  const endTotalMinutes = endHour * 60 + endMinute;
+
+  const durationInMinutes = endTotalMinutes - startTotalMinutes;
+  const durationInHours = durationInMinutes / 60;
+
+  return durationInHours > 0 ? durationInHours : 0;
+}
+
+const horasReservadas = valueInputStartHours && valueInputEndHours
+  ? calcularHorasReservadas(valueInputStartHours, valueInputEndHours)
+  : 0;
+
+const valorReserva = horasReservadas * valorHora;
 
   if (!isMounted || !userLocation) return null;
 
@@ -347,6 +382,15 @@ export default function JogadorHome() {
                             </MD>
                           </S.ContainerModalRatingAndAdress>
 
+                          <S.ContainerModalRatingAndAdress>
+                            <MD 
+                              family={theme.fonts.inter}
+                              color={theme.colors.branco.secundario}
+                              >
+                               Valor por hora: R$ 100,00
+                            </MD>
+                          </S.ContainerModalRatingAndAdress>
+
                           <S.Button onClick={() => setIsModalReserva(true)}>
                               <LG 
                                 weight={700} 
@@ -386,30 +430,79 @@ export default function JogadorHome() {
                     </MD>
 
                   <S.ContainerModalPaymentOptions>
+                    <S.ContainerDisablePix>
+                      <SM
+                        family={theme.fonts.inter}
+                        color={theme.colors.vermelho}
+                        >
+                        Indisponivel <br/>no momento
+                      </SM>
+
+                      <div style={{width: 'auto', height: 'auto', gap: "8px",display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                        <S.ContainerPix>
+                          <S.ContainerModalPayment 
+                            disabled={true}
+                            hasError={hasErrorMethodPayment}
+                            selected={methodPayment === "pix"}
+                            onClick={() => {setMethodPayment("pix"), setHasErrorMethodPayment(false)}}
+                            >
+                            <MD 
+                              family={theme.fonts.inter}
+                              color={theme.colors.branco.secundario}
+                              >
+                              Pix
+                            </MD>
+
+                            <img src="/images/svg/icons-pix.svg" alt="Pagamento Pix"/>
+                          </S.ContainerModalPayment>
+                        </S.ContainerPix>
+
+                        <S.ContainerModalFormTooltip>
+                          <img src="/images/png/icons-question-mark-1.png" alt=" Pagamento pix" data-tooltip-id="pix-tooltip"/>
+
+                          <Tooltip 
+                            id="pix-tooltip" 
+                            place="top"
+                            content="Ao selecionar o pix, você receberá o código pix do proprietário. 
+                            O pagamento é processado instantaneamente, e a reserva será confirmada após a validação. Para ter direito ao reembolso, 
+                            você precisa cancelar com até 24 horas de antecedência da data da reserva."
+                            style={{ 
+                              backgroundColor: "#0D1321",
+                              color: theme.colors.branco.principal,
+                              borderRadius: '8px',
+                              padding: '8px',
+                              fontSize: '14px',
+                              maxWidth: '200px'
+                            }}
+                          />
+                        </S.ContainerModalFormTooltip>
+                      </div>
+                    </S.ContainerDisablePix>
+
+                    
+                   <div style={{width: 'auto', height: 'auto', gap: "8px",display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     <S.ContainerModalPayment 
-                      hasError={hasErrorMethodPayment}
-                      selected={metodoPagamento === "pix"}
-                      onClick={() => {setMetodoPagamento("pix"), setHasErrorMethodPayment(false)}}
+                      hasError={methodPaymentMoneyError}
+                      selected={methodPayment === "dinheiro"}
+                      onClick={() => {setMethodPayment("dinheiro"), setMethodPaymentMoneyError(false)}}
                       >
                       <MD 
                         family={theme.fonts.inter}
                         color={theme.colors.branco.secundario}
                         >
-                        Pix
+                        Dinheiro 
                       </MD>
 
-                      <img src="/images/svg/icons-pix.svg" alt="Pagamento Pix"/>
+                      <img src="/images/png/icons-payment-method-2.png" alt=" Pagamento em dinheiro"/>
                     </S.ContainerModalPayment>
 
                     <S.ContainerModalFormTooltip>
-                      <img src="/images/png/icons-question-mark-1.png" alt=" Pagamento à vista" data-tooltip-id="pix-tooltip"/>
+                      <img src="/images/png/icons-question-mark-1.png" alt=" Pagamento em dinheiro" data-tooltip-id="dinheiro-tooltip"/>
 
                       <Tooltip 
-                        id="pix-tooltip" 
+                        id="dinheiro-tooltip" 
                         place="top"
-                        content="Ao selecionar o pix, você receberá o código pix do proprietário. 
-                        O pagamento é processado instantaneamente, e a reserva será confirmada após a validação. Para ter direito ao reembolso, 
-                        você precisa cancelar com até 24 horas de antecedência da data da reserva."
+                        content="O pagamento em dinheiro deverá ser realizado diretamente com o proprietário do local. Ao selecionar essa opção, o proprietário será notificado sobre o método de pagamento escolhido."
                         style={{ 
                           backgroundColor: "#0D1321",
                           color: theme.colors.branco.principal,
@@ -421,39 +514,17 @@ export default function JogadorHome() {
                       />
                     </S.ContainerModalFormTooltip>
 
-                    <S.ContainerModalPayment 
-                      hasError={hasErrorMethodPayment}
-                      selected={metodoPagamento === "avista"}
-                      onClick={() => {setMetodoPagamento("avista"), setHasErrorMethodPayment(false)}}
-                      >
-                      <MD 
-                        family={theme.fonts.inter}
-                        color={theme.colors.branco.secundario}
-                        >
-                        À vista
-                      </MD>
-
-                      <img src="/images/png/icons-payment-method-2.png" alt=" Pagamento à vista"/>
-                    </S.ContainerModalPayment>
-
-                    <S.ContainerModalFormTooltip>
-                      <img src="/images/png/icons-question-mark-1.png" alt=" Pagamento à vista" data-tooltip-id="avista-tooltip"/>
-
-                      <Tooltip 
-                        id="avista-tooltip" 
-                        place="top"
-                        content="O pagamento à vista deverá ser realizado diretamente com o proprietário do local. Ao selecionar essa opção, o proprietário será notificado sobre o método de pagamento escolhido."
-                        style={{ 
-                          backgroundColor: "#0D1321",
-                          color: theme.colors.branco.principal,
-                          borderRadius: '8px',
-                          padding: '8px',
-                          fontSize: '14px',
-                          maxWidth: '200px'
-                        }}
-                      />
-                    </S.ContainerModalFormTooltip>
+                    </div>
                   </S.ContainerModalPaymentOptions>
+
+                  {valueInputStartHours && valueInputEndHours && (
+                    <MD 
+                    family={theme.fonts.inter}
+                    color={theme.colors.branco.secundario}
+                    >
+                      Valor da reserva: R$ {valorReserva.toFixed(2).replace('.', ',')}
+                    </MD>
+                  )}
                 </S.ContainerModalFormPayment>
 
 
@@ -520,6 +591,28 @@ export default function JogadorHome() {
                         Confirmar reserva
                     </LG>
                 </S.Button>
+              </Dialog.Body>
+            </S.ContainerModalReserva>
+          </Modal>
+        )}
+
+        {isModalPix  && (
+          <Modal isOpen={true} onClose={closeModal} width="350px" >
+            <S.ContainerModalReserva>
+              <Dialog.Header width="100%" display="flex" flexDirection="row" justifyContent="space-between">
+                  <H3 color={theme.colors.laranja}>
+                      Pagamento Pix
+                  </H3>
+
+                  <button onClick={() => setIsModalPix(false)}>
+                    <img src="/images/svg/icon-close-white.svg" alt="Fechar"/>
+                  </button> 
+              </Dialog.Header>
+            
+              <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
+                <S.ContainerModalPaymentQrCode>
+                  <QRCodeSVG value="TESTE" size={200} />
+                </S.ContainerModalPaymentQrCode>
               </Dialog.Body>
             </S.ContainerModalReserva>
           </Modal>

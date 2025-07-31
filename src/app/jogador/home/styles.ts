@@ -125,9 +125,35 @@ export const ContainerModalPaymentOptions = styled(C.Flex)`
 
     gap: 8px;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
+
+    align-items: flex-end;
 `
+
+export const ContainerDisablePix = styled(C.Flex)`
+    width: auto;
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    >p{
+        font-size: 10px;
+        line-height: 12px;
+    }
+`
+
+export const ContainerPix = styled(C.Flex)`
+    width: auto;
+    height: auto;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+`
+
 
 export const ContainerModalPayment = styled(C.Button)<modalReservaProps>`
     all: unset;
@@ -146,9 +172,18 @@ export const ContainerModalPayment = styled(C.Button)<modalReservaProps>`
     border: ${props => props.hasError ? `2px solid #D93131` : props.selected ? `2px solid #2FBB69` : "2px solid #FFFFFF40"};
     background-color: transparent;
 
+    >p{
+        white-space: nowrap;
+    }
+
     >img{
         width: 30px;
         height: auto;
+    }
+
+     &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
     }
 `
 
@@ -193,4 +228,17 @@ export const Button = styled(C.Button)`
     
     border-radius: 12px;
     background-color: ${theme.colors.verde.principal};
+`
+
+export const ContainerModalPaymentQrCode= styled(C.Flex)`
+    width: auto;
+    height: auto;
+    padding: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: start;
+
+    border-radius: 12px;
+    background-color: ${theme.colors.branco.principal};
 `
