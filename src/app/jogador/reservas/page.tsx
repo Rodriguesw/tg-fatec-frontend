@@ -76,40 +76,42 @@ export default function JogadorReservas() {
           <S.Content>
             <TitleWithButtonBack title='Minhas reservas' />
 
-            {hasEvents ? (
-              currentUser?.reserved_sports_location?.map((item: ReservedSportLocation) => (
-                <CardReserved
-                  key={item.id}
-                  id={item.id} 
-                  name={item.name}
-                  address={item.address}
-                  start_time={item.start_time}
-                  end_time={item.end_time}
-                  price={item.price}
-                  reserved_date={item.reserved_date}
-                  payment_method={item.payment_method}
-                  onClickEdit={(id) => {
-                    setSelectedCourtId(id); 
-                    setIsOpenModalEdit(true);
-                  }}
-                  onClickCancel={(id) => {
-                    setSelectedCourtId(id);
-                    setIsOpenModalCancel(true);
-                  }}
-                />
-              ))
-              
-            ):(
-              <S.NotFoundEvent>
-                <img src="/images/svg/icon-not-found.svg" alt="Nenhuma reserva encontrada"/>
+            <S.ContainerCard>
+              {hasEvents ? (
+                currentUser?.reserved_sports_location?.map((item: ReservedSportLocation) => (
+                  <CardReserved
+                    key={item.id}
+                    id={item.id} 
+                    name={item.name}
+                    address={item.address}
+                    start_time={item.start_time}
+                    end_time={item.end_time}
+                    price={item.price}
+                    reserved_date={item.reserved_date}
+                    payment_method={item.payment_method}
+                    onClickEdit={(id) => {
+                      setSelectedCourtId(id); 
+                      setIsOpenModalEdit(true);
+                    }}
+                    onClickCancel={(id) => {
+                      setSelectedCourtId(id);
+                      setIsOpenModalCancel(true);
+                    }}
+                  />
+                ))
+                
+              ):(
+                <S.NotFoundEvent>
+                  <img src="/images/svg/icon-not-found.svg" alt="Nenhuma reserva encontrada"/>
 
-                <LG 
-                  family={theme.fonts.inter}
-                  color={theme.colors.branco.secundario}>
-                  Você ainda não tem nenhuma reserva feita!
-                </LG>
-              </S.NotFoundEvent>
-            )}
+                  <LG 
+                    family={theme.fonts.inter}
+                    color={theme.colors.branco.secundario}>
+                    Você ainda não tem nenhuma reserva feita!
+                  </LG>
+                </S.NotFoundEvent>
+              )}
+              </S.ContainerCard>
           </S.Content>          
             
           <Navbar />

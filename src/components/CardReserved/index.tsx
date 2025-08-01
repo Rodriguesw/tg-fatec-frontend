@@ -37,11 +37,14 @@ export function CardReserved({
   onClickEdit, 
   onClickCancel
 }: CardReservedProps) {
+  console.log("reserved_date ====>>>>", reserved_date)
+
+
+  
   const formattedAddress = `${address.street}, ${address.number} - ${address.city}, ${address.state}`;
   const dateAndTime = `${reserved_date} ${start_time} - ${end_time}`;
 
   return (
-    <S.Container>
       <S.Card>
         <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
           {name}
@@ -73,6 +76,5 @@ export function CardReserved({
           </S.ButtonCancel>
         </S.ContainerButton>     
       </S.Card>
-    </S.Container>
   )
 }

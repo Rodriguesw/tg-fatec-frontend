@@ -6,6 +6,7 @@ import { GoogleMap, LoadScriptNext, Marker } from '@react-google-maps/api';
 import { Tooltip } from 'react-tooltip';
 import { QRCodeSVG } from 'qrcode.react';
 
+import { format, parseISO } from 'date-fns';
 
 import {
   mapContainerStyle,
@@ -49,7 +50,7 @@ export default function JogadorHome() {
   const [valueInputStartHours, setValueInputStartHours] = useState("");
   const [valueInputEndHours, setValueInputEndHours] = useState("");
 
-  const [methodPayment, setMethodPayment] = useState('dinheiro');
+  const [methodPayment, setMethodPayment] = useState('Dinheiro');
   const [methodPaymentMoneyError, setMethodPaymentMoneyError] = useState(false);
 
   const [hasErrorMethodPayment, setHasErrorMethodPayment] = useState(false);
@@ -177,7 +178,7 @@ export default function JogadorHome() {
     const day = raw.slice(0, 2)
     const month = raw.slice(2, 4)
     const year = raw.slice(4)
-    return `${year}-${month}-${day}`
+    return `${day}/${month}/${year}`
   }
 
   const todayDate = new Date().toISOString().split('T')[0]
@@ -200,32 +201,31 @@ export default function JogadorHome() {
   }
 
   const handleSubmitReserva = () => {
-    console.log("methodPaymentPix", methodPayment)
-    const hasMethodPaymentMoneyError = methodPayment !== 'dinheiro'
+  const hasMethodPaymentMoneyError = methodPayment !== 'Dinheiro';
+  const hasDateError = valueInputDate === '';
+  const hasStartHourError = valueInputStartHours === '';
+  const hasEndHourError = valueInputEndHours === '';
+  const hasIgualHours = valueInputStartHours === valueInputEndHours;
 
-    const hasDateError = valueInputDate === ''
-    const hasStartHourError = valueInputStartHours === ''
-    const hasEndHourError = valueInputEndHours === ''
+  const hasAnyError =
+    hasMethodPaymentMoneyError ||
+    hasDateError ||
+    hasStartHourError ||
+    hasEndHourError ||
+    hasIgualHours;
 
-    const hasIgualHours = valueInputStartHours === valueInputEndHours
-  
-    const hasAnyError = hasMethodPaymentMoneyError || hasDateError || hasStartHourError || hasEndHourError || hasIgualHours
-  
-    // Aplica os erros para mostrar visualmente nos inputs
-    setMethodPaymentMoneyError(hasMethodPaymentMoneyError)
-    setHasErrorDate(hasDateError)
-    setHasErrorStartHours(hasStartHourError)
-    setHasErrorEndHours(hasEndHourError)
-    setHasErrorStartHours(hasIgualHours)
-    setHasErrorEndHours(hasIgualHours)
-  
-    if (hasAnyError) {
-      showToast({
-        type: 'error',
-        message: 'Verifique todos os campos em vermelho.'
-      })
-      return
-    }
+  setMethodPaymentMoneyError(hasMethodPaymentMoneyError);
+  setHasErrorDate(hasDateError);
+  setHasErrorStartHours(hasStartHourError || hasIgualHours);
+  setHasErrorEndHours(hasEndHourError || hasIgualHours);
+
+  if (hasAnyError) {
+    showToast({
+      type: 'error',
+      message: 'Verifique todos os campos em vermelho.',
+    });
+    return;
+  }
 
     // Aqui você pode continuar com a lógica da reserva, ex:
     console.log("==============QUADRA==============")
@@ -233,21 +233,80 @@ export default function JogadorHome() {
     console.log("cepData", cepData)
     console.log("==============PAGAMENTO==============")
     console.log("methodPayment", methodPayment)
+    console.log("price", valorReserva.toFixed(2).replace('.', ','))
     console.log("valueInputStartHours", valueInputStartHours)
     console.log("valueInputEndHours", valueInputEndHours)
     console.log("formatToHtmlDate(valueInputDate)", formatToHtmlDate(valueInputDate))
 
-    // Sucesso
-    showToast({
-      type: 'success',
-      message: 'Reserva feita com sucesso!'
-    })
 
-    setIsModalReserva(false)
-    setIsModalLocalization(false)
-  
-    clearInputs()
+  // Cria a nova reserva
+  const novaReserva = {
+    id: Date.now(), // ID único
+    name: selectedMarker.title,
+    address: {
+      id: Date.now() + 1,
+      cep: cepData.cep,
+      number: cepData.numero,
+      street: cepData.logradouro,
+      city: cepData.localidade,
+      neighborhood: cepData.bairro,
+      state: cepData.uf,
+    },
+    start_time: valueInputStartHours,
+    end_time: valueInputEndHours,
+    price: `R$ ${valorReserva.toFixed(2).replace('.', ',')}`,
+    reserved_date: formatToHtmlDate(valueInputDate),
+    payment_method: methodPayment
+  };
+
+  console.log('Nova reserva:', novaReserva);
+
+  // Recupera o usuário atual
+  const currentUserRaw = localStorage.getItem("currentUser");
+  if (!currentUserRaw) return;
+
+  const currentUser = JSON.parse(currentUserRaw);
+
+  // Adiciona a reserva ao currentUser
+  if (!Array.isArray(currentUser.reserved_sports_location)) {
+    currentUser.reserved_sports_location = [];
   }
+  currentUser.reserved_sports_location.push(novaReserva);
+
+  // Atualiza o localStorage com o currentUser
+  localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+  // Agora atualiza também o infoUser
+  const infoUsersRaw = localStorage.getItem("infoUser");
+  const infoUsers = infoUsersRaw ? JSON.parse(infoUsersRaw) : {};
+
+  const userId = currentUser.id;
+
+  if (infoUsers[userId]) {
+    if (!Array.isArray(infoUsers[userId].reserved_sports_location)) {
+      infoUsers[userId].reserved_sports_location = [];
+    }
+
+    infoUsers[userId].reserved_sports_location.push(novaReserva);
+  } else {
+    // Se o usuário não estiver no infoUser ainda, adiciona
+    infoUsers[userId] = currentUser;
+  }
+
+  // Salva infoUser atualizado
+  localStorage.setItem("infoUser", JSON.stringify(infoUsers));
+
+  // Feedback e limpeza
+  showToast({
+    type: 'success',
+    message: 'Reserva feita com sucesso!',
+  });
+
+  setIsModalReserva(false);
+  setIsModalLocalization(false);
+  clearInputs();
+};
+
   
   const handleDateChange = (value: string) => {
     setValueInputDate(value)
@@ -483,8 +542,8 @@ const valorReserva = horasReservadas * valorHora;
                    <div style={{width: 'auto', height: 'auto', gap: "8px",display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     <S.ContainerModalPayment 
                       hasError={methodPaymentMoneyError}
-                      selected={methodPayment === "dinheiro"}
-                      onClick={() => {setMethodPayment("dinheiro"), setMethodPaymentMoneyError(false)}}
+                      selected={methodPayment === "Dinheiro"}
+                      onClick={() => {setMethodPayment("Dinheiro"), setMethodPaymentMoneyError(false)}}
                       >
                       <MD 
                         family={theme.fonts.inter}
