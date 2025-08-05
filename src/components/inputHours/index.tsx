@@ -51,17 +51,6 @@ export function InputHours({
 
   const hourOptions = generateHourOptions()
 
-  // Inicializa o valor
-  // useEffect(() => {
-  //   if (value && isValidHour(value)) {
-  //     setTimeValue(value)
-  //   } else {
-  //     const defaultValue = hourOptions[0] || '00:00'
-  //     setTimeValue(defaultValue)
-  //     if (onChange) onChange(defaultValue)
-  //   }
-  // }, [value, minHour, maxHour, isToday])
-
   useEffect(() => {
     if (value && isValidHour(value)) {
       setTimeValue(value)

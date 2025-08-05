@@ -181,7 +181,7 @@ export default function JogadorHome() {
     return `${day}/${month}/${year}`
   }
 
-  const todayDate = new Date().toISOString().split('T')[0]
+  const todayDate = new Date().toLocaleDateString('pt-BR')
   const isToday = formatToHtmlDate(valueInputDate) === todayDate
 
   const handleCloseModal = () => {
@@ -201,31 +201,40 @@ export default function JogadorHome() {
   }
 
   const handleSubmitReserva = () => {
-  const hasMethodPaymentMoneyError = methodPayment !== 'Dinheiro';
-  const hasDateError = valueInputDate === '';
-  const hasStartHourError = valueInputStartHours === '';
-  const hasEndHourError = valueInputEndHours === '';
-  const hasIgualHours = valueInputStartHours === valueInputEndHours;
+    const hasMethodPaymentMoneyError = methodPayment !== 'Dinheiro';
+    const hasDateError = valueInputDate === '';
+    const hasStartHourError = valueInputStartHours === '';
+    const hasEndHourError = valueInputEndHours === '';
+    const hasIgualHours = valueInputStartHours === valueInputEndHours;
+    const hasStarBiggerThanEnd = valueInputStartHours > valueInputEndHours;
 
-  const hasAnyError =
-    hasMethodPaymentMoneyError ||
-    hasDateError ||
-    hasStartHourError ||
-    hasEndHourError ||
-    hasIgualHours;
+    const willSetEndHourToZero = hasIgualHours;
+    const hasZeroHours = hasIgualHours || valueInputEndHours === "00:00";
 
-  setMethodPaymentMoneyError(hasMethodPaymentMoneyError);
-  setHasErrorDate(hasDateError);
-  setHasErrorStartHours(hasStartHourError || hasIgualHours);
-  setHasErrorEndHours(hasEndHourError || hasIgualHours);
+    if (willSetEndHourToZero) {
+      setValueInputEndHours("00:00");
+    }
 
-  if (hasAnyError) {
-    showToast({
-      type: 'error',
-      message: 'Verifique todos os campos em vermelho.',
-    });
-    return;
-  }
+    const hasAnyError =
+      hasMethodPaymentMoneyError ||
+      hasDateError ||
+      hasStartHourError ||
+      hasEndHourError ||
+      hasZeroHours || 
+      hasStarBiggerThanEnd;
+
+    setMethodPaymentMoneyError(hasMethodPaymentMoneyError);
+    setHasErrorDate(hasDateError);
+    setHasErrorStartHours(hasStartHourError);
+    setHasErrorEndHours(hasEndHourError || hasZeroHours || hasStarBiggerThanEnd);
+
+    if (hasAnyError) {
+      showToast({
+        type: 'error',
+        message: 'Verifique todos os campos em vermelho.',
+      });
+      return;
+    }
 
     // Aqui você pode continuar com a lógica da reserva, ex:
     console.log("==============QUADRA==============")
@@ -238,74 +247,73 @@ export default function JogadorHome() {
     console.log("valueInputEndHours", valueInputEndHours)
     console.log("formatToHtmlDate(valueInputDate)", formatToHtmlDate(valueInputDate))
 
+    // Cria a nova reserva
+    const novaReserva = {
+      id: Date.now(), // ID único
+      name: selectedMarker.title,
+      address: {
+        id: Date.now() + 1,
+        cep: cepData.cep,
+        number: cepData.numero,
+        street: cepData.logradouro,
+        city: cepData.localidade,
+        neighborhood: cepData.bairro,
+        state: cepData.uf,
+      },
+      start_time: valueInputStartHours,
+      end_time: valueInputEndHours,
+      price: `R$ ${valorReserva.toFixed(2).replace('.', ',')}`,
+      reserved_date: formatToHtmlDate(valueInputDate),
+      payment_method: methodPayment
+    };
 
-  // Cria a nova reserva
-  const novaReserva = {
-    id: Date.now(), // ID único
-    name: selectedMarker.title,
-    address: {
-      id: Date.now() + 1,
-      cep: cepData.cep,
-      number: cepData.numero,
-      street: cepData.logradouro,
-      city: cepData.localidade,
-      neighborhood: cepData.bairro,
-      state: cepData.uf,
-    },
-    start_time: valueInputStartHours,
-    end_time: valueInputEndHours,
-    price: `R$ ${valorReserva.toFixed(2).replace('.', ',')}`,
-    reserved_date: formatToHtmlDate(valueInputDate),
-    payment_method: methodPayment
-  };
+    console.log('Nova reserva:', novaReserva);
 
-  console.log('Nova reserva:', novaReserva);
+    // Recupera o usuário atual
+    const currentUserRaw = localStorage.getItem("currentUser");
+    if (!currentUserRaw) return;
 
-  // Recupera o usuário atual
-  const currentUserRaw = localStorage.getItem("currentUser");
-  if (!currentUserRaw) return;
+    const currentUser = JSON.parse(currentUserRaw);
 
-  const currentUser = JSON.parse(currentUserRaw);
+    // Adiciona a reserva ao currentUser
+    if (!Array.isArray(currentUser.reserved_sports_location)) {
+      currentUser.reserved_sports_location = [];
+    }
+    currentUser.reserved_sports_location.push(novaReserva);
 
-  // Adiciona a reserva ao currentUser
-  if (!Array.isArray(currentUser.reserved_sports_location)) {
-    currentUser.reserved_sports_location = [];
-  }
-  currentUser.reserved_sports_location.push(novaReserva);
+    // Atualiza o localStorage com o currentUser
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
-  // Atualiza o localStorage com o currentUser
-  localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    // Agora atualiza também o infoUser
+    const infoUsersRaw = localStorage.getItem("infoUser");
+    const infoUsers = infoUsersRaw ? JSON.parse(infoUsersRaw) : {};
 
-  // Agora atualiza também o infoUser
-  const infoUsersRaw = localStorage.getItem("infoUser");
-  const infoUsers = infoUsersRaw ? JSON.parse(infoUsersRaw) : {};
+    const userId = currentUser.id;
 
-  const userId = currentUser.id;
+    if (infoUsers[userId]) {
+      if (!Array.isArray(infoUsers[userId].reserved_sports_location)) {
+        infoUsers[userId].reserved_sports_location = [];
+      }
 
-  if (infoUsers[userId]) {
-    if (!Array.isArray(infoUsers[userId].reserved_sports_location)) {
-      infoUsers[userId].reserved_sports_location = [];
+      infoUsers[userId].reserved_sports_location.push(novaReserva);
+    } else {
+      // Se o usuário não estiver no infoUser ainda, adiciona
+      infoUsers[userId] = currentUser;
     }
 
-    infoUsers[userId].reserved_sports_location.push(novaReserva);
-  } else {
-    // Se o usuário não estiver no infoUser ainda, adiciona
-    infoUsers[userId] = currentUser;
-  }
+    // Salva infoUser atualizado
+    localStorage.setItem("infoUser", JSON.stringify(infoUsers));
 
-  // Salva infoUser atualizado
-  localStorage.setItem("infoUser", JSON.stringify(infoUsers));
+    // Feedback e limpeza
+    showToast({
+      type: 'success',
+      message: 'Reserva feita com sucesso!',
+    });
 
-  // Feedback e limpeza
-  showToast({
-    type: 'success',
-    message: 'Reserva feita com sucesso!',
-  });
-
-  setIsModalReserva(false);
-  setIsModalLocalization(false);
-  clearInputs();
-};
+    setIsModalReserva(false);
+    setIsModalLocalization(false);
+    clearInputs();
+  };
 
   
   const handleDateChange = (value: string) => {
@@ -325,24 +333,37 @@ export default function JogadorHome() {
 
   const valorHora = 100;
 
-function calcularHorasReservadas(inicio: string, fim: string): number {
-  const [startHour, startMinute] = inicio.split(':').map(Number);
-  const [endHour, endMinute] = fim.split(':').map(Number);
+  function calcularHorasReservadas(inicio: string, fim: string): number {
+    const [startHour, startMinute] = inicio.split(':').map(Number);
+    const [endHour, endMinute] = fim.split(':').map(Number);
 
-  const startTotalMinutes = startHour * 60 + startMinute;
-  const endTotalMinutes = endHour * 60 + endMinute;
+    const startTotalMinutes = startHour * 60 + startMinute;
+    const endTotalMinutes = endHour * 60 + endMinute;
 
-  const durationInMinutes = endTotalMinutes - startTotalMinutes;
-  const durationInHours = durationInMinutes / 60;
+    const durationInMinutes = endTotalMinutes - startTotalMinutes;
+    const durationInHours = durationInMinutes / 60;
 
-  return durationInHours > 0 ? durationInHours : 0;
-}
+    return durationInHours > 0 ? durationInHours : 0;
+  }
 
-const horasReservadas = valueInputStartHours && valueInputEndHours
-  ? calcularHorasReservadas(valueInputStartHours, valueInputEndHours)
-  : 0;
+  const horasReservadas = valueInputStartHours && valueInputEndHours
+    ? calcularHorasReservadas(valueInputStartHours, valueInputEndHours)
+    : 0;
 
-const valorReserva = horasReservadas * valorHora;
+  const valorReserva = horasReservadas * valorHora;
+
+  const getDynamicMinHour = () => {
+    console.log('isToday', isToday);
+    if (!isToday) return 6;
+
+    const now = new Date();
+    const nextHour = now.getHours() + 1;
+
+    console.log('nextHour', nextHour);
+
+    // Limita o horário para no máximo o maxHour
+    return nextHour >= 22 ? 22 : nextHour;
+  };
 
   if (!isMounted || !userLocation) return null;
 
@@ -611,7 +632,7 @@ const valorReserva = horasReservadas * valorHora;
                       disabled={valueInputDate !== '' ? false : true}
                       value={valueInputStartHours} 
                       onChange={handleHoursStartChange}  
-                      minHour={6}
+                      minHour={getDynamicMinHour()}
                       maxHour={22}
                       isToday={isToday}
                       hasError={hasErrorStartHours}
