@@ -190,7 +190,7 @@ export default function JogadorReservas() {
                 <SM
                   family={theme.fonts.inter}
                   color={theme.colors.branco.secundario}>
-                  Deseja realmente cancelar a reserva?
+                  Deseja realmente cancelar a reserva {selectedCourt?.name}?
                 </SM>
 
                 <S.ContainerButtonModalCancel>
@@ -207,7 +207,25 @@ export default function JogadorReservas() {
                   <S.Button>
                     <MD 
                     color={theme.colors.branco.principal} 
-                    family={theme.fonts.inter}>
+                    family={theme.fonts.inter}
+                    onClick={() => {
+                      if (selectedCourtId !== null) {
+                        const updatedReservations = currentUser.reserved_sports_location.filter(
+                          (item: ReservedSportLocation) => item.id !== selectedCourtId
+                        );
+
+                        const updatedUser = {
+                          ...currentUser,
+                          reserved_sports_location: updatedReservations,
+                        };
+
+                        setCurrentUser(updatedUser);
+                        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                      }
+
+                      setIsOpenModalCancel(false);
+                    }}
+                    >
                       Confirmar
                   </MD>
                 </S.Button>
