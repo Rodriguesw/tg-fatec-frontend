@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import * as C from '@chakra-ui/react'
 
 interface InputContainerProps  {
+    hasValue: boolean
     $hasError: boolean
 }
 
@@ -30,10 +31,10 @@ export const Select = styled.select<InputContainerProps >`
     padding: 8px 12px;
 
     font-size: 18px;
-    color: #FFFFFF40;
     font-weight: 400;
     line-height: auto;
     font-family: "Inter";
+    color: ${props => props.hasValue ? "#FFFFFF70" :  "#FFFFFF40"};
 
     border-radius: 12px;
     background-color: transparent;

@@ -117,7 +117,7 @@ export default function JogadorReservas() {
           <Navbar />
       </S.Wrapper>
 
-      {isOpenModalEdit && 
+      {/* {isOpenModalEdit && 
         <Modal isOpen={isOpenModalEdit} onClose={() => setIsOpenModalEdit(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
@@ -165,7 +165,7 @@ export default function JogadorReservas() {
             </Dialog.Body>
           </S.ContainerModalEdit>
         </Modal>
-      }
+      } */}
 
       {isOpenModalCancel && 
         <Modal isOpen={isOpenModalCancel} onClose={() => setIsOpenModalCancel(false)}>

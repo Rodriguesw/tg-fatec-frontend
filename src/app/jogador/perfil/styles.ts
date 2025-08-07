@@ -77,7 +77,33 @@ export const ContainerModalEdit = styled(C.Flex)`
     background-color: #0D1321;
 `
 
-export const ContainerButtonModalEdit = styled(C.Flex)`
+export const ContainerButtonModalRegister = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+
+    >button{
+        width: 100%;
+        height: 48px;
+        max-width: 112px;
+        padding: 8px 4px;
+
+        border-radius: 8px;
+    }
+
+    >button:first-child{
+        background-color: ${theme.colors.vermelho};
+    }
+
+    >button:last-child{
+        background-color: ${theme.colors.verde.secundario};
+    }
+`
+
+export const ContainerButtonModalSettings = styled(C.Flex)`
     width: 100%;
     height: auto;
 
@@ -110,5 +136,5 @@ export const ModalButton = styled(C.Button)`
     padding: 12px 24px;
     
     border-radius: 12px;
-    background-color: ${theme.colors.verde.principal};
+    background-color: ${theme.colors.vermelho};
 `

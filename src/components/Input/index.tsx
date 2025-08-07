@@ -15,6 +15,7 @@ interface InputProps {
     value?: string
     onChange?: (value: string) => void 
     hasError?: boolean
+    hasValue?: boolean
     options?: Option[]
 }
 
@@ -26,6 +27,7 @@ export function Input({
     value, 
     onChange, 
     hasError = false, 
+    hasValue = false,
     options 
 }: InputProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -45,6 +47,7 @@ export function Input({
                     id={id}
                     value={value} 
                     onChange={handleChange}
+                    hasValue={value ? true : false}
                     $hasError={hasError}
                 >
                     <option value="">{placeholder}</option>
@@ -60,8 +63,9 @@ export function Input({
                     id={id}
                     type={type === 'date' ? 'date' : type} 
                     placeholder={placeholder}
-                    value={value}
+                    value={value ? value : ''}
                     onChange={handleChange}
+                    hasValue={value ? true : false}
                     $hasError={hasError}
                     max={type === 'date' ? new Date().toISOString().split('T')[0] : undefined}
                 />

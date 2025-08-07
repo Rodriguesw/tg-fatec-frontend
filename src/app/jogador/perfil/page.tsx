@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
 import { Modal } from '@/components/Modal';
+import { Input } from '@/components/Input';
 
 import { Dialog } from "@chakra-ui/react"
 
@@ -13,49 +14,130 @@ import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { LG, MD, SM } from '@/styles/typographStyles';
 
+interface FormErrors {
+  name: boolean;
+  birthDate: boolean;
+  gender: boolean;
+  team: boolean;
+  email: boolean;
+}
+
 export default function JogadorPerfil() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-
+  
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  
+  const [openMyData, setOpenMyData] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
+  
+  const [name, setName] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [gender, setGender] = useState('');
+  const [team, setTeam] = useState('');
+  const [email, setEmail] = useState('');
+  
+  const [errors, setErrors] = useState<FormErrors>({
+    name: false,
+    birthDate: false,
+    gender: false,
+    team: false,
+    email: false,
+  });
+  
+  const [isLoading, setIsLoading] = useState(false);
 
+  const genderOptions = [
+    { label: 'Masculino', value: 'male' },
+    { label: 'Feminino', value: 'female' },
+  ];
+
+  const teamOptions = [
+    { label: 'Corinthians', value: 'corinthians' },
+    { label: 'Palmeiras', value: 'palmeiras' },
+    { label: 'São Paulo', value: 'sao_paulo' },
+    { label: 'Santos', value: 'santos' },
+    { label: 'Outro', value: 'other' }
+  ];
+  
   useEffect(() => {
     setIsMounted(true); 
   }, []);
+
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUser');
+
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setCurrentUser(parsedUser);
+
+      setName(parsedUser.name)
+      setBirthDate(parsedUser.birth_date)
+      setGender(parsedUser.gender)
+      setTeam(parsedUser.team)
+      setEmail(parsedUser.email)
+    } 
+  }, []);
+
+  const handleNameChange = (value: string) => {
+    setName(value);
+    setErrors(prev => ({ ...prev, name: false }));
+  };
+
+  const handleBirthDateChange = (value: string) => {
+    setBirthDate(value);
+    setErrors(prev => ({ ...prev, birthDate: false }));
+  };
+
+  const handleGenderChange = (value: string) => {
+    setGender(value);
+    setErrors(prev => ({ ...prev, gender: false }));
+  };
+
+  const handleTeamChange = (value: string) => {
+    setTeam(value);
+    setErrors(prev => ({ ...prev, team: false }));
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setErrors(prev => ({ ...prev, email: false }));
+  };
+
+  const handleDeleteAccount = () => {
+    const userIdToDelete = currentUser.id;
+  
+    const infoUserRaw = localStorage.getItem('infoUser');
+  
+    if (!infoUserRaw) return;
+  
+    try {
+      const infoUserParsed = JSON.parse(infoUserRaw);
+  
+      if (infoUserParsed[userIdToDelete]) {
+        delete infoUserParsed[userIdToDelete];
+  
+        localStorage.setItem('infoUser', JSON.stringify(infoUserParsed));
+  
+        localStorage.removeItem('currentUser');
+  
+        router.push('/jogador/login');
+      } else {
+        console.warn('Usuário não encontrado no infoUser.');
+      }
+    } catch (error) {
+      console.error('Erro ao fazer parse de infoUser:', error);
+    }
+  
+    setOpenSettings(false);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
     
     router.push('/jogador/login');
   }
-
-  // const handleDeleteAccount = () => {
-  //   const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-  //   const userIdToDelete = currentUser.id;
-
-  //   const infoUserRaw = localStorage.getItem('infoUser');
-
-  //   console.log("infoUserRaw", infoUserRaw);
-
-  //   // if (!infoUserRaw) return;
-
-  //   // try {
-  //   //   const infoUserParsed = JSON.parse(infoUserRaw);
-
-  //   //   // Verifica se é um único objeto e se é o mesmo usuário
-  //   //   if (infoUserParsed.id === userIdToDelete) {
-  //   //     localStorage.removeItem('infoUser');
-  //   //     localStorage.removeItem('currentUser');
-  //   //     router.push('/jogador/login');
-  //   //   } else {
-  //   //     console.warn('O usuário logado não corresponde ao infoUser.');
-  //   //   }
-  //   // } catch (error) {
-  //   //   console.error('Erro ao fazer parse de infoUser:', error);
-  //   // }
-
-  //   setOpenSettings(false);
-  // };
 
   if (!isMounted) return null; 
 
@@ -70,7 +152,7 @@ export default function JogadorPerfil() {
               </S.ContainerPhoto>
 
               <S.ContainerButtons>
-                <S.Button>
+                <S.Button onClick={() => setOpenMyData(true)}>
                   <LG  
                     color={theme.colors.branco.secundario} 
                     family={theme.fonts.inter}>
@@ -99,7 +181,95 @@ export default function JogadorPerfil() {
           <Navbar />
       </S.Wrapper>
 
-      {/* {openSettings && 
+      {openMyData && 
+        <Modal isOpen={openMyData} onClose={() => setOpenMyData(false)}>
+          <S.ContainerModalEdit>
+            <Dialog.Header>
+              <Dialog.Title textAlign="center">
+                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                  Meu cadastro
+                </LG>
+              </Dialog.Title>
+            </Dialog.Header>
+
+            <Dialog.Body
+              gap="16px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+            >
+              <Input 
+                id="name"
+                type='text' 
+                value={name}
+                placeholder='Nome completo' 
+                label='Nome completo *' 
+                onChange={handleNameChange}
+                hasError ={errors.name}
+              />
+
+              <Input 
+                id="birthDate"
+                type='date' 
+                value={birthDate}
+                placeholder='00/00/0000' 
+                label='Data de nascimento *' 
+                onChange={handleBirthDateChange}
+                hasError ={errors.birthDate}
+              />
+
+              <Input 
+                id="gender"
+                type='select' 
+                placeholder='Selecionar' 
+                label='Sexo' 
+                onChange={handleGenderChange}
+                options={genderOptions}
+                value={gender}
+                hasError ={errors.gender}
+              />
+
+              <Input 
+                id="team"
+                type='select' 
+                placeholder='Selecionar' 
+                label='Time do coração' 
+                onChange={handleTeamChange}
+                options={teamOptions}
+                value={team}
+                hasError ={errors.team}
+              />
+
+              <Input 
+                id="email"
+                type='text' 
+                value={email}
+                placeholder='email@mail.com' 
+                label='E-mail *' 
+                onChange={handleEmailChange}
+                hasError ={errors.email}
+              />
+
+              <S.ContainerButtonModalRegister>
+                <S.ModalButton onClick={() => setOpenMyData(false)}>
+                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    Cancelar
+                  </MD>
+                </S.ModalButton>
+
+                <S.ModalButton>
+                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    Salvar
+                  </MD>
+                </S.ModalButton>
+              </S.ContainerButtonModalRegister>
+            </Dialog.Body>
+          </S.ContainerModalEdit>
+        </Modal>
+      }
+
+      {openSettings && 
         <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
@@ -120,10 +290,10 @@ export default function JogadorPerfil() {
               <SM
                 family={theme.fonts.inter}
                 color={theme.colors.branco.secundario}>
-                Tem certeza de que deseja excluir sua conta?
+                Tem certeza de que deseja excluir permanente sua conta?
               </SM>
 
-              <S.ContainerButtonModalEdit>
+              <S.ContainerButtonModalSettings>
                 <S.ModalButton onClick={() => setOpenSettings(false)}>
                   <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                     Cancelar
@@ -135,11 +305,11 @@ export default function JogadorPerfil() {
                     Confirmar
                   </MD>
                 </S.ModalButton>
-              </S.ContainerButtonModalEdit>
+              </S.ContainerButtonModalSettings>
             </Dialog.Body>
           </S.ContainerModalEdit>
         </Modal>
-      } */}
+      }
     </S.Container>
   );
 }

@@ -63,11 +63,11 @@ export function CardReserved({
         </SM>
 
         <S.ContainerButton>
-          <S.ButtonEdit onClick={() => onClickEdit(id)}>
+          {/* <S.ButtonEdit onClick={() => onClickEdit(id)}>
             <SM family={theme.fonts.inter} color={theme.colors.azul.segundario}>
               Alterar
             </SM> 
-          </S.ButtonEdit>
+          </S.ButtonEdit> */}
 
           <S.ButtonCancel onClick={() => onClickCancel(id)}>
             <SM family={theme.fonts.inter} color={theme.colors.vermelho}>
