@@ -66,7 +66,7 @@ export const Button = styled(C.Button)`
 `
 
 export const ContainerModalEdit = styled(C.Flex)`
-    width: 320px;
+    width: 360px;
     height: auto;
     padding: 16px;
     

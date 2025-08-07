@@ -7,8 +7,9 @@ import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
 import { Modal } from '@/components/Modal';
 import { Input } from '@/components/Input';
+import { showToast } from '@/components/ToastAlert';
 
-import { Dialog } from "@chakra-ui/react"
+import { Dialog, Spinner } from "@chakra-ui/react"
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
@@ -85,6 +86,11 @@ export default function JogadorPerfil() {
     setErrors(prev => ({ ...prev, name: false }));
   };
 
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setErrors(prev => ({ ...prev, email: false }));
+  };
+
   const handleBirthDateChange = (value: string) => {
     setBirthDate(value);
     setErrors(prev => ({ ...prev, birthDate: false }));
@@ -100,10 +106,89 @@ export default function JogadorPerfil() {
     setErrors(prev => ({ ...prev, team: false }));
   };
 
-  const handleEmailChange = (value: string) => {
-    setEmail(value);
-    setErrors(prev => ({ ...prev, email: false }));
+  const validateEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|org|org\.br|yahoo|net)$/;
+
+    return regex.test(email);
   };
+
+  const validateFields = (): boolean => {
+      const newErrors: FormErrors = {
+        name: !name.trim(),
+        birthDate: !birthDate.trim(),
+        gender: !gender.trim(),
+        team: !team.trim(),
+        email: !email.trim() || !validateEmail(email),
+      };
+      
+      const hasEmptyFields = Object.values(newErrors).some(error => error);
+      
+      const hasInvalidEmail = !validateEmail(email) && email.trim();
+      
+      setErrors(newErrors);
+  
+      if (hasEmptyFields) {
+        showToast({
+          type: 'error',
+          message: 'Preencha todos os campos'
+        });
+        return false;
+      }
+  
+      if (hasInvalidEmail) {
+        showToast({
+          type: 'error',
+          message: 'Insira um e-mail válido'
+        });
+        return false;
+      }
+  
+      return true;
+    };
+
+  const handleSavedChanges = () => {
+    if (!validateFields()) {
+      return;
+    }
+    
+    setIsLoading(true);
+
+    try {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      const infoUserRaw = localStorage.getItem('infoUser');
+      const infoUser = infoUserRaw ? JSON.parse(infoUserRaw) : {};
+
+      const updatedUser = {
+        ...currentUser,
+        name,
+        birth_date: birthDate,
+        gender,
+        team,
+        email,
+      };
+
+      setTimeout(() => {
+        setIsLoading(false); 
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+        if (updatedUser.id) {
+          infoUser[updatedUser.id] = updatedUser;
+          localStorage.setItem('infoUser', JSON.stringify(infoUser));
+        }
+
+        showToast({
+          type: 'success',
+          message: 'Suas alterações foram salvas com sucesso!'
+        });
+
+        setOpenMyData(false);
+      }, 200); 
+
+    } catch (error) {
+      setIsLoading(false); 
+    }
+  };
+
 
   const handleDeleteAccount = () => {
     const userIdToDelete = currentUser.id;
@@ -210,6 +295,16 @@ export default function JogadorPerfil() {
               />
 
               <Input 
+                id="email"
+                type='text' 
+                value={email}
+                placeholder='email@mail.com' 
+                label='E-mail *' 
+                onChange={handleEmailChange}
+                hasError ={errors.email}
+              />
+
+              <Input 
                 id="birthDate"
                 type='date' 
                 value={birthDate}
@@ -241,16 +336,6 @@ export default function JogadorPerfil() {
                 hasError ={errors.team}
               />
 
-              <Input 
-                id="email"
-                type='text' 
-                value={email}
-                placeholder='email@mail.com' 
-                label='E-mail *' 
-                onChange={handleEmailChange}
-                hasError ={errors.email}
-              />
-
               <S.ContainerButtonModalRegister>
                 <S.ModalButton onClick={() => setOpenMyData(false)}>
                   <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
@@ -258,10 +343,12 @@ export default function JogadorPerfil() {
                   </MD>
                 </S.ModalButton>
 
-                <S.ModalButton>
-                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                    Salvar
-                  </MD>
+                <S.ModalButton onClick={handleSavedChanges}>
+                  {isLoading ? (<Spinner />) : (
+                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      Salvar
+                    </MD>
+                  )}
                 </S.ModalButton>
               </S.ContainerButtonModalRegister>
             </Dialog.Body>
