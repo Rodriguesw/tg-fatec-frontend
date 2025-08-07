@@ -289,7 +289,7 @@ export default function JogadorPerfil() {
                 type='text' 
                 value={name}
                 placeholder='Nome completo' 
-                label='Nome completo *' 
+                label='Nome completo' 
                 onChange={handleNameChange}
                 hasError ={errors.name}
               />
@@ -299,7 +299,7 @@ export default function JogadorPerfil() {
                 type='text' 
                 value={email}
                 placeholder='email@mail.com' 
-                label='E-mail *' 
+                label='E-mail' 
                 onChange={handleEmailChange}
                 hasError ={errors.email}
               />
@@ -309,7 +309,7 @@ export default function JogadorPerfil() {
                 type='date' 
                 value={birthDate}
                 placeholder='00/00/0000' 
-                label='Data de nascimento *' 
+                label='Data de nascimento' 
                 onChange={handleBirthDateChange}
                 hasError ={errors.birthDate}
               />
@@ -332,7 +332,7 @@ export default function JogadorPerfil() {
                 label='Time do coração' 
                 onChange={handleTeamChange}
                 options={teamOptions}
-                value={team}
+                value={team} 
                 hasError ={errors.team}
               />
 
