@@ -110,7 +110,7 @@ export default function JogadorHome() {
           },
           {
             enableHighAccuracy: true,
-            timeout: 10000, // aumenta o tempo para tentar pegar GPS
+            timeout: 5000, // aumenta o tempo para tentar pegar GPS
             maximumAge: 0,
           }
         );
