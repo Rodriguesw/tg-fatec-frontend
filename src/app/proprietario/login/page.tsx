@@ -8,7 +8,7 @@ import { Spinner } from "@chakra-ui/react";
 
 import { Input } from "@/components/Input";
 import { showToast } from "@/components/ToastAlert";
-import { TitleWithButtonBack } from "@/components/TitleWithButtonBack";
+import { TitleWithButtons } from "@/components/TitleWithButtons";
 import { LoginWithBannerAndModal } from "@/components/LoginWithBannerAndModal";
 
 import * as S from "./styles";
@@ -191,7 +191,7 @@ export default function LoginProprietario() {
         >
           <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack
+              <TitleWithButtons
                 title="Proprietário"
                 buttonBack={true}
                 onClick={handleClick}

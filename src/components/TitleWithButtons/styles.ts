@@ -7,6 +7,8 @@ export const Container = styled(C.Flex)`
 
     gap: 4px;
     align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
 `;
 
 export const ButtonBack = styled(C.Button)`
@@ -20,5 +22,14 @@ export const ButtonBack = styled(C.Button)`
     justify-content: center;
 `;  
 
+export const ButtonAdd= styled(C.Button)`
+    all: unset;
 
+    width: 29px;
+    height: 29px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`; 
 

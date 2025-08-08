@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
 import { Input } from '@/components/Input';
 import { Navbar } from '@/components/Navbar';
-import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
+import { TitleWithButtons } from '@/components/TitleWithButtons';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
@@ -74,7 +74,7 @@ export default function JogadorReservas() {
           <Header />
 
           <S.Content>
-            <TitleWithButtonBack title='Minhas reservas' />
+            <TitleWithButtons title='Minhas reservas' />
 
             <S.ContainerCard>
               {hasEvents ? (

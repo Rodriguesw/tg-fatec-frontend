@@ -8,7 +8,7 @@ import { Spinner } from '@chakra-ui/react';
 import { Input } from '@/components/Input';
 import { Header } from '@/components/Header';
 import { showToast } from '@/components/ToastAlert';
-import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
+import { TitleWithButtons } from '@/components/TitleWithButtons';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
@@ -243,7 +243,7 @@ export default function JogadorCadastro() {
   
           <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack title='Dados cadastrais' buttonBack={true} onClick={handleClick} />
+              <TitleWithButtons title='Dados cadastrais' buttonBack={true} onClick={handleClick} />
             </S.ContentHeader>
   
             <S.ContentForm>

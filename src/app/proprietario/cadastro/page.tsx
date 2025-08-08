@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Input } from '@/components/Input';
-import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
+import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
 import * as S from './styles';
@@ -36,7 +36,7 @@ export default function ProprietarioCadastroClient() {
   
           <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack title='Dados cadastrais' buttonBack={true} onClick={handleClick} />
+              <TitleWithButtons title='Dados cadastrais' buttonBack={true} onClick={handleClick} />
             </S.ContentHeader>
   
             <S.ContentForm>

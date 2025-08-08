@@ -11,7 +11,7 @@ import { Dialog,Button, PinInput, Spinner } from "@chakra-ui/react"
 import { Input } from '@/components/Input';
 import { Modal } from '@/components/Modal';
 import { showToast } from '@/components/ToastAlert';
-import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
+import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
 import * as S from './styles';
@@ -212,7 +212,7 @@ export default function JogadorRecuperarSenha() {
           <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-jogador.jpg'>
             <S.Content>
               <S.ContentHeader>
-                <TitleWithButtonBack title='Recuperar senha' buttonBack={true} onClick={handleClick}  />
+                <TitleWithButtons title='Recuperar senha' buttonBack={true} onClick={handleClick}  />
   
                 <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                   Recuperar senha

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Spinner } from "@chakra-ui/react"
 
 import { Input } from '@/components/Input';
-import { TitleWithButtonBack } from '@/components/TitleWithButtonBack';
+import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
 import * as S from './styles';
@@ -230,7 +230,7 @@ export default function JogadorLogin() {
         <LoginWithBannerAndModal minHeight="560px" backgroundImage="/images/jpg/bk-login-jogador.jpg">
           <S.Content>
             <S.ContentHeader>
-              <TitleWithButtonBack title="Jogador" buttonBack={true} onClick={handleClick} />
+              <TitleWithButtons title="Jogador" buttonBack={true} onClick={handleClick} />
 
               <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                 Login:

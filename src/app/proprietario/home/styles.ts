@@ -4,7 +4,7 @@ import { theme } from "@/styles/theme";
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: auto;
+    height: 100vh;
 
     overflow-y: auto;
     justify-content: center;
@@ -24,15 +24,13 @@ export const Wrapper = styled(C.Flex)`
 
 export const Content = styled(C.Flex)`
     width: 100%;
-    height: auto;
+    height: calc(100% - 11rem);
     padding: 16px;
 
     gap: 16px;
     align-items: center;
     flex-direction: column;
     justify-content: flex-start;
-
-  
 `
 
 export const ContainerInput = styled(C.Flex)`
