@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GoogleMap, LoadScriptNext, Marker } from '@react-google-maps/api';
 
 import { Tooltip } from 'react-tooltip';
@@ -61,6 +61,9 @@ export default function JogadorHome() {
   //Modal de Pagamento Pix
   const [isModalPix, setIsModalPix] = useState(false);
 
+
+  const initialLocationRef = useRef<{ lat: number; lng: number } | null>(null);
+
   useEffect(() => {
     setIsMounted(true);
 
@@ -68,29 +71,53 @@ export default function JogadorHome() {
       if (result.state === "granted" || result.state === "prompt") {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            console.log('Coords:', position.coords);
-            console.log('Precisão:', position.coords.accuracy, 'metros');
-            setUserLocation({
+            const newCoords = {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
-            });
+            };
+
+            console.log('Nova localização:', newCoords);
+            console.log('Precisão estimada:', position.coords.accuracy, 'metros');
+
+            // Se ainda não temos uma localização inicial, salvamos
+            if (!initialLocationRef.current) {
+              initialLocationRef.current = newCoords;
+              setUserLocation(newCoords);
+              return;
+            }
+
+            const isSameLocation =
+              initialLocationRef.current.lat === newCoords.lat &&
+              initialLocationRef.current.lng === newCoords.lng;
+
+            if (isSameLocation) {
+              setUserLocation(newCoords); // atualiza normalmente
+            } else {
+              // Mantém a localização original (ignora a nova)
+              console.log('Localização ignorada — diferente da original');
+              setUserLocation(initialLocationRef.current);
+            }
           },
           (error) => {
-            alert('Não foi possível obter sua localização.');
-            setUserLocation({
-              lat: -23.5017,
-              lng: -47.4581,
-            });
+            console.warn('Erro ao obter localização:', error.message);
+            // Se falhar, define fallback padrão
+            const fallbackCoords = {
+              lat: -23.600812,
+              lng: -48.051476,
+            };
+            initialLocationRef.current = fallbackCoords;
+            setUserLocation(fallbackCoords);
           },
           {
             enableHighAccuracy: true,
-            timeout: 5000,
+            timeout: 10000, // aumenta o tempo para tentar pegar GPS
             maximumAge: 0,
           }
         );
       }
     });
   }, []);
+
 
   const [markers, setMarkers] = useState<typeof defaultExtraMarkers>([]);
 
