@@ -105,7 +105,7 @@ export const mapContainerStyle = {
   };
   
   // RATING = 0.29, 1.44, 2.31, 3.48, 4.52
-  export const extraMarkers = [
+  export const defaultExtraMarkers  = [
     {
       id: 1,
       lat: -23.5889,

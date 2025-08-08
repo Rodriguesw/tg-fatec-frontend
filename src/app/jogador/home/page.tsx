@@ -11,7 +11,7 @@ import { format, parseISO } from 'date-fns';
 import {
   mapContainerStyle,
   mapOptions,
-  extraMarkers,
+  defaultExtraMarkers,
 } from '@/utils/MapConfig';
 
 import { fetchCEP } from '@/services/BuscaCep';
@@ -23,13 +23,13 @@ import { Navbar } from '@/components/Navbar';
 import  InputDays  from '@/components/inputDays';
 import { InputHours } from '@/components/inputHours';
 import { RatingStars } from '@/components/RatingStars';
+import { showToast } from '@/components/ToastAlert';
 
 import { Dialog, Spinner } from "@chakra-ui/react"
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { H3, LG, MD, SM } from '@/styles/typographStyles';
-import { showToast } from '@/components/ToastAlert';
 
 export default function JogadorHome() {
   const [isMounted, setIsMounted] = useState(false);
@@ -90,6 +90,23 @@ export default function JogadorHome() {
         );
       }
     });
+  }, []);
+
+  const [markers, setMarkers] = useState<typeof defaultExtraMarkers>([]);
+
+  useEffect(() => {
+    const storedMarkers = localStorage.getItem('mapMarkers');
+
+    if (storedMarkers) {
+      try {
+        setMarkers(JSON.parse(storedMarkers));
+      } catch (err) {
+        setMarkers(defaultExtraMarkers);
+      }
+    } else {
+      localStorage.setItem('mapMarkers', JSON.stringify(defaultExtraMarkers));
+      setMarkers(defaultExtraMarkers);
+    }
   }, []);
 
   const handleSearchChange = (value: string) => {
@@ -235,17 +252,6 @@ export default function JogadorHome() {
       });
       return;
     }
-
-    // Aqui você pode continuar com a lógica da reserva, ex:
-    console.log("==============QUADRA==============")
-    console.log("nome", selectedMarker.title)
-    console.log("cepData", cepData)
-    console.log("==============PAGAMENTO==============")
-    console.log("methodPayment", methodPayment)
-    console.log("price", valorReserva.toFixed(2).replace('.', ','))
-    console.log("valueInputStartHours", valueInputStartHours)
-    console.log("valueInputEndHours", valueInputEndHours)
-    console.log("formatToHtmlDate(valueInputDate)", formatToHtmlDate(valueInputDate))
 
     // Cria a nova reserva
     const novaReserva = {
@@ -404,7 +410,7 @@ export default function JogadorHome() {
                   />
                 )}
 
-                {extraMarkers.map((marker, index) => (
+                {markers.map((marker, index) => (
                   <Marker
                     key={index}
                     position={{ lat: marker.lat, lng: marker.lng }}
