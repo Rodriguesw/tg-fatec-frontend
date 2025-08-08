@@ -13,6 +13,7 @@ interface InputProps {
     label?: string
     placeholder?: string
     value?: string
+    disabled?: boolean
     onChange?: (value: string) => void 
     hasError?: boolean
     hasvalue?: string
@@ -28,6 +29,7 @@ export function Input({
     onChange, 
     hasError = false, 
     hasvalue,
+    disabled = false,
     options 
 }: InputProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -67,6 +69,7 @@ export function Input({
                     onChange={handleChange}
                     hasvalue={value ? 'true' : 'false'}
                     $hasError={hasError}
+                    disabled={disabled}
                     max={type === 'date' ? new Date().toISOString().split('T')[0] : undefined}
                 />
             )}

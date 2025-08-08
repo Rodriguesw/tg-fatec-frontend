@@ -298,6 +298,7 @@ export default function JogadorPerfil() {
                 id="email"
                 type='text' 
                 value={email}
+                disabled={true}
                 placeholder='email@mail.com' 
                 label='E-mail' 
                 onChange={handleEmailChange}
