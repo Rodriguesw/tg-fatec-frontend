@@ -8,16 +8,39 @@ import { Navbar } from '@/components/Navbar';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { MD, LG, SM } from '@/styles/typographStyles';
+import { MD, LG, SM, H3 } from '@/styles/typographStyles';
+
+import { Modal } from '@/components/Modal';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { CardMyProperty } from '@/components/CardMyProperty';
+
+import { Dialog, Spinner } from "@chakra-ui/react"
 
 export default function ProprietarioHome() {
   const [isMounted, setIsMounted] = useState(false);
 
+  //Modal de Reserva
+  const [newModalLocalSport, setNewModalLocalSport] = useState(false);
+
+  const [gender, setGender] = useState('');
+
+  const genderOptions = [
+    { label: 'Masculino', value: 'male' },
+    { label: 'Feminino', value: 'female' },
+  ];
+
   useEffect(() => {
     setIsMounted(true); 
   }, []);
+
+  const handleGenderChange = (value: string) => {
+    setGender(value);
+    // setErrors(prev => ({ ...prev, gender: false }));
+  };
+
+  const closeModal = () => {
+    setNewModalLocalSport(false);
+  };
 
   if (!isMounted) return null; 
 
@@ -27,12 +50,116 @@ export default function ProprietarioHome() {
           <Header />
 
           <S.Content>
-            <TitleWithButtons buttonAdd={true} title='Minhas quadras' />
+            <TitleWithButtons buttonAdd={true} title='Minhas quadras' onClick={() => setNewModalLocalSport(true)}/>
               
             <CardMyProperty />
           </S.Content>          
           <Navbar />
       </S.Wrapper>
+
+      {newModalLocalSport  && (
+        <Modal isOpen={true} onClose={closeModal} width="350px" >
+          <S.ContainerModalLocalSport>
+            <Dialog.Header width="100%" display="flex" flexDirection="row" justifyContent="space-between">
+                <H3 color={theme.colors.laranja}>
+                    Nova quadra
+                </H3>
+
+                <button onClick={() => {setNewModalLocalSport(false)}}>
+                  <img src="/images/svg/icon-close-white.svg" alt="Fechar"/>
+                </button> 
+            </Dialog.Header>
+          
+            <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
+              <S.ContainerContentModalLocalSport>
+                <Input 
+                  id="name"
+                  type='text' 
+                  placeholder='Nome' 
+                  label='Nome da quadra' 
+                  // onChange={handleNameChange}
+                  // hasError ={errors.name}
+                />
+
+                <S.ContainerWithTwoInputs>
+                  <Input 
+                    id="name"
+                    type='text' 
+                    placeholder='00000-000' 
+                    label='CEP' 
+                    // onChange={handleNameChange}
+                    // hasError ={errors.name}
+                  />
+
+                  <Input 
+                    id="name"
+                    type='text' 
+                    placeholder='0000' 
+                    label='Número' 
+                    // onChange={handleNameChange}
+                    // hasError ={errors.name}
+                  />
+                </S.ContainerWithTwoInputs>
+
+                <Input 
+                  id="name"
+                  type='text' 
+                  placeholder='Rua' 
+                  label='Endereço' 
+                  // onChange={handleNameChange}
+                  // hasError ={errors.name}
+                />
+
+                <Input 
+                  id="gender"
+                  type='select' 
+                  placeholder='Selecionar' 
+                  label='Dias da semana' 
+                  onChange={handleGenderChange}
+                  options={genderOptions}
+                  value={gender}
+                  // hasError ={errors.gender}
+                />
+
+                <S.ContainerWithTwoInputs>
+                  <Input 
+                    id="name"
+                    type='text' 
+                    placeholder='00:00' 
+                    label='Horário' 
+                    // onChange={handleNameChange}
+                    // hasError ={errors.name}
+                  />
+
+                  <MD family={theme.fonts.inter} color={theme.colors.branco.principal}>
+                    às
+                  </MD>
+
+                  <Input 
+                    id="name"
+                    type='text' 
+                    placeholder='00:00' 
+                    label='' 
+                    // onChange={handleNameChange}
+                    // hasError ={errors.name}
+                  />
+                </S.ContainerWithTwoInputs>
+
+                <S.Button onClick={() => {setNewModalLocalSport(false)}}>
+                  <LG 
+                    weight={700} 
+                    color={theme.colors.branco.principal} 
+                    family={theme.fonts.inter}
+                    >
+                      Criar quadra
+                  </LG>
+                </S.Button>
+
+              </S.ContainerContentModalLocalSport>
+            </Dialog.Body>
+          </S.ContainerModalLocalSport>
+        </Modal>
+      )}
     </S.Container>
   );
 }
