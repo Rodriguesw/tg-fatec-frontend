@@ -15,6 +15,8 @@ import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { CardMyProperty } from '@/components/CardMyProperty';
 
 import { Dialog, Spinner } from "@chakra-ui/react"
+import { fetchCEP } from '@/services/BuscaCep';
+import  { WeekdayMultiSelect } from '@/components/Multiple';
 
 export default function ProprietarioHome() {
   const [isMounted, setIsMounted] = useState(false);
@@ -22,20 +24,78 @@ export default function ProprietarioHome() {
   //Modal de Reserva
   const [newModalLocalSport, setNewModalLocalSport] = useState(false);
 
+  const [nameLocalSport, setNameLocalSport] = useState('');
+  const [cep, setCep] = useState('');
+  const [number, setNumber] = useState('');
+  const [adressLocalSport, setAdressLocalSport] = useState('');
   const [gender, setGender] = useState('');
 
-  const genderOptions = [
-    { label: 'Masculino', value: 'male' },
-    { label: 'Feminino', value: 'female' },
-  ];
+  const daysOptions = [
+    { label: 'Segunda-feira', value: 'Seg' },
+    { label: 'Terça-feira', value: 'Ter' },
+    { label: 'Quarta-feira', value: 'Qua' },
+    { label: 'Quinta-feira', value: 'Qui' },
+    { label: 'Sexta-feira', value: 'Sex' },
+    { label: 'Sábado', value: 'Sáb' },
+    { label: 'Domingo', value: 'Dom' }
+]
+
+  
 
   useEffect(() => {
     setIsMounted(true); 
   }, []);
 
+  const handleNameChange = (value: string) => {
+    setNameLocalSport(value);
+    // setErrors(prev => ({ ...prev, gender: false }));
+  };
+
+  const handleCepChange = async (value: string) => {
+    let newValue = value.replace(/\D/g, '');
+    let valueWithOutMask = "";
+
+    if (newValue.length === 8) {
+      valueWithOutMask = newValue
+    }
+
+    if (newValue.length > 5) {
+      newValue = newValue.substring(0, 5) + '-' + newValue.substring(5, 8);
+    }
+    setCep(newValue);
+
+    if (valueWithOutMask.length === 8) {
+      const data = await fetchCEP(valueWithOutMask);
+
+      console.log("CEP Data:", data);
+
+      setAdressLocalSport(data.logradouro);
+    }
+  };
+
+  const handleNumberChange = (value: string) => {
+    setNumber(value);
+    // setErrors(prev => ({ ...prev, gender: false }));
+  };
+
+  const handleAddressLocalSportChange = (value: string) => {
+    setAdressLocalSport(value);
+    // setErrors(prev => ({ ...prev, gender: false }));
+  };
+
   const handleGenderChange = (value: string) => {
     setGender(value);
     // setErrors(prev => ({ ...prev, gender: false }));
+  };
+
+  const handleCreateLocalSport = () => {
+    console.log("CRIANDO QUADRA:", {
+      nameLocalSport,
+      cep,
+      number,
+      adressLocalSport,
+      gender,
+    });
   };
 
   const closeModal = () => {
@@ -77,7 +137,8 @@ export default function ProprietarioHome() {
                   type='text' 
                   placeholder='Nome' 
                   label='Nome da quadra' 
-                  // onChange={handleNameChange}
+                  value={nameLocalSport}
+                  onChange={handleNameChange}
                   // hasError ={errors.name}
                 />
 
@@ -87,7 +148,8 @@ export default function ProprietarioHome() {
                     type='text' 
                     placeholder='00000-000' 
                     label='CEP' 
-                    // onChange={handleNameChange}
+                    value={cep}
+                    onChange={handleCepChange}
                     // hasError ={errors.name}
                   />
 
@@ -96,7 +158,8 @@ export default function ProprietarioHome() {
                     type='text' 
                     placeholder='0000' 
                     label='Número' 
-                    // onChange={handleNameChange}
+                    value={number}
+                    onChange={handleNumberChange}
                     // hasError ={errors.name}
                   />
                 </S.ContainerWithTwoInputs>
@@ -106,9 +169,12 @@ export default function ProprietarioHome() {
                   type='text' 
                   placeholder='Rua' 
                   label='Endereço' 
-                  // onChange={handleNameChange}
+                  value={adressLocalSport}
+                  onChange={handleAddressLocalSportChange}
                   // hasError ={errors.name}
                 />
+
+                <WeekdayMultiSelect></WeekdayMultiSelect>
 
                 <Input 
                   id="gender"
@@ -116,10 +182,12 @@ export default function ProprietarioHome() {
                   placeholder='Selecionar' 
                   label='Dias da semana' 
                   onChange={handleGenderChange}
-                  options={genderOptions}
+                  options={daysOptions}
                   value={gender}
                   // hasError ={errors.gender}
                 />
+
+                
 
                 <S.ContainerWithTwoInputs>
                   <Input 
@@ -145,7 +213,7 @@ export default function ProprietarioHome() {
                   />
                 </S.ContainerWithTwoInputs>
 
-                <S.Button onClick={() => {setNewModalLocalSport(false)}}>
+                <S.Button onClick={handleCreateLocalSport}>
                   <LG 
                     weight={700} 
                     color={theme.colors.branco.principal} 

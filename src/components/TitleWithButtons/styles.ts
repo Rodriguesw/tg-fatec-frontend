@@ -1,14 +1,18 @@
 import styled from "styled-components";
 import * as C from '@chakra-ui/react'
 
-export const Container = styled(C.Flex)`
+interface ContainerProps {
+    hasButtonAdd?: boolean;
+}
+
+export const Container = styled(C.Flex)<ContainerProps>`
     width: 100%;
     height:  auto;
 
     gap: 4px;
     align-items: center;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: ${props => props.hasButtonAdd ? 'space-between' : 'flex-start'};
 `;
 
 export const ButtonBack = styled(C.Button)`

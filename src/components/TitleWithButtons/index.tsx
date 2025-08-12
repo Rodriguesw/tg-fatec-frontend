@@ -15,7 +15,7 @@ const ButtonBack = () => {
 
 export function TitleWithButtons({ title, buttonBack, buttonAdd, onClick }: TitleWithButtonsProps) {
     return (
-        <S.Container>
+        <S.Container hasButtonAdd={buttonAdd}>
             {buttonBack && 
                 <S.ButtonBack onClick={onClick || ButtonBack}>
                     <img src="/images/svg/icon-arrow-left.svg" alt="Voltar" />
