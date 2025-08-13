@@ -53,13 +53,9 @@ export default function ProprietarioHome() {
   const [dataCep, setDataCep] = useState<CEPData | null>(null);
   const [number, setNumber] = useState('');
   const [adressLocalSport, setAdressLocalSport] = useState('');
-
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
-
   const [valueInputStartHours, setValueInputStartHours] = useState("");
-
   const [valueInputEndHours, setValueInputEndHours] = useState("");
-
   const [valuePerHour, setValuePerHour] = useState('');
 
   const [method, setMethod] = useState('Dinheiro');
