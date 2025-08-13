@@ -3,20 +3,21 @@
 import { Portal, Select, createListCollection } from "@chakra-ui/react";
 
 
-export const WeekdayMultiSelect = () => {
+export const WeekdayMultiSelect = ({ onChange }: { onChange: (values: string[]) => void }) => {
   return (
     <Select.Root
       multiple
       collection={weekdays}
       size="sm"
       width="320px"
+      onValueChange={(details) => onChange(details.value)}
     >
       <Select.HiddenSelect />
 
-      <Select.Label color="#FFFFFF75" fontFamily={"Inter"} fontSize={'16px'}>Dias da semana</Select.Label>
+      <Select.Label color="#FFFFFF75" fontFamily={"Inter"} fontSize={'16px'} paddingLeft={'12px'}>Dias da semana</Select.Label>
 
       <Select.Control>
-        <Select.Trigger height={'48px'} padding={'12px'} borderRadius={'12px'} color="#FFFFFF40" fontSize={'18px'} fontFamily={"Inter"}>
+        <Select.Trigger height={'48px'} padding={'12px'} borderRadius={'12px'} color="#FFFFFF40" fontSize={'18px'} fontFamily={"Inter"} border="2px solid #FFFFFF25">
           <Select.ValueText />
         </Select.Trigger>
 

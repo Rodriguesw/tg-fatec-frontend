@@ -1,28 +1,34 @@
+import { SM } from '@/styles/typographStyles'
 import * as S from './styles'
 import { useState, useEffect } from 'react'
+import { theme } from '@/styles/theme'
 
 interface InputHoursProps {
   id?: string
   value?: string // Formato "HH:00"
   onChange?: (value: string) => void
   hasError?: boolean
+  label?: string
   placeholder?: string
   minHour?: number // Hora mínima (0-23)
   maxHour?: number // Hora máxima (0-23)
   isToday?: boolean // Se o dia selecionado é hoje
   disabled?: boolean 
+  width?: string
 }
 
 export function InputHours({
   id,
   value = '',
   onChange,
+  label, 
   hasError = false,
   minHour = 6,
   maxHour = 22,
   isToday = false,
   placeholder = '00:00',
-  disabled = false
+  disabled = false,
+  width,
 }: InputHoursProps) {
   const [timeValue, setTimeValue] = useState('00:00')
 
@@ -74,7 +80,13 @@ export function InputHours({
   }
 
   return (
-    <S.Container>
+    <S.Container width={width}>
+      {label && (
+        <S.Label>
+          <SM family={theme.fonts.inter}>{label}</SM>
+        </S.Label>
+      )}
+
       <S.Select
         id={id}
         value={timeValue}

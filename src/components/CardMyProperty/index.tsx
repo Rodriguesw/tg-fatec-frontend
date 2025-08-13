@@ -3,25 +3,36 @@ import { theme } from '@/styles/theme'
 import { LG, SM } from '@/styles/typographStyles'
 
 export function CardMyProperty() {
+  const getDataMySportsLocations = JSON.parse(localStorage.getItem('currentUserProprietario') || '{}');
+
+  console.log(getDataMySportsLocations)
   return (
-      <S.Card>
-        <S.CardContent>
-          <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
-            Nome da Quadra
-          </LG>
+    <>
+      {getDataMySportsLocations.my_sports_location.map((item: any) => (
+        <S.Card key={item.id}>
+              <S.CardContent>
+                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                  {item.name}
+                </LG>
 
-          <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-            Rua Nome da Rua, 0000 - Cidade, UF
-          </SM>
+                <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+                  {item.address.street}, {item.address.number} - {item.address.city}, {item.address.state}
+                </SM>
 
-          <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-            SEG, TER, QUA, QUi - 00:00 ás 00:00
-          </SM>
-        </S.CardContent>
+                <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+                  Dias: {item.days.join(', ')} <br/> Horários: {item.start_time} às {item.end_time}
+                </SM>
 
-          <S.ButtonEdit onClick={() => console.log("clicou")}>
-            <img src="/images/svg/icon-pen.svg" alt="Editar"/>
-          </S.ButtonEdit>    
-      </S.Card>
+                <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+                  Valor: {item.price} <br/> Método de pagamento: {item.payment_method}
+                </SM>
+              </S.CardContent>
+
+              <S.ButtonEdit onClick={() => console.log("clicou")}>
+                <img src="/images/svg/icon-pen.svg" alt="Editar"/>
+              </S.ButtonEdit>    
+        </S.Card>
+        ))}   
+    </>
   )
 }

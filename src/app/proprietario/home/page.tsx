@@ -17,6 +17,7 @@ import { CardMyProperty } from '@/components/CardMyProperty';
 import { Dialog, Spinner } from "@chakra-ui/react"
 import { fetchCEP } from '@/services/BuscaCep';
 import  { WeekdayMultiSelect } from '@/components/Multiple';
+import { InputHours } from '@/components/inputHours';
 
 export default function ProprietarioHome() {
   const [isMounted, setIsMounted] = useState(false);
@@ -28,7 +29,15 @@ export default function ProprietarioHome() {
   const [cep, setCep] = useState('');
   const [number, setNumber] = useState('');
   const [adressLocalSport, setAdressLocalSport] = useState('');
-  const [gender, setGender] = useState('');
+
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+
+  const [valueInputStartHours, setValueInputStartHours] = useState("");
+  const [hasErrorStartHours, setHasErrorStartHours] = useState(false);
+  
+  const [valueInputEndHours, setValueInputEndHours] = useState("");
+  const [hasErrorEndHours, setHasErrorEndHours] = useState(false);
+
 
   const daysOptions = [
     { label: 'Segunda-feira', value: 'Seg' },
@@ -83,10 +92,24 @@ export default function ProprietarioHome() {
     // setErrors(prev => ({ ...prev, gender: false }));
   };
 
-  const handleGenderChange = (value: string) => {
-    setGender(value);
-    // setErrors(prev => ({ ...prev, gender: false }));
-  };
+  const handleHoursStartChange = (value: string) => {
+    setValueInputStartHours(value)
+    setHasErrorStartHours(false) // remove o erro ao escolher uma data válida
+  }
+
+  const handleHoursEndChange = (value: string) => {
+    setValueInputEndHours(value)
+    setHasErrorEndHours(false) // remove o erro ao escolher uma data válida
+  }
+
+  // Converte o valor do horário para número (ex: "13:00" => 13)
+  const getHourAsNumber = (time: string) => {
+    const [hourStr] = time.split(':')
+    return parseInt(hourStr, 10)
+  }
+
+  const minEndHour = getHourAsNumber(valueInputStartHours) + 1
+
 
   const handleCreateLocalSport = () => {
     console.log("CRIANDO QUADRA:", {
@@ -94,7 +117,9 @@ export default function ProprietarioHome() {
       cep,
       number,
       adressLocalSport,
-      gender,
+      selectedDays,
+      valueInputStartHours,
+      valueInputEndHours
     });
   };
 
@@ -174,43 +199,33 @@ export default function ProprietarioHome() {
                   // hasError ={errors.name}
                 />
 
-                <WeekdayMultiSelect></WeekdayMultiSelect>
-
-                <Input 
-                  id="gender"
-                  type='select' 
-                  placeholder='Selecionar' 
-                  label='Dias da semana' 
-                  onChange={handleGenderChange}
-                  options={daysOptions}
-                  value={gender}
-                  // hasError ={errors.gender}
-                />
-
-                
+                <WeekdayMultiSelect onChange={(values) => setSelectedDays(values)}/>
 
                 <S.ContainerWithTwoInputs>
-                  <Input 
-                    id="name"
-                    type='text' 
-                    placeholder='00:00' 
-                    label='Horário' 
-                    // onChange={handleNameChange}
-                    // hasError ={errors.name}
+                  <InputHours 
+                    label="Horário"
+                    disabled={false}
+                    value={valueInputStartHours} 
+                    onChange={handleHoursStartChange}  
+                    minHour={6}
+                    maxHour={22}
+                    hasError={hasErrorStartHours}
+                    width='100%'
                   />
 
                   <MD family={theme.fonts.inter} color={theme.colors.branco.principal}>
                     às
                   </MD>
 
-                  <Input 
-                    id="name"
-                    type='text' 
-                    placeholder='00:00' 
-                    label='' 
-                    // onChange={handleNameChange}
-                    // hasError ={errors.name}
-                  />
+                  <InputHours 
+                    disabled={valueInputStartHours !== '' ? false : true}
+                    value={valueInputEndHours} 
+                    onChange={handleHoursEndChange}
+                    minHour={minEndHour}
+                    maxHour={23}
+                    hasError={hasErrorEndHours}
+                    width='100%'
+                    />
                 </S.ContainerWithTwoInputs>
 
                 <S.Button onClick={handleCreateLocalSport}>

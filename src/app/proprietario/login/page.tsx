@@ -22,6 +22,25 @@ interface User {
   password: string;
   cnpj: string;
   phone: string;
+  my_sports_location: {
+    id?: number;
+    name?: string;
+    address?: {
+      id?: number;
+      cep?: string;
+      number?: string;
+      city?: string;
+      neighborhood?: string;
+      state?: string;
+      street?: string;
+    };
+    days?: string[];
+    start_time?: string;
+    end_time?: string;
+    price?: string;
+    payment_method?: string;
+    reserved_date?: string;
+  }[]
 }
 
 interface LoginErrors {
@@ -79,8 +98,26 @@ export default function LoginProprietario() {
         name: "Admin",
         email: "matheushr39@gmail.com",
         password: "admin",
-        cnpj: "12345678901234",
-        phone: "11999999999"
+        cnpj: "11.080.217/0001-75",
+        phone: "15 99160-1215",
+        my_sports_location: [{
+          id: 1782,
+          name: "Arena KS Society",
+          address: {
+            id: 12,
+            cep: "18213110",
+            number: "305",
+            street: "Rua Alceu Correa de Moraes",
+            city: "Itapetininga",
+            neighborhood: "Vila Macia",
+            state: "SP"
+          },
+          days: ["SEG", "TER", "QUA", "QUI", "SEX", "SÁB", "DOM"],
+          start_time: "06:00",
+          end_time: "23:00",
+          price: "R$ 100,00",
+          payment_method: "Dinheiro",
+          }],
       };
 
       localStorage.setItem("infoUserProprietario", JSON.stringify({1: dataUserTest}));

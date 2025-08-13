@@ -2,16 +2,27 @@ import styled from 'styled-components'
 import * as C from '@chakra-ui/react'
 
 interface InputContainerProps  {
-    $hasError: boolean
+    width?: string
+    $hasError?: boolean
 }
 
-export const Container = styled(C.Flex)`
-    width: auto;
+export const Container = styled(C.Flex)<InputContainerProps>`
+    width: ${props => props.width ? props.width : 'auto'};
     height: auto;
 
     gap: 4px;
     flex-direction: column;
     position: relative; 
+`
+
+export const Label = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    padding-left: 12px;
+    >p{
+        color: #FFFFFF75;
+    }
 `
 
 // Componente estilizado para <select>

@@ -86,6 +86,10 @@ export const ContainerWithTwoInputs = styled(C.Flex)`
 
     gap: 8px;
     align-items: flex-end;
+
+    >div>Select{
+        width: 100%;
+    }
 `
 
 export const Button = styled(C.Button)`
