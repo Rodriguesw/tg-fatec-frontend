@@ -68,15 +68,34 @@ export const ContainerModalLocalSport = styled(C.Flex)<modalProps>`
 
 export const ContainerContentModalLocalSport = styled(C.Flex)`
     width: 100%;
-    height: auto;
+    height: 60vh;
 
     gap: 24px;
     flex-direction: column;
+
+    overflow-y: auto;
 
     >div:nth-child(2){
         >div:last-child{
             width: 140px;
         }
+    }
+
+    /* Estilizando a barra de rolagem */
+    scrollbar-width: thin; /* Para navegadores compatíveis com CSS padrão */
+    scrollbar-color: transparent transparent;
+
+    /* Estilização para navegadores baseados em WebKit */
+    ::-webkit-scrollbar {
+        width: 1px; /* Largura da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: transparent; /* Deixa o "polegar" da barra transparente */
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: transparent; /* Deixa o fundo da barra transparente */
     }
 `
 
@@ -100,4 +119,19 @@ export const Button = styled(C.Button)`
     
     border-radius: 12px;
     background-color: ${theme.colors.verde.principal};
+`
+
+export const ContainerNotFoundLocal = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    align-items: center;
+    flex-direction: column;
+
+    >img{
+        width: 100%;
+        height: auto;
+        max-width: 200px;
+    }
 `

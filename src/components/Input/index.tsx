@@ -50,6 +50,7 @@ export function Input({
                     value={value} 
                     onChange={handleChange}
                     hasvalue={value ? 'true' : 'false'}
+                    disabled={disabled}
                     $hasError={hasError}
                 >
                     <option value="">{placeholder}</option>

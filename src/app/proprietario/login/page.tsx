@@ -26,7 +26,6 @@ interface User {
     id?: number;
     name?: string;
     address?: {
-      id?: number;
       cep?: string;
       number?: string;
       city?: string;
@@ -104,7 +103,6 @@ export default function LoginProprietario() {
           id: 1782,
           name: "Arena KS Society",
           address: {
-            id: 12,
             cep: "18213110",
             number: "305",
             street: "Rua Alceu Correa de Moraes",

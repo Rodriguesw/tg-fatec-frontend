@@ -65,6 +65,11 @@ export const Select = styled.select<InputContainerProps >`
         -webkit-text-fill-color: #FFFFFF40 !important;
         transition: background-color 5000s ease-in-out 0s;
     }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
 `
 
 export const Input = styled(C.Input)<InputContainerProps>`

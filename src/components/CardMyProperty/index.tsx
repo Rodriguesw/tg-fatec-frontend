@@ -4,10 +4,8 @@ import { LG, SM } from '@/styles/typographStyles'
 
 export function CardMyProperty() {
   const getDataMySportsLocations = JSON.parse(localStorage.getItem('currentUserProprietario') || '{}');
-
-  console.log(getDataMySportsLocations)
   return (
-    <>
+    <S.Container>
       {getDataMySportsLocations.my_sports_location.map((item: any) => (
         <S.Card key={item.id}>
               <S.CardContent>
@@ -33,6 +31,6 @@ export function CardMyProperty() {
               </S.ButtonEdit>    
         </S.Card>
         ))}   
-    </>
+    </S.Container>
   )
 }
