@@ -45,10 +45,10 @@ export function Navbar() {
                         <SM family={theme.fonts.inter}>PEDIDOS</SM>
                     </S.Button>
 
-                    <S.Button active={currentPath === '/proprietario/agenda'} onClick={() => router.push('/proprietario/agenda')}>
+                    <S.Button active={currentPath === '/proprietario/reservados'} onClick={() => router.push('/proprietario/reservados')}>
                         <img src="/images/svg/icon-book-open.svg" alt=''/>
 
-                        <SM family={theme.fonts.inter} weight={700}>AGENDA</SM>
+                        <SM family={theme.fonts.inter} weight={700}>RESERVA</SM>
                     </S.Button>
 
                     <S.Button active={currentPath === '/proprietario/perfil'} onClick={() => router.push('/proprietario/perfil')}>
