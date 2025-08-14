@@ -5,11 +5,13 @@ import { Portal, Select, createListCollection } from "@chakra-ui/react";
 interface WeekdayMultiSelectProps {
   hasError?: boolean;
   onChange: (values: string[]) => void;
+  value?: string[]; 
 }
 
 export const WeekdayMultiSelect = ({ 
   hasError = false, 
-  onChange 
+  onChange,
+  value = [] 
 }: WeekdayMultiSelectProps) => {
   return (
     <Select.Root
@@ -17,6 +19,7 @@ export const WeekdayMultiSelect = ({
       collection={weekdays}
       size="sm"
       width="320px"
+      value={value} 
       onValueChange={(details) => onChange(details.value)}
     >
       <Select.HiddenSelect />

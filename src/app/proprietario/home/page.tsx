@@ -65,6 +65,8 @@ export default function ProprietarioHome() {
 
   const [errors, setErrors] = useState<FormErrors>({});
 
+  const [editItem, setEditItem] = useState<any | null>(null);
+
   useEffect(() => {
     setIsMounted(true); 
   }, []);
@@ -288,6 +290,22 @@ export default function ProprietarioHome() {
     });
   };
 
+  const handleEdit = (item: any) => {
+    setEditItem(item);
+
+    setNameLocalSport(item.name);
+    setCep(item.address.cep);
+    setNumber(item.address.number);
+    setAdressLocalSport(item.address.street);
+    setSelectedDays(item.days);
+    setValueInputStartHours(item.start_time);
+    setValueInputEndHours(item.end_time);
+    setValuePerHour(item.price);
+    setMethod(item.payment_method);
+
+    setNewModalLocalSport(true);
+  };
+
   if (!isMounted) return null; 
 
   return (
@@ -296,10 +314,10 @@ export default function ProprietarioHome() {
           <Header />
 
           <S.Content>
-            <TitleWithButtons buttonAdd={true} title='Minhas quadras' onClick={() => setNewModalLocalSport(true)}/>
+            <TitleWithButtons buttonAdd={true} title='Minhas quadras' onClick={() => {setNewModalLocalSport(true), setEditItem(null)}}/>
               
             {currentUserProprietario.my_sports_location.length > 0 ? (
-              <CardMyProperty />
+              <CardMyProperty onEdit={handleEdit} />
             ):(
             <S.ContainerNotFoundLocal>
               <img src="/images/png/image-futebol-local.png" alt="Imagem campo de futebol"/>
@@ -326,7 +344,7 @@ export default function ProprietarioHome() {
           <S.ContainerModalLocalSport>
             <Dialog.Header width="100%" display="flex" flexDirection="row" justifyContent="space-between">
                 <H3 color={theme.colors.laranja}>
-                    Nova quadra
+                    {editItem ? 'Editar quadra' : "Nova quadra"}
                 </H3>
 
                 <button onClick={() => {closeModal()}}>
@@ -378,7 +396,7 @@ export default function ProprietarioHome() {
                   hasError ={errors.adressLocalSport}
                 />
 
-                <WeekdayMultiSelect onChange={(values) => {setSelectedDays(values), setErrors(prev => ({ ...prev, selectedDays: false }));}} hasError={errors.selectedDays}/>
+                <WeekdayMultiSelect value={selectedDays} onChange={(values) => {setSelectedDays(values), console.log("values ===>>>",values), setErrors(prev => ({ ...prev, selectedDays: false }));}} hasError={errors.selectedDays}/>
 
                 <S.ContainerWithTwoInputs>
                   <InputHours 

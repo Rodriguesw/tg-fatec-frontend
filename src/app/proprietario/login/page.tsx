@@ -110,7 +110,7 @@ export default function LoginProprietario() {
             neighborhood: "Vila Macia",
             state: "SP"
           },
-          days: ["SEG", "TER", "QUA", "QUI", "SEX", "SÁB", "DOM"],
+          days: ["Seg", "Qua", "Qui", "SÁB"],
           start_time: "06:00",
           end_time: "23:00",
           price: "R$ 100,00",

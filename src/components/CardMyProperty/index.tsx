@@ -2,7 +2,7 @@ import * as S from './styles'
 import { theme } from '@/styles/theme'
 import { LG, SM } from '@/styles/typographStyles'
 
-export function CardMyProperty() {
+export function CardMyProperty({ onEdit }: { onEdit: (item: any) => void }) {
   const getDataMySportsLocations = JSON.parse(localStorage.getItem('currentUserProprietario') || '{}');
   return (
     <S.Container>
@@ -26,7 +26,7 @@ export function CardMyProperty() {
                 </SM>
               </S.CardContent>
 
-              <S.ButtonEdit onClick={() => console.log("clicou")}>
+              <S.ButtonEdit onClick={() => onEdit(item)}>
                 <img src="/images/svg/icon-pen.svg" alt="Editar"/>
               </S.ButtonEdit>    
         </S.Card>
