@@ -135,3 +135,41 @@ export const ContainerNotFoundLocal = styled(C.Flex)`
         max-width: 200px;
     }
 `
+
+export const ContainerButtonModalEdit = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+
+    >button{
+        width: 100%;
+        height: 48px;
+        max-width: 112px;
+        padding: 8px 4px;
+
+        border-radius: 8px;
+    }
+
+    >button:first-child{
+        background-color: ${theme.colors.vermelho};
+    }
+
+    >button:last-child{
+        background-color: ${theme.colors.verde.secundario};
+    }
+`
+
+export const ContainerModalDelete = styled(C.Flex)`
+    width: 360px;
+    height: auto;
+    padding: 16px;
+    
+    gap: 16px;
+    border-radius: 16px;
+    flex-direction: column;
+
+    background-color: #0D1321;
+`

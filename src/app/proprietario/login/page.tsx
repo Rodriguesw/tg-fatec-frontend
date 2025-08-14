@@ -22,7 +22,7 @@ interface User {
   password: string;
   cnpj: string;
   phone: string;
-  my_sports_location: {
+  my_sports_location?: {
     id?: number;
     name?: string;
     address?: {
@@ -94,7 +94,7 @@ export default function LoginProprietario() {
     if (Object.keys(users).length === 0) {
       const dataUserTest: User = {
         id: 1,
-        name: "Admin",
+        name: "Matheus",
         email: "matheushr39@gmail.com",
         password: "admin",
         cnpj: "11.080.217/0001-75",
@@ -103,7 +103,7 @@ export default function LoginProprietario() {
           id: 1782,
           name: "Arena KS Society",
           address: {
-            cep: "18213110",
+            cep: "18213-110",
             number: "305",
             street: "Rua Alceu Correa de Moraes",
             city: "Itapetininga",
@@ -118,7 +118,21 @@ export default function LoginProprietario() {
           }],
       };
 
-      localStorage.setItem("infoUserProprietario", JSON.stringify({1: dataUserTest}));
+      const dataUserTestTwo: User = {
+        id: 2,
+        name: "Thiago",
+        email: "matheushr@gmail.com",
+        password: "admin",
+        cnpj: "11.080.217/0001-75",
+        phone: "15 99160-1215",
+      };
+
+      const existingUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
+
+      existingUsers[dataUserTest.id] = dataUserTest;
+      existingUsers[dataUserTestTwo.id] = dataUserTestTwo;
+
+      localStorage.setItem("infoUserProprietario", JSON.stringify(existingUsers));
     }
   }, []);
 

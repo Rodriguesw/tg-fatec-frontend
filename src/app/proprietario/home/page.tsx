@@ -67,6 +67,9 @@ export default function ProprietarioHome() {
 
   const [editItem, setEditItem] = useState<any | null>(null);
 
+  //Modal de confirmação de exclusão
+  const [openDeleteLocal, setOpenDeleteLocal] = useState(false);
+
   useEffect(() => {
     setIsMounted(true); 
   }, []);
@@ -110,7 +113,9 @@ export default function ProprietarioHome() {
   };
 
   const handleNumberChange = (value: string) => {
-    setNumber(value);
+    const onlyNumbers = value.replace(/\D/g, ""); 
+
+    setNumber(onlyNumbers);
     setErrors(prev => ({ ...prev, number: false }));
   };
 
@@ -226,42 +231,53 @@ export default function ProprietarioHome() {
 
 
     try {
+      // Atualiza o usuário atual
       const currentUser = JSON.parse(localStorage.getItem('currentUserProprietario') || '{}');
       if (!currentUser.my_sports_location) {
         currentUser.my_sports_location = [];
       }
       currentUser.my_sports_location.push(newSportsLocation);
       localStorage.setItem('currentUserProprietario', JSON.stringify(currentUser));
+      setCurrentUserProprietario(currentUser);
 
-      const infoUser = JSON.parse(localStorage.getItem('infoUserProprietario') || '{}');
-      if (!infoUser.my_sports_location) {
-        infoUser.my_sports_location = [];
+      let infoUsers = JSON.parse(localStorage.getItem('infoUserProprietario') || '[]');
+
+      if (!Array.isArray(infoUsers)) {
+        infoUsers = Object.values(infoUsers); 
       }
-      
-      const existingIndex = infoUser.my_sports_location.findIndex(
-        (loc: any) => loc.name === nameLocalSport
+
+      const userIndex = infoUsers.findIndex(
+        (u: any) => u.id === currentUser.id || u.email === currentUser.email
       );
-      
-      if (existingIndex >= 0) {
-        infoUser.my_sports_location[existingIndex] = newSportsLocation;
-      } else {
-        infoUser.my_sports_location.push(newSportsLocation);
-      }
-      
-      localStorage.setItem('infoUserProprietario', JSON.stringify(infoUser));
-      
-      setNewModalLocalSport(false)
 
-      //Limpando inputs
-      setNameLocalSport('')
-      setCep('')
-      setNumber('')
-      setAdressLocalSport('')
-      setSelectedDays([])
-      setValueInputStartHours('')
-      setValueInputEndHours('')
-      setValuePerHour('')
-    } catch (error) {}
+      if (userIndex !== -1) {
+        if (!infoUsers[userIndex].my_sports_location) {
+          infoUsers[userIndex].my_sports_location = [];
+        }
+        infoUsers[userIndex].my_sports_location.push(newSportsLocation);
+      }
+
+      localStorage.setItem('infoUserProprietario', JSON.stringify(infoUsers));
+
+      showToast({
+        type: "success",
+        message: "Propriedade criada com sucesso!",
+      });
+
+      setNewModalLocalSport(false);
+
+      // Limpando inputs
+      setNameLocalSport('');
+      setCep('');
+      setNumber('');
+      setAdressLocalSport('');
+      setSelectedDays([]);
+      setValueInputStartHours('');
+      setValueInputEndHours('');
+      setValuePerHour('');
+    } catch (error) {
+      console.error("Erro ao salvar quadra", error);
+    }
   };
 
   const closeModal = () => {
@@ -306,6 +322,126 @@ export default function ProprietarioHome() {
     setNewModalLocalSport(true);
   };
 
+  const handleSavedSportLocation = () => {
+    if (!editItem) return;
+
+    const storedData = JSON.parse(localStorage.getItem("currentUserProprietario") || "{}");
+
+    const updatedLocations = storedData.my_sports_location.map((location: any) => {
+      if (location.id === editItem.id) {
+        return {
+          ...location,
+          name: nameLocalSport,
+          address: {
+            ...location.address,
+            cep,
+            number,
+            street: adressLocalSport,
+          },
+          days: selectedDays,
+          start_time: valueInputStartHours,
+          end_time: valueInputEndHours,
+          price: valuePerHour,
+          payment_method: method
+        };
+      }
+      return location;
+    });
+
+    const updatedData = {
+      ...storedData,
+      my_sports_location: updatedLocations
+    };
+    
+    localStorage.setItem("currentUserProprietario", JSON.stringify(updatedData));
+    setCurrentUserProprietario(updatedData);
+
+    showToast({
+      type: "success",
+      message: "Propriedade atualizada com sucesso!",
+    });
+
+    // Fecha modal e limpa estados
+    setEditItem(null);
+    setNewModalLocalSport(false);
+
+    //Limpando inputs
+    setNameLocalSport('')
+    setCep('')
+    setNumber('')
+    setAdressLocalSport('')
+    setSelectedDays([])
+    setValueInputStartHours('')
+    setValueInputEndHours('')
+    setValuePerHour('')
+
+    //LImpando erros
+    setErrors({
+      nameLocalSport: false,
+      cep: false,
+      number: false,
+      adressLocalSport: false,
+      selectedDays: false,
+      valueInputStartHours: false,
+      valueInputEndHours: false,
+      valuePerHour: false,
+    });
+  };
+
+  const handleDeletedSportLocation = () => {
+    if (!editItem) return;
+
+    const storedCurrentUser = JSON.parse(localStorage.getItem("currentUserProprietario") || "{}");
+    const updatedLocations = storedCurrentUser.my_sports_location.filter(
+      (location: any) => location.id !== editItem.id
+    );
+    const updatedCurrentUser = {
+      ...storedCurrentUser,
+      my_sports_location: updatedLocations
+    };
+    localStorage.setItem("currentUserProprietario", JSON.stringify(updatedCurrentUser));
+    setCurrentUserProprietario(updatedCurrentUser);
+
+    const storedAllUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "[]");
+    const updatedAllUsers = storedAllUsers.map((user: any) => {
+      if (user.id === updatedCurrentUser.id) {
+        return {
+          ...user,
+          my_sports_location: updatedCurrentUser.my_sports_location
+        };
+      }
+      return user;
+    });
+    localStorage.setItem("infoUserProprietario", JSON.stringify(updatedAllUsers));
+
+    showToast({
+      type: "success",
+      message: "Propriedade excluída com sucesso!",
+    });
+
+    setEditItem(null);
+    setNewModalLocalSport(false);
+    setNameLocalSport('');
+    setCep('');
+    setNumber('');
+    setAdressLocalSport('');
+    setSelectedDays([]);
+    setValueInputStartHours('');
+    setValueInputEndHours('');
+    setValuePerHour('');
+
+    setErrors({
+      nameLocalSport: false,
+      cep: false,
+      number: false,
+      adressLocalSport: false,
+      selectedDays: false,
+      valueInputStartHours: false,
+      valueInputEndHours: false,
+      valuePerHour: false,
+    });
+  };
+
   if (!isMounted) return null; 
 
   return (
@@ -314,9 +450,9 @@ export default function ProprietarioHome() {
           <Header />
 
           <S.Content>
-            <TitleWithButtons buttonAdd={true} title='Minhas quadras' onClick={() => {setNewModalLocalSport(true), setEditItem(null)}}/>
+            <TitleWithButtons buttonAdd={true} title='Minhas propriedades' onClick={() => {setNewModalLocalSport(true), setEditItem(null)}}/>
               
-            {currentUserProprietario.my_sports_location.length > 0 ? (
+            {currentUserProprietario?.my_sports_location?.length > 0 ? (
               <CardMyProperty onEdit={handleEdit} />
             ):(
             <S.ContainerNotFoundLocal>
@@ -325,13 +461,13 @@ export default function ProprietarioHome() {
               <LG 
               family={theme.fonts.inter} 
               color={theme.colors.branco.secundario}>
-                Você não tem quadras <br/>cadastradas.
+                Você não tem propriedades <br/>cadastradas.
               </LG>
 
               <SM
                 family={theme.fonts.inter}
                 color={theme.colors.branco.secundario}>
-                Para começar clique no + acima e <br/>adicione uma quadra .
+                Para começar clique no + acima e <br/>adicione uma propriedade.
               </SM>
             </S.ContainerNotFoundLocal>)}
             
@@ -358,7 +494,7 @@ export default function ProprietarioHome() {
                   id="name"
                   type='text' 
                   placeholder='Nome' 
-                  label='Nome da quadra' 
+                  label='Nome da propriedade' 
                   value={nameLocalSport}
                   onChange={handleNameChange}
                   hasError ={errors.nameLocalSport}
@@ -447,21 +583,84 @@ export default function ProprietarioHome() {
                   // hasError ={errors.method}
                 />
 
-                <S.Button onClick={handleCreateLocalSport}>
-                  <LG 
-                    weight={700} 
-                    color={theme.colors.branco.principal} 
-                    family={theme.fonts.inter}
-                    >
-                      Criar quadra
-                  </LG>
-                </S.Button>
-
+                 {editItem ? (
+                    <S.ContainerButtonModalEdit>
+                      <S.Button 
+                        onClick={() => setOpenDeleteLocal(true)} 
+                      >
+                        <MD 
+                        color={theme.colors.branco.principal} 
+                        family={theme.fonts.inter}>
+                          Excluir
+                        </MD>
+                      </S.Button> 
+    
+                      <S.Button onClick={handleSavedSportLocation}>
+                        <MD 
+                        color={theme.colors.branco.principal} 
+                        family={theme.fonts.inter}>
+                          Salvar
+                      </MD>
+                    </S.Button>
+                  </S.ContainerButtonModalEdit>
+                 ) : (
+                    <S.Button onClick={handleCreateLocalSport}>
+                      <LG 
+                        weight={700} 
+                        color={theme.colors.branco.principal} 
+                        family={theme.fonts.inter}
+                        >
+                          Criar quadra
+                      </LG>
+                    </S.Button>
+                 )}
               </S.ContainerContentModalLocalSport>
             </Dialog.Body>
           </S.ContainerModalLocalSport>
         </Modal>
       )}
+
+       {openDeleteLocal && 
+          <Modal isOpen={openDeleteLocal} onClose={() => setOpenDeleteLocal(false)}>
+            <S.ContainerModalDelete>
+              <Dialog.Header>
+                <Dialog.Title textAlign="center">
+                  <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    Deletar propriedade
+                  </LG>
+                </Dialog.Title>
+              </Dialog.Header>
+  
+              <Dialog.Body
+                gap="16px"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                flexDirection="column"
+              >
+                <SM
+                  family={theme.fonts.inter}
+                  color={theme.colors.branco.secundario}>
+                  Tem certeza de que deseja excluir permanente sua propriedade?
+                </SM>
+  
+                <S.ContainerButtonModalEdit>
+                  <S.Button onClick={() => setOpenDeleteLocal(false)}>
+                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      Cancelar
+                    </MD>
+                  </S.Button>
+  
+                  <S.Button onClick={handleDeletedSportLocation}>
+                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      Confirmar
+                    </MD>
+                  </S.Button>
+                </S.ContainerButtonModalEdit>
+              </Dialog.Body>
+            </S.ContainerModalDelete>
+          </Modal>
+        }
     </S.Container>
   );
 }
