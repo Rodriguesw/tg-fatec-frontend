@@ -10,12 +10,24 @@ import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { MD, LG, SM } from '@/styles/typographStyles';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
+import { CardMyOrders } from '@/components/CardMyOrders';
 
 export default function ProprietarioPedidos() {
   const [isMounted, setIsMounted] = useState(false);
 
+  const [currentUserProprietario, setCurrentUserProprietario] = useState<any>(null);
+
   useEffect(() => {
     setIsMounted(true); 
+  }, []);
+
+  useEffect(() => {
+    const storedSport = localStorage.getItem('currentUserProprietario');
+
+    if (storedSport) {
+      const parsedUser = JSON.parse(storedSport);
+      setCurrentUserProprietario(parsedUser);
+    } 
   }, []);
 
   if (!isMounted) return null; 
@@ -27,6 +39,20 @@ export default function ProprietarioPedidos() {
 
           <S.Content>
               <TitleWithButtons title='Pedidos recebidos'/>
+
+              {currentUserProprietario?.orders?.length > 0 ? (
+                <CardMyOrders />
+              ):(
+                <S.NotFoundEvent>
+                  <img src="/images/svg/icon-not-found.svg" alt="Nenhuma reserva encontrada"/>
+
+                  <LG 
+                    family={theme.fonts.inter}
+                    color={theme.colors.branco.secundario}>
+                    Você ainda não tem nenhum pedido pendente.
+                  </LG>
+                </S.NotFoundEvent>
+              )}
           </S.Content>   
 
           <Navbar />

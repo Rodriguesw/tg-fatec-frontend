@@ -105,7 +105,7 @@ export const Input = styled(C.Input)<InputContainerProps>`
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-        background-image: url('/images/png/icons-calendar.png');
+        background-image: url('/images/png/icon-calendar.png');
         background-repeat: no-repeat;
         background-position: right 1rem center;
         background-size: 1.25rem;

@@ -123,11 +123,12 @@ export const Button = styled(C.Button)`
 
 export const ContainerNotFoundLocal = styled(C.Flex)`
     width: 100%;
-    height: auto;
+    height: 100%;
 
     gap: 16px;
     align-items: center;
     flex-direction: column;
+    justify-content: center;
 
     >img{
         width: 100%;

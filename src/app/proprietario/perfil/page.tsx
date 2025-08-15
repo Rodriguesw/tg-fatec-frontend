@@ -5,18 +5,192 @@ import { useRouter } from 'next/navigation';
 
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
+import { Modal } from '@/components/Modal';
+import { Input } from '@/components/Input';
+import { showToast } from '@/components/ToastAlert';
+
+import { Dialog, Spinner } from "@chakra-ui/react"
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { LG } from '@/styles/typographStyles';
+import { LG, MD, SM } from '@/styles/typographStyles';
+
+interface FormErrors {
+  name: boolean;
+  cnpj: boolean;
+  phone: boolean;
+  email: boolean;
+}
 
 export default function ProprietarioPerfil() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  
+  const [openMyData, setOpenMyData] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
+  
+  const [name, setName] = useState('');
+  const [cnpj, setCnpj] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  
+  const [errors, setErrors] = useState<FormErrors>({
+    name: false,
+    cnpj: false,
+    phone: false,
+    email: false,
+  });
+  
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
     setIsMounted(true); 
   }, []);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUserProprietario');
+
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setCurrentUser(parsedUser);
+
+      setName(parsedUser.name)
+      setCnpj(parsedUser.cnpj)
+      setPhone(parsedUser.phone)
+      setEmail(parsedUser.email)
+    } 
+  }, []);
+
+  const handleNameChange = (value: string) => {
+    setName(value);
+    setErrors(prev => ({ ...prev, name: false }));
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setErrors(prev => ({ ...prev, email: false }));
+  };
+
+  const handleCnpjChange = (value: string) => {
+    setCnpj(value);
+    setErrors(prev => ({ ...prev, cnpj: false }));
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setPhone(value);
+    setErrors(prev => ({ ...prev, phone: false }));
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|org|org\.br|yahoo|net)$/;
+
+    return regex.test(email);
+  };
+
+  const validateFields = (): boolean => {
+    const newErrors: FormErrors = {
+      name: !name.trim(),
+      cnpj: !cnpj.trim(),
+      phone: !phone.trim(),
+      email: !email.trim() || !validateEmail(email),
+    };
+    
+    const hasEmptyFields = Object.values(newErrors).some(error => error);
+    
+    const hasInvalidEmail = !validateEmail(email) && email.trim();
+    
+    setErrors(newErrors);
+
+    if (hasEmptyFields) {
+      showToast({
+        type: 'error',
+        message: 'Preencha todos os campos'
+      });
+      return false;
+    }
+
+    if (hasInvalidEmail) {
+      showToast({
+        type: 'error',
+        message: 'Insira um e-mail válido'
+      });
+      return false;
+    }
+
+    return true;
+  };
+  
+  const handleSavedChanges = () => {
+    if (!validateFields()) {
+      return;
+    }
+    
+    setIsLoading(true);
+
+    try {
+      const currentUser = JSON.parse(localStorage.getItem('currentUserProprietario') || '{}');
+      const infoUserProprietarioRaw = localStorage.getItem('infoUserProprietario');
+      const infoUserProprietario = infoUserProprietarioRaw ? JSON.parse(infoUserProprietarioRaw) : {};
+
+      const updatedUser = {
+        ...currentUser,
+        name,
+        cnpj: cnpj,
+        phone,
+        email,
+      };
+
+      setTimeout(() => {
+        setIsLoading(false); 
+        localStorage.setItem('currentUserProprietario', JSON.stringify(updatedUser));
+
+        if (updatedUser.id) {
+          infoUserProprietario[updatedUser.id] = updatedUser;
+          localStorage.setItem('infoUserProprietario', JSON.stringify(infoUserProprietario));
+        }
+
+        showToast({
+          type: 'success',
+          message: 'Suas alterações foram salvas com sucesso!'
+        });
+
+        setOpenMyData(false);
+      }, 200); 
+
+    } catch (error) {
+      setIsLoading(false); 
+    }
+  };
+  
+  const handleDeleteAccount = () => {
+    const userIdToDelete = currentUser.id;
+  
+    const infoUserProprietarioRaw = localStorage.getItem('infoUserProprietario');
+  
+    if (!infoUserProprietarioRaw) return;
+  
+    try {
+      const infoUserParsed = JSON.parse(infoUserProprietarioRaw);
+  
+      if (infoUserParsed[userIdToDelete]) {
+        delete infoUserParsed[userIdToDelete];
+  
+        localStorage.setItem('infoUserProprietario', JSON.stringify(infoUserParsed));
+  
+        localStorage.removeItem('currentUserProprietario');
+  
+        router.push('/proprietario/login');
+      } else {
+        console.warn('Usuário não encontrado no infoUserProprietario.');
+      }
+    } catch (error) {
+      console.error('Erro ao fazer parse de infoUserProprietario:', error);
+    }
+  
+    setOpenSettings(false);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("currentUserProprietario");
@@ -37,7 +211,7 @@ export default function ProprietarioPerfil() {
             </S.ContainerPhoto>
 
             <S.ContainerButtons>
-              <S.Button>
+              <S.Button onClick={() => setOpenMyData(true)}>
                 <LG  
                   color={theme.colors.branco.secundario} 
                   family={theme.fonts.inter}>
@@ -45,7 +219,7 @@ export default function ProprietarioPerfil() {
                 </LG>
               </S.Button>
 
-              <S.Button >
+              <S.Button onClick={() => setOpenSettings(true)}>
                 <LG  
                   color={theme.colors.branco.secundario} 
                   family={theme.fonts.inter}>
@@ -65,6 +239,127 @@ export default function ProprietarioPerfil() {
             
           <Navbar />
       </S.Wrapper>
+
+      {openMyData && 
+        <Modal isOpen={openMyData} onClose={() => setOpenMyData(false)}>
+          <S.ContainerModalEdit>
+            <Dialog.Header>
+              <Dialog.Title textAlign="center">
+                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                  Meu cadastro
+                </LG>
+              </Dialog.Title>
+            </Dialog.Header>
+
+            <Dialog.Body
+              gap="16px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+            >
+              <Input 
+                id="name"
+                type='text' 
+                value={name}
+                placeholder='Nome completo' 
+                label='Nome completo' 
+                onChange={handleNameChange}
+                hasError ={errors.name}
+              />
+
+              <Input 
+                id="email"
+                type='text' 
+                value={email}
+                disabled={true}
+                placeholder='email@mail.com' 
+                label='E-mail' 
+                onChange={handleEmailChange}
+                hasError ={errors.email}
+              />
+
+              <Input 
+                id="cnpj"
+                type='text' 
+                value={cnpj}
+                placeholder='12.345.678/0001-91' 
+                label='CNPJ' 
+                onChange={handleCnpjChange}
+                hasError ={errors.cnpj}
+              />
+
+              <Input 
+                id="phone"
+                type='text' 
+                placeholder='15 99999-9999' 
+                label='Telefone' 
+                onChange={handlePhoneChange}
+                value={phone}
+                hasError ={errors.phone}
+              />
+
+              <S.ContainerButtonModalRegister>
+                <S.ModalButton onClick={() => setOpenMyData(false)}>
+                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    Cancelar
+                  </MD>
+                </S.ModalButton>
+
+                <S.ModalButton onClick={handleSavedChanges}>
+                  {isLoading ? (<Spinner />) : (
+                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      Salvar
+                    </MD>
+                  )}
+                </S.ModalButton>
+              </S.ContainerButtonModalRegister>
+            </Dialog.Body>
+          </S.ContainerModalEdit>
+        </Modal>
+      }
+      
+      {openSettings && 
+        <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
+          <S.ContainerModalEdit>
+            <Dialog.Header>
+              <Dialog.Title textAlign="center">
+                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                  Segurança
+                </LG>
+              </Dialog.Title>
+            </Dialog.Header>
+
+            <Dialog.Body
+              gap="16px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+            >
+              <SM
+                family={theme.fonts.inter}
+                color={theme.colors.branco.secundario}>
+                Tem certeza de que deseja excluir permanente sua conta?
+              </SM>
+
+              <S.ContainerButtonModalSettings>
+                <S.ModalButton onClick={() => setOpenSettings(false)}>
+                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    Cancelar
+                  </MD>
+                </S.ModalButton>
+
+                <S.ModalButton onClick={handleDeleteAccount}>
+                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    Confirmar
+                  </MD>
+                </S.ModalButton>
+              </S.ContainerButtonModalSettings>
+            </Dialog.Body>
+          </S.ContainerModalEdit>
+        </Modal>
+      }
     </S.Container>
   );
 }

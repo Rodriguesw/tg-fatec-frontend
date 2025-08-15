@@ -401,8 +401,10 @@ export default function ProprietarioHome() {
     };
     localStorage.setItem("currentUserProprietario", JSON.stringify(updatedCurrentUser));
     setCurrentUserProprietario(updatedCurrentUser);
+    
+    const storedAllUsersObj = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
+    const storedAllUsers = Object.values(storedAllUsersObj);
 
-    const storedAllUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "[]");
     const updatedAllUsers = storedAllUsers.map((user: any) => {
       if (user.id === updatedCurrentUser.id) {
         return {
@@ -412,7 +414,9 @@ export default function ProprietarioHome() {
       }
       return user;
     });
-    localStorage.setItem("infoUserProprietario", JSON.stringify(updatedAllUsers));
+
+    const updatedAllUsersObj = Object.fromEntries(updatedAllUsers.map(user => [user.id, user]));
+    localStorage.setItem("infoUserProprietario", JSON.stringify(updatedAllUsersObj));
 
     showToast({
       type: "success",

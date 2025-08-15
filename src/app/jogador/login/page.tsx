@@ -16,7 +16,7 @@ import { MD, LG, SM } from '@/styles/typographStyles';
 
 import { showToast } from '@/components/ToastAlert';
 
-interface User {
+interface UserJogador {
   id: number;
   name: string;
   birth_date: string;
@@ -84,7 +84,7 @@ export default function JogadorLogin() {
   useEffect(() => {
     setIsMounted(true);
 
-    const getUsersFromStorage = (): Record<number, User> => {
+    const getUsersFromStorage = (): Record<number, UserJogador> => {
       try {
         const data = localStorage.getItem("infoUser");
 
@@ -96,7 +96,7 @@ export default function JogadorLogin() {
 
     const users = getUsersFromStorage();
     if (Object.keys(users).length === 0) {
-      const dataUserTest: User = {
+      const dataUserTest: UserJogador = {
         id: 1,
         name: "Matheus Henrique",
         birth_date: "2004-02-04",
@@ -178,8 +178,8 @@ export default function JogadorLogin() {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const users: Record<number, User> = JSON.parse(localStorage.getItem("infoUser") || "{}");
-      const user = Object.values<User>(users).find((u: User) => u.email === email);
+      const users: Record<number, UserJogador> = JSON.parse(localStorage.getItem("infoUser") || "{}");
+      const user = Object.values<UserJogador>(users).find((u: UserJogador) => u.email === email);
       
       if (user && user.password === password) {
         localStorage.setItem("currentUser", JSON.stringify(user));

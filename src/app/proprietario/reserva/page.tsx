@@ -27,6 +27,16 @@ export default function ProprietarioReservados() {
 
           <S.Content>
             <TitleWithButtons title='Reservados'/>
+
+            <S.NotFoundEvent>
+              <img src="/images/svg/icon-calendar-event.svg" alt="Nenhuma reserva encontrada"/>
+
+              <LG 
+                family={theme.fonts.inter}
+                color={theme.colors.branco.secundario}>
+                Você não tem reservas para os próximos dias.
+              </LG>
+            </S.NotFoundEvent>
           </S.Content>           
 
           <Navbar />

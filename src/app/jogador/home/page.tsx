@@ -566,12 +566,12 @@ export default function JogadorHome() {
                               Pix
                             </MD>
 
-                            <img src="/images/svg/icons-pix.svg" alt="Pagamento Pix"/>
+                            <img src="/images/svg/icon-pix.svg" alt="Pagamento Pix"/>
                           </S.ContainerModalPayment>
                         </S.ContainerPix>
 
                         <S.ContainerModalFormTooltip>
-                          <img src="/images/png/icons-question-mark-1.png" alt=" Pagamento pix" data-tooltip-id="pix-tooltip"/>
+                          <img src="/images/png/icon-question-mark-1.png" alt=" Pagamento pix" data-tooltip-id="pix-tooltip"/>
 
                           <Tooltip 
                             id="pix-tooltip" 
@@ -606,11 +606,11 @@ export default function JogadorHome() {
                         Dinheiro 
                       </MD>
 
-                      <img src="/images/png/icons-payment-method-2.png" alt=" Pagamento em dinheiro"/>
+                      <img src="/images/png/icon-payment-method-2.png" alt=" Pagamento em dinheiro"/>
                     </S.ContainerModalPayment>
 
                     <S.ContainerModalFormTooltip>
-                      <img src="/images/png/icons-question-mark-1.png" alt=" Pagamento em dinheiro" data-tooltip-id="dinheiro-tooltip"/>
+                      <img src="/images/png/icon-question-mark-1.png" alt=" Pagamento em dinheiro" data-tooltip-id="dinheiro-tooltip"/>
 
                       <Tooltip 
                         id="dinheiro-tooltip" 

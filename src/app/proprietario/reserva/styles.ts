@@ -32,3 +32,25 @@ export const Content = styled(C.Flex)`
     flex-direction: column;
     justify-content: flex-start;
 `
+
+export const NotFoundEvent = styled(C.Flex)`
+    width: 100%;
+    height: 100%;
+
+    gap: 16px;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    >img{
+        width: 100%;
+        height: auto;
+        max-width: 350px;
+    }
+
+    >p{
+        width: 100%;
+        height: auto;
+        max-width: 320px;
+    }
+`

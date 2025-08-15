@@ -15,7 +15,7 @@ import * as S from "./styles";
 import { theme } from "@/styles/theme";
 import { LG, MD, SM } from "@/styles/typographStyles";
 
-interface User {
+interface UserProprietario {
   id: number;
   name: string;
   email: string;
@@ -39,7 +39,55 @@ interface User {
     price?: string;
     payment_method?: string;
     reserved_date?: string;
-  }[]
+  }[];
+  reservations?: {
+    id?: number;
+    user_id?: number;
+    my_sports_location_id?: number;
+    reserved_date?: string;
+    start_time?: string;
+    end_time?: string;
+    price?: string;
+    payment_method?: string;
+  }[];
+  orders?: {
+    id?: number;
+    user_id?: number;
+    my_sports_location_id?: number;
+    reserved_date?: string;
+    start_time?: string;
+    end_time?: string;
+    price?: string;
+    payment_method?: string;
+  }[];
+}
+
+interface UserJogador {
+  id: number;
+  name: string;
+  birth_date: string;
+  gender: string;
+  team: string;
+  email: string;
+  password: string;
+  reserved_sports_location: {
+    id?: number;
+    name?: string;
+    address?: {
+      id?: number;
+      cep?: string;
+      number?: string;
+      city?: string;
+      neighborhood?: string;
+      state?: string;
+      street?: string;
+    };
+    start_time?: string;
+    end_time?: string;
+    price?: string;
+    payment_method?: string;
+    reserved_date?: string;
+  }[];
 }
 
 interface LoginErrors {
@@ -81,7 +129,7 @@ export default function LoginProprietario() {
   useEffect(() => {
     setIsMounted(true);
 
-    const getUsersFromStorage = (): Record<number, User> => {
+    const getUsersFromStorage = (): Record<number, UserProprietario> => {
       try {
         const data = localStorage.getItem("infoUserProprietario");
         return data ? JSON.parse(data) : {};
@@ -92,7 +140,7 @@ export default function LoginProprietario() {
 
     const users = getUsersFromStorage();
     if (Object.keys(users).length === 0) {
-      const dataUserTest: User = {
+      const dataUserTest: UserProprietario = {
         id: 1,
         name: "Matheus",
         email: "matheushr39@gmail.com",
@@ -116,9 +164,29 @@ export default function LoginProprietario() {
           price: "R$ 100,00",
           payment_method: "Dinheiro",
           }],
+        reservations: [{
+          id: 1,
+          user_id: 1,
+          my_sports_location_id: 1782,
+          reserved_date: "2025-10-01",
+          start_time: "08:00",
+          end_time: "10:00",
+          price: "R$ 100,00",
+          payment_method: "Dinheiro"
+        }],
+        orders: [{
+          id: 1,
+          user_id: 1,
+          my_sports_location_id: 1782,
+          reserved_date: "2025-10-01",
+          start_time: "08:00",
+          end_time: "10:00",
+          price: "R$ 100,00",
+          payment_method: "Dinheiro"
+        }]
       };
 
-      const dataUserTestTwo: User = {
+      const dataUserTestTwo: UserProprietario = {
         id: 2,
         name: "Thiago",
         email: "matheushr@gmail.com",
@@ -126,6 +194,36 @@ export default function LoginProprietario() {
         cnpj: "11.080.217/0001-75",
         phone: "15 99160-1215",
       };
+
+      const dataUserJogadorTest: UserJogador = {
+        id: 1,
+        name: "Matheus Henrique",
+        birth_date: "2004-02-04",
+        gender: "male",
+        team: "sao_paulo",
+        email: "matheushr39@gmail.com",
+        password: "teste",
+        reserved_sports_location: [{
+          id: 1782,
+          name: "Arena KS Society",
+          address: {
+            id: 12,
+            cep: "18213110",
+            number: "305",
+            street: "Rua Alceu Correa de Moraes",
+            city: "Itapetininga",
+            neighborhood: "Vila Macia",
+            state: "SP"
+          },
+          start_time: "20:00",
+          end_time: "23:00",
+          price: "R$ 300,00",
+          payment_method: "Dinheiro",
+          reserved_date: "29/03/2025",
+        }]
+      };
+
+      localStorage.setItem("infoUser", JSON.stringify({1: dataUserJogadorTest}));
 
       const existingUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
 
@@ -188,10 +286,10 @@ export default function LoginProprietario() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const users: Record<number, User> = JSON.parse(
+      const users: Record<number, UserProprietario> = JSON.parse(
         localStorage.getItem("infoUserProprietario") || "{}"
       );
-      const user = Object.values<User>(users).find((u: User) => u.email === email);
+      const user = Object.values<UserProprietario>(users).find((u: UserProprietario) => u.email === email);
 
       if (user && user.password === password) {
         localStorage.setItem("currentUserProprietario", JSON.stringify(user));
