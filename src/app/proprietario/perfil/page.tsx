@@ -73,13 +73,47 @@ export default function ProprietarioPerfil() {
     setErrors(prev => ({ ...prev, email: false }));
   };
 
+  const formatCNPJ = (value: string): string => {
+    // Remove tudo que não é dígito
+    const digits = value.replace(/\D/g, '').substring(0, 14);
+    
+    // Aplica a máscara
+    return digits
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2');
+  };
+
   const handleCnpjChange = (value: string) => {
-    setCnpj(value);
+    const formattedValue = formatCNPJ(value);
+    setCnpj(formattedValue);
     setErrors(prev => ({ ...prev, cnpj: false }));
   };
 
+  const formatPhone = (value: string): string => {
+    const digits = value.replace(/\D/g, '');
+    
+    const limitedDigits = digits.slice(0, 11);
+
+    if (limitedDigits.length <= 2) {
+      return limitedDigits;
+    }
+    
+    if (limitedDigits.length <= 6) {
+      return `(${limitedDigits.slice(0, 2)}) ${limitedDigits.slice(2, 6)}`;
+    }
+    if (limitedDigits.length <= 10) {
+      return `(${limitedDigits.slice(0, 2)}) ${limitedDigits.slice(2, 6)}-${limitedDigits.slice(6, 10)}`;
+    }
+    
+    return `(${limitedDigits.slice(0, 2)}) ${limitedDigits.slice(2, 7)}-${limitedDigits.slice(7, 11)}`;
+  };
+
+  // Atualize seu handler:
   const handlePhoneChange = (value: string) => {
-    setPhone(value);
+    const formattedValue = formatPhone(value);
+    setPhone(formattedValue);
     setErrors(prev => ({ ...prev, phone: false }));
   };
 
@@ -198,6 +232,22 @@ export default function ProprietarioPerfil() {
     router.push("/");
   }
 
+  const closeModal = () => {
+    setOpenMyData(false);
+
+    setErrors({
+      name: false,
+      cnpj: false,
+      phone: false,
+      email: false,
+    });
+    
+    setName(currentUser?.name || '');
+    setCnpj(currentUser?.cnpj || '');
+    setPhone(currentUser?.phone || '');
+    setEmail(currentUser?.email || '');
+  }
+
   if (!isMounted) return null; 
 
   return (
@@ -300,7 +350,7 @@ export default function ProprietarioPerfil() {
               />
 
               <S.ContainerButtonModalRegister>
-                <S.ModalButton onClick={() => setOpenMyData(false)}>
+                <S.ModalButton onClick={() => closeModal()}>
                   <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                     Cancelar
                   </MD>

@@ -227,7 +227,7 @@ export default function JogadorLogin() {
   return (
     <S.Container>
       <S.Wrapper>
-        <LoginWithBannerAndModal minHeight="560px" backgroundImage="/images/jpg/bk-login-jogador.jpg">
+        <LoginWithBannerAndModal minHeight="560px" backgroundImage="/images/jpg/bk-login-jogador-1.jpg">
           <S.Content>
             <S.ContentHeader>
               <TitleWithButtons title="Jogador" buttonBack={true} onClick={handleClick} />
