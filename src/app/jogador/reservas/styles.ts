@@ -72,7 +72,7 @@ export const NotFoundEvent = styled(C.Flex)`
     >img{
         width: 100%;
         height: auto;
-        max-width: 350px;
+        max-width: 270px;
     }
 
     >p{

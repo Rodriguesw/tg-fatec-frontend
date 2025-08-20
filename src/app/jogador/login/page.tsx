@@ -36,8 +36,8 @@ interface UserJogador {
       state?: string;
       street?: string;
     };
-    start_time?: string;
-    end_time?: string;
+    time_start?: string;
+    time_end?: string;
     price?: string;
     payment_method?: string;
     reserved_date?: string;
@@ -52,7 +52,7 @@ interface LoginErrors {
 }
 
 const validateEmail = (email: string): boolean => {
-  const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|net|yahoo|org|org\.br)$/;
+  const regex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})*$/;
   
   if (!email || email.length < 5 || email.length > 254) {
     return false;
@@ -116,8 +116,8 @@ export default function JogadorLogin() {
             neighborhood: "Vila Macia",
             state: "SP"
           },
-          start_time: "20:00",
-          end_time: "23:00",
+          time_start: "20:00",
+          time_end: "23:00",
           price: "R$ 300,00",
           payment_method: "Dinheiro",
           reserved_date: "29/03/2025",
@@ -227,7 +227,7 @@ export default function JogadorLogin() {
   return (
     <S.Container>
       <S.Wrapper>
-        <LoginWithBannerAndModal minHeight="560px" backgroundImage="/images/jpg/bk-login-jogador-1.jpg">
+        <LoginWithBannerAndModal minHeight="560px" backgroundImage="/images/jpg/bk-login-jogador-2.jpg">
           <S.Content>
             <S.ContentHeader>
               <TitleWithButtons title="Jogador" buttonBack={true} onClick={handleClick} />

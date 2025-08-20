@@ -7,7 +7,7 @@ interface InputContainerProps  {
 
 export const Container = styled(C.Flex)<InputContainerProps>`
   width: auto;
-  height: auto;
+  height: 46px;
 
   gap: 4px;
   flex-direction: column;
@@ -50,5 +50,11 @@ export const Container = styled(C.Flex)<InputContainerProps>`
       background-color: #292929;
       border-bottom: none;
     }
+  }
+
+  .input-date:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: #FFFFFF70;
   }
 `

@@ -16,8 +16,8 @@ interface CardReservedProps {
   id: number;
   name: string;
   address: Address;
-  start_time: string;
-  end_time: string;
+  time_start: string;
+  time_end: string;
   price: string;
   payment_method: string;
   reserved_date: string;
@@ -29,8 +29,8 @@ export function CardReserved({
   id, 
   name,
   address,
-  start_time,
-  end_time,
+  time_start,
+  time_end,
   price,
   payment_method,
   reserved_date,
@@ -38,7 +38,7 @@ export function CardReserved({
   onClickCancel
 }: CardReservedProps) {
   const formattedAddress = `${address.street}, ${address.number} - ${address.city}, ${address.state}`;
-  const dateAndTime = `${reserved_date} ${start_time} - ${end_time}`;
+  const dateAndTime = `${reserved_date} ${time_start} - ${time_end}`;
 
   return (
       <S.Card>

@@ -223,8 +223,8 @@ export default function ProprietarioHome() {
         state: dataCep?.uf,
       },
       days: selectedDays,
-      start_time: valueInputStartHours,
-      end_time: valueInputEndHours,
+      time_start: valueInputStartHours,
+      time_end: valueInputEndHours,
       price: valuePerHour,
       payment_method: method
     };
@@ -314,8 +314,8 @@ export default function ProprietarioHome() {
     setNumber(item.address.number);
     setAdressLocalSport(item.address.street);
     setSelectedDays(item.days);
-    setValueInputStartHours(item.start_time);
-    setValueInputEndHours(item.end_time);
+    setValueInputStartHours(item.time_start);
+    setValueInputEndHours(item.time_end);
     setValuePerHour(item.price);
     setMethod(item.payment_method);
 
@@ -339,8 +339,8 @@ export default function ProprietarioHome() {
             street: adressLocalSport,
           },
           days: selectedDays,
-          start_time: valueInputStartHours,
-          end_time: valueInputEndHours,
+          time_start: valueInputStartHours,
+          time_end: valueInputEndHours,
           price: valuePerHour,
           payment_method: method
         };

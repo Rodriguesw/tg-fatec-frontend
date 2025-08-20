@@ -16,8 +16,8 @@ interface Owner {
   id: number;
   razaoSocial: string;
   cnpj: string;
-  telefone: string;
-  responsavel: string;
+  phone: string;
+  nome: string;
   email: string;
   password: string;
 }
@@ -65,7 +65,7 @@ export default function ProprietarioCadastroClient() {
   }
 
   const validateEmail = (email: string): boolean => {
-    const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|org|org\.br|yahoo|net)$/;
+    const regex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})*$/;
     return regex.test(email);
   };
 
@@ -127,7 +127,7 @@ export default function ProprietarioCadastroClient() {
     try {
       setIsLoading(true);
   
-      const existingOwners: Record<number, Owner> = JSON.parse(localStorage.getItem("infoOwner") || "{}");
+      const existingOwners: Record<number, Owner> = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
       const emailExists = Object.values<Owner>(existingOwners).some(owner => owner.email === email);
       
       if (emailExists) {
@@ -150,8 +150,8 @@ export default function ProprietarioCadastroClient() {
         id: newId,
         razaoSocial,
         cnpj,
-        telefone,
-        responsavel,
+        phone: telefone,
+        nome: responsavel,
         email,
         password,
       };
@@ -159,7 +159,7 @@ export default function ProprietarioCadastroClient() {
       await new Promise(resolve => setTimeout(resolve, 500));
   
       existingOwners[newId] = payload;
-      localStorage.setItem("infoOwner", JSON.stringify(existingOwners));
+      localStorage.setItem("infoUserProprietario", JSON.stringify(existingOwners));
   
       showToast({
         type: 'success',
@@ -312,7 +312,7 @@ export default function ProprietarioCadastroClient() {
               <Input 
                 id="password"
                 type='password' 
-                placeholder='********' 
+                placeholder='••••••••••' 
                 label='Senha *' 
                 onChange={handlePasswordChange}
                 hasError={errors.password}
@@ -322,7 +322,7 @@ export default function ProprietarioCadastroClient() {
               <Input 
                 id="passwordConfirmation"
                 type='password' 
-                placeholder='********' 
+                placeholder='••••••••••'
                 label='Confirmar Senha *' 
                 onChange={handlePasswordConfirmationChange}
                 hasError={errors.passwordConfirmation}

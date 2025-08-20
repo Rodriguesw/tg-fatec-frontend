@@ -20,6 +20,7 @@ interface FormErrors {
   cnpj: boolean;
   phone: boolean;
   email: boolean;
+  razaoSocial: boolean; // Adicione aqui
 }
 
 export default function ProprietarioPerfil() {
@@ -35,12 +36,13 @@ export default function ProprietarioPerfil() {
   const [cnpj, setCnpj] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  
+  const [razaoSocial, setRazaoSocial] = useState('');
   const [errors, setErrors] = useState<FormErrors>({
     name: false,
     cnpj: false,
     phone: false,
     email: false,
+    razaoSocial: false, // Adicione aqui
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +60,7 @@ export default function ProprietarioPerfil() {
 
       setName(parsedUser.name)
       setCnpj(parsedUser.cnpj)
+      setRazaoSocial(parsedUser.razaoSocial);
       setPhone(parsedUser.phone)
       setEmail(parsedUser.email)
     } 
@@ -117,8 +120,13 @@ export default function ProprietarioPerfil() {
     setErrors(prev => ({ ...prev, phone: false }));
   };
 
+  const handleRazaoSocialChange = (value: string) => {
+    setRazaoSocial(value);
+    setErrors(prev => ({ ...prev, razaoSocial: false }));
+  };
+
   const validateEmail = (email: string): boolean => {
-    const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|org|org\.br|yahoo|net)$/;
+    const regex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})*$/;
 
     return regex.test(email);
   };
@@ -129,6 +137,7 @@ export default function ProprietarioPerfil() {
       cnpj: !cnpj.trim(),
       phone: !phone.trim(),
       email: !email.trim() || !validateEmail(email),
+      razaoSocial: !razaoSocial.trim(), // Adicione aqui
     };
     
     const hasEmptyFields = Object.values(newErrors).some(error => error);
@@ -174,6 +183,7 @@ export default function ProprietarioPerfil() {
         cnpj: cnpj,
         phone,
         email,
+        razaoSocial,
       };
 
       setTimeout(() => {
@@ -240,12 +250,14 @@ export default function ProprietarioPerfil() {
       cnpj: false,
       phone: false,
       email: false,
+      razaoSocial: false, // Adicione aqui
     });
-    
+
     setName(currentUser?.name || '');
     setCnpj(currentUser?.cnpj || '');
     setPhone(currentUser?.phone || '');
     setEmail(currentUser?.email || '');
+    setRazaoSocial(currentUser?.razaoSocial || ''); // Adicione aqui
   }
 
   if (!isMounted) return null; 
@@ -327,6 +339,16 @@ export default function ProprietarioPerfil() {
                 label='E-mail' 
                 onChange={handleEmailChange}
                 hasError ={errors.email}
+              />
+
+              <Input 
+                id="razaoSocial"
+                type='text' 
+                placeholder='Razão Social' 
+                label='Razão Social *' 
+                onChange={handleRazaoSocialChange}
+                hasError={errors.razaoSocial}
+                value={razaoSocial}
               />
 
               <Input 

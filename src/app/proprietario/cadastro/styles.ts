@@ -4,7 +4,7 @@ import { theme } from "@/styles/theme";
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: 100vh;
+    height: auto;
 
     overflow-y: auto;
     justify-content: center;
@@ -16,6 +16,7 @@ export const Wrapper = styled(C.Flex)`
     width: 100%;
     height: 100%;
     max-width: 479px;       
+    padding-bottom: 40px;
 
     align-items: center;
     justify-content: flex-start;
@@ -58,7 +59,7 @@ export const Content = styled(C.Flex)`
     width: 100%;
     height: auto;
     max-width: 479px;
-    padding: 24px 24px 64px;
+    padding: 24px 24px 40px;
 
     gap: 24px;
     align-items: center;

@@ -293,8 +293,8 @@ export default function JogadorHome() {
         neighborhood: cepData.bairro,
         state: cepData.uf,
       },
-      start_time: valueInputStartHours,
-      end_time: valueInputEndHours,
+      time_start: valueInputStartHours,
+      time_end: valueInputEndHours,
       price: `R$ ${valorReserva.toFixed(2).replace('.', ',')}`,
       reserved_date: formatToHtmlDate(valueInputDate),
       payment_method: methodPayment

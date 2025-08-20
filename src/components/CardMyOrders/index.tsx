@@ -35,7 +35,7 @@ export function CardMyOrders({ onEdit }: { onEdit?: (item: any) => void }) {
                     </SM>
 
                     <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                        {item.reserved_date} - {item.start_time} às {item.end_time}
+                        {item.reserved_date} - {item.time_start} às {item.time_end}
                     </SM>
                   </S.CardContentDataAndHours>
                 ))}

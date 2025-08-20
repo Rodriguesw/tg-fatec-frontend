@@ -72,6 +72,31 @@ export const Select = styled.select<InputContainerProps >`
     }
 `
 
+export const InputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+export const EyeButton = styled.button`
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    height: 20px;
+    width: 20px;
+  }
+`;
+
 export const Input = styled(C.Input)<InputContainerProps>`
     width: 100%;
     height: 46px;

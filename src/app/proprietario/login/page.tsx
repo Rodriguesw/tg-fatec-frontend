@@ -21,6 +21,7 @@ interface UserProprietario {
   email: string;
   password: string;
   cnpj: string;
+  razaoSocial: string;
   phone: string;
   my_sports_location?: {
     id?: number;
@@ -34,8 +35,8 @@ interface UserProprietario {
       street?: string;
     };
     days?: string[];
-    start_time?: string;
-    end_time?: string;
+    time_start?: string;
+    time_end?: string;
     price?: string;
     payment_method?: string;
     reserved_date?: string;
@@ -45,8 +46,8 @@ interface UserProprietario {
     user_id?: number;
     my_sports_location_id?: number;
     reserved_date?: string;
-    start_time?: string;
-    end_time?: string;
+    time_start?: string;
+    time_end?: string;
     price?: string;
     payment_method?: string;
   }[];
@@ -55,8 +56,8 @@ interface UserProprietario {
     user_id?: number;
     my_sports_location_id?: number;
     reserved_date?: string;
-    start_time?: string;
-    end_time?: string;
+    time_start?: string;
+    time_end?: string;
     price?: string;
     payment_method?: string;
   }[];
@@ -82,8 +83,8 @@ interface UserJogador {
       state?: string;
       street?: string;
     };
-    start_time?: string;
-    end_time?: string;
+    time_start?: string;
+    time_end?: string;
     price?: string;
     payment_method?: string;
     reserved_date?: string;
@@ -98,7 +99,7 @@ interface LoginErrors {
 }
 
 const validateEmail = (email: string): boolean => {
-  const regex = /^[^\s@]+@[^\s@]+\.(com|com\.br|net|yahoo|org|org\.br)$/;
+  const regex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})*$/;
   
   if (!email || email.length < 5 || email.length > 254) {
     return false;
@@ -146,6 +147,7 @@ export default function LoginProprietario() {
         email: "matheushr39@gmail.com",
         password: "admin",
         cnpj: "11.080.217/0001-75",
+        razaoSocial: "Matheus Society LTDA",
         phone: "15 99160-1215",
         my_sports_location: [{
           id: 1782,
@@ -159,8 +161,8 @@ export default function LoginProprietario() {
             state: "SP"
           },
           days: ["Seg", "Qua", "Qui", "SÁB"],
-          start_time: "06:00",
-          end_time: "23:00",
+          time_start: "06:00",
+          time_end: "23:00",
           price: "R$ 100,00",
           payment_method: "Dinheiro",
           }],
@@ -169,8 +171,8 @@ export default function LoginProprietario() {
           user_id: 1,
           my_sports_location_id: 1782,
           reserved_date: "2025-09-01",
-          start_time: "08:00",
-          end_time: "10:00",
+          time_start: "08:00",
+          time_end: "10:00",
           price: "R$ 100,00",
           payment_method: "Dinheiro"
         }],
@@ -179,8 +181,8 @@ export default function LoginProprietario() {
           user_id: 1,
           my_sports_location_id: 1782,
           reserved_date: "2025-10-01",
-          start_time: "12:00",
-          end_time: "10:00",
+          time_start: "12:00",
+          time_end: "10:00",
           price: "R$ 100,00",
           payment_method: "Dinheiro"
         }]
@@ -193,6 +195,7 @@ export default function LoginProprietario() {
         password: "admin",
         cnpj: "11.080.217/0001-75",
         phone: "15 99160-1215",
+        razaoSocial: "Thiago Society LTDA",
       };
 
       const dataUserJogadorTest: UserJogador = {
@@ -215,8 +218,8 @@ export default function LoginProprietario() {
             neighborhood: "Vila Macia",
             state: "SP"
           },
-          start_time: "20:00",
-          end_time: "23:00",
+          time_start: "20:00",
+          time_end: "23:00",
           price: "R$ 300,00",
           payment_method: "Dinheiro",
           reserved_date: "29/03/2025",

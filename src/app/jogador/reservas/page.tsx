@@ -28,8 +28,8 @@ interface ReservedSportLocation {
     state: string;
     street: string;
   };
-  start_time: string;
-  end_time: string;
+  time_start: string;
+  time_end: string;
   price: string;
   payment_method: string;
   reserved_date: string;
@@ -84,8 +84,8 @@ export default function JogadorReservas() {
                     id={item.id} 
                     name={item.name}
                     address={item.address}
-                    start_time={item.start_time}
-                    end_time={item.end_time}
+                    time_start={item.time_start}
+                    time_end={item.time_end}
                     price={item.price}
                     reserved_date={item.reserved_date}
                     payment_method={item.payment_method}
