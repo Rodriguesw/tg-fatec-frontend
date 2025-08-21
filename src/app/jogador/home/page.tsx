@@ -364,7 +364,21 @@ export default function JogadorHome() {
     setHasErrorEndHours(false) // remove o erro ao escolher uma data válida
   }
 
-  const valorHora = 100;
+  function formatPriceToNumber(priceString: string) {
+      if (!priceString || typeof priceString !== 'string') {
+          return 0;
+      }
+      
+      const numericString = priceString.replace(/[^\d,.]/g, '');
+      
+      if (numericString.includes(',')) {
+          return parseFloat(numericString.replace(/\./g, '').replace(',', '.'));
+      }
+      
+      return parseFloat(numericString);
+  }
+
+  const valorHora = formatPriceToNumber(selectedMarker?.price); // {selectedMarker.price}
 
   function calcularHorasReservadas(inicio: string, fim: string): number {
     const [startHour, startMinute] = inicio.split(':').map(Number);
@@ -383,7 +397,14 @@ export default function JogadorHome() {
     ? calcularHorasReservadas(valueInputStartHours, valueInputEndHours)
     : 0;
 
-  const valorReserva = horasReservadas * valorHora;
+    const valorReserva = horasReservadas * valorHora;
+
+    function formatarMoedaBrasileira(valor: number) {
+      return new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+      }).format(valor);
+  }
 
   const getDynamicMinHour = () => {
     console.log('isToday', isToday);
@@ -500,7 +521,7 @@ export default function JogadorHome() {
                               family={theme.fonts.inter}
                               color={theme.colors.branco.secundario}
                               >
-                               Valor por hora: R$ 100,00
+                               Valor por hora: {formatarMoedaBrasileira(valorHora)}
                             </MD>
                           </S.ContainerModalRatingAndAdress>
 
@@ -635,7 +656,7 @@ export default function JogadorHome() {
                     family={theme.fonts.inter}
                     color={theme.colors.branco.secundario}
                     >
-                      Valor da reserva: R$ {valorReserva.toFixed(2).replace('.', ',')}
+                      Valor da reserva: {formatarMoedaBrasileira(valorReserva)}
                     </MD>
                   )}
                 </S.ContainerModalFormPayment>

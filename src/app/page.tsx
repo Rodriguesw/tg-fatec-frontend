@@ -1,21 +1,31 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // Atualize para next/navigation
+import Link from 'next/link';
 
-import { Input } from '@/components/Input';
+import { defaultExtraMarkers } from '@/utils/MapConfig';
+
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
 import * as S from './styles'
-import { H3, LG, MD } from '@/styles/typographStyles';
 import { theme } from '@/styles/theme';
-import Link from 'next/link';
+import { H3, LG, MD } from '@/styles/typographStyles';
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
         
   useEffect(() => {
-    setIsMounted(true); // Garante que o componente seja montado no cliente
+    setIsMounted(true); 
+  }, []);
+
+  useEffect(() => {
+    const storedMarkers = localStorage.getItem('mapMarkers');
+
+    if (storedMarkers) {
+      //Não seta os markers se já houver marcadores no localStorage
+    } else {
+      localStorage.setItem('mapMarkers', JSON.stringify(defaultExtraMarkers));
+    }
   }, []);
   
   if (!isMounted) return null;

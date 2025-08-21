@@ -30,6 +30,7 @@ interface CEPData {
 
 interface FormErrors {
   nameLocalSport?: boolean;
+  typeLocalSport?: boolean;
   cep?: boolean;
   number?: boolean;
   adressLocalSport?: boolean;
@@ -49,6 +50,7 @@ export default function ProprietarioHome() {
   const [newModalLocalSport, setNewModalLocalSport] = useState(false);
 
   const [nameLocalSport, setNameLocalSport] = useState('');
+  const [typeLocalSport, setTypeLocalSport] = useState('');
   const [cep, setCep] = useState('');
   const [dataCep, setDataCep] = useState<CEPData | null>(null);
   const [number, setNumber] = useState('');
@@ -61,6 +63,12 @@ export default function ProprietarioHome() {
   const [method, setMethod] = useState('Dinheiro');
   const methodOptions = [
     { label: 'Dinheiro', value: 'Dinheiro' },
+  ];
+  
+  const typeOptions = [
+    { label: 'Futsal', value: 'Futsal' },
+    { label: 'Society', value: 'Society' },
+    { label: 'Futebol', value: 'Futebol' },
   ];
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -86,6 +94,11 @@ export default function ProprietarioHome() {
   const handleNameChange = (value: string) => {
     setNameLocalSport(value);
     setErrors(prev => ({ ...prev, nameLocalSport: false }));
+  };
+  
+  const handleTypeChange = (value: string) => {
+    setTypeLocalSport(value);
+    setErrors(prev => ({ ...prev, typeLocalSport: false }));
   };
 
   const handleCepChange = async (value: string) => {
@@ -173,9 +186,49 @@ export default function ProprietarioHome() {
     return /^R\$\s\d+,\d{2}$/.test(value);
   };
 
-  const handleCreateLocalSport = () => {
+  // Função para geocodificar endereço e obter coordenadas
+  const geocodeAddress = async (address: string): Promise<{ lat: number; lng: number } | null> => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0`
+      );
+      const data = await response.json();
+  
+      if (data.status === "OK") {
+        const location = data.results[0].geometry.location;
+        
+        return {
+          lat: location.lat,
+          lng: location.lng,
+        };
+      } else {
+        console.error("Geocoding error:", data.status);
+        return null;
+      }
+    } catch (error) {
+      console.error("Erro ao geocodificar endereço:", error);
+      return null;
+    }
+  };
+
+  // Função para determinar o ícone com base no tipo de propriedade
+  const getIconByType = (type: string) => {
+    switch(type.toLowerCase()) {
+      case 'futsal':
+        return { url: '/images/svg/icon-marker-map-blue.svg' };
+      case 'society':
+        return { url: '/images/svg/icon-marker-map-orange.svg' };
+      case 'futebol':
+        return { url: '/images/svg/icon-marker-map-green.svg' };
+      default:
+        return { url: '/images/svg/icon-marker-map-blue.svg' };
+    }
+  };
+
+  const handleCreateLocalSport = async () => {
     if (
       !nameLocalSport ||
+      !typeLocalSport ||
       !cep ||
       !number ||
       !adressLocalSport ||
@@ -187,6 +240,7 @@ export default function ProprietarioHome() {
     ) {
       const newErrors: FormErrors = {
         nameLocalSport: !nameLocalSport,
+        typeLocalSport: !typeLocalSport,
         cep: !validateCEP(cep),
         number: !validateNumber(number),
         adressLocalSport: !adressLocalSport,
@@ -214,6 +268,7 @@ export default function ProprietarioHome() {
     const newSportsLocation = {
       id: Date.now(),
       name: nameLocalSport,
+      type: typeLocalSport,
       address: {
         id: Date.now() + 1, 
         cep,
@@ -240,24 +295,55 @@ export default function ProprietarioHome() {
       localStorage.setItem('currentUserProprietario', JSON.stringify(currentUser));
       setCurrentUserProprietario(currentUser);
 
-      let infoUsers = JSON.parse(localStorage.getItem('infoUserProprietario') || '[]');
-
-      if (!Array.isArray(infoUsers)) {
-        infoUsers = Object.values(infoUsers); 
-      }
-
-      const userIndex = infoUsers.findIndex(
-        (u: any) => u.id === currentUser.id || u.email === currentUser.email
-      );
-
-      if (userIndex !== -1) {
-        if (!infoUsers[userIndex].my_sports_location) {
-          infoUsers[userIndex].my_sports_location = [];
+      const infoUsersObj = JSON.parse(localStorage.getItem('infoUserProprietario') || '{}');
+      
+      // Atualiza o usuário no objeto infoUserProprietario
+      if (infoUsersObj[currentUser.id]) {
+        if (!infoUsersObj[currentUser.id].my_sports_location) {
+          infoUsersObj[currentUser.id].my_sports_location = [];
         }
-        infoUsers[userIndex].my_sports_location.push(newSportsLocation);
+        infoUsersObj[currentUser.id].my_sports_location.push(newSportsLocation);
+      } else {
+        // Se o usuário não existir no infoUserProprietario, adiciona-o
+        infoUsersObj[currentUser.id] = currentUser;
       }
 
-      localStorage.setItem('infoUserProprietario', JSON.stringify(infoUsers));
+      localStorage.setItem('infoUserProprietario', JSON.stringify(infoUsersObj));
+
+      // Adicionar a propriedade ao mapMarkers
+      const fullAddress = `${adressLocalSport}, ${number}, ${dataCep?.localidade || ''}, ${dataCep?.uf || ''}`;
+      const coordinates = await geocodeAddress(fullAddress);
+      
+      if (coordinates) {
+        // Obter os marcadores existentes
+        const storedMarkers = JSON.parse(localStorage.getItem('mapMarkers') || '[]');
+        
+        // Gerar um novo ID para o marcador (maior ID existente + 1)
+        const maxId = storedMarkers.reduce((max: number, marker: any) => 
+          marker.id > max ? marker.id : max, 0);
+        
+        // Criar o novo marcador
+        const newMarker = {
+          id: maxId + 1,
+          lat: coordinates.lat,
+          lng: coordinates.lng,
+          title: nameLocalSport,
+          icon: getIconByType(typeLocalSport),
+          address: {
+            cep,
+            number
+          },
+          rating: 0, // Rating inicial como 0
+          price: valuePerHour, // Valor por hora
+          time_start: valueInputStartHours, // Hora de início
+          time_end: valueInputEndHours, // Hora de término
+          days: selectedDays // Dias da semana disponíveis
+        };
+        
+        // Adicionar o novo marcador à lista e salvar no localStorage
+        storedMarkers.push(newMarker);
+        localStorage.setItem('mapMarkers', JSON.stringify(storedMarkers));
+      }
 
       showToast({
         type: "success",
@@ -268,6 +354,7 @@ export default function ProprietarioHome() {
 
       // Limpando inputs
       setNameLocalSport('');
+      setTypeLocalSport('');
       setCep('');
       setNumber('');
       setAdressLocalSport('');
@@ -285,6 +372,7 @@ export default function ProprietarioHome() {
 
     //Limpando inputs
     setNameLocalSport('')
+    setTypeLocalSport('')
     setCep('')
     setNumber('')
     setAdressLocalSport('')
@@ -296,6 +384,7 @@ export default function ProprietarioHome() {
     //LImpando erros
      setErrors({
       nameLocalSport: false,
+      typeLocalSport: false,
       cep: false,
       number: false,
       adressLocalSport: false,
@@ -310,6 +399,7 @@ export default function ProprietarioHome() {
     setEditItem(item);
 
     setNameLocalSport(item.name);
+    setTypeLocalSport(item.type || '');
     setCep(item.address.cep);
     setNumber(item.address.number);
     setAdressLocalSport(item.address.street);
@@ -322,7 +412,7 @@ export default function ProprietarioHome() {
     setNewModalLocalSport(true);
   };
 
-  const handleSavedSportLocation = () => {
+  const handleSavedSportLocation = async () => {
     if (!editItem) return;
 
     const storedData = JSON.parse(localStorage.getItem("currentUserProprietario") || "{}");
@@ -332,6 +422,7 @@ export default function ProprietarioHome() {
         return {
           ...location,
           name: nameLocalSport,
+          type: typeLocalSport,
           address: {
             ...location.address,
             cep,
@@ -355,6 +446,66 @@ export default function ProprietarioHome() {
     
     localStorage.setItem("currentUserProprietario", JSON.stringify(updatedData));
     setCurrentUserProprietario(updatedData);
+    
+    // Atualiza também o infoUserProprietario
+    const storedAllUsersObj = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
+    
+    // Atualiza o usuário no objeto infoUserProprietario
+    if (storedAllUsersObj[updatedData.id]) {
+      storedAllUsersObj[updatedData.id] = {
+        ...storedAllUsersObj[updatedData.id],
+        my_sports_location: updatedData.my_sports_location
+      };
+    }
+    
+    localStorage.setItem("infoUserProprietario", JSON.stringify(storedAllUsersObj));
+    
+    // Atualiza o mapMarkers se a propriedade já existir lá
+    const storedMarkers = JSON.parse(localStorage.getItem('mapMarkers') || '[]');
+    const markerIndex = storedMarkers.findIndex((marker: any) => 
+      marker.title === editItem.name && 
+      marker.address?.cep === editItem.address?.cep && 
+      marker.address?.number === editItem.address?.number
+    );
+    
+    if (markerIndex !== -1) {
+      // Se o endereço mudou, precisamos obter novas coordenadas
+      if (cep !== editItem.address?.cep || number !== editItem.address?.number || adressLocalSport !== editItem.address?.street) {
+        const fullAddress = `${adressLocalSport}, ${number}, ${dataCep?.localidade || ''}, ${dataCep?.uf || ''}`;
+        const coordinates = await geocodeAddress(fullAddress);
+        
+        if (coordinates) {
+          storedMarkers[markerIndex] = {
+            ...storedMarkers[markerIndex],
+            lat: coordinates.lat,
+            lng: coordinates.lng,
+            title: nameLocalSport,
+            icon: getIconByType(typeLocalSport),
+            address: {
+              cep,
+              number
+            },
+            price: valuePerHour,
+            time_start: valueInputStartHours,
+            time_end: valueInputEndHours,
+            days: selectedDays
+          };
+        }
+      } else {
+        // Se apenas o nome ou tipo mudou (ou outros dados não relacionados ao endereço)
+        storedMarkers[markerIndex] = {
+          ...storedMarkers[markerIndex],
+          title: nameLocalSport,
+          icon: getIconByType(typeLocalSport),
+          price: valuePerHour,
+          time_start: valueInputStartHours,
+          time_end: valueInputEndHours,
+          days: selectedDays
+        };
+      }
+      
+      localStorage.setItem('mapMarkers', JSON.stringify(storedMarkers));
+    }
 
     showToast({
       type: "success",
@@ -367,6 +518,7 @@ export default function ProprietarioHome() {
 
     //Limpando inputs
     setNameLocalSport('')
+    setTypeLocalSport('')
     setCep('')
     setNumber('')
     setAdressLocalSport('')
@@ -378,6 +530,7 @@ export default function ProprietarioHome() {
     //LImpando erros
     setErrors({
       nameLocalSport: false,
+      typeLocalSport: false,
       cep: false,
       number: false,
       adressLocalSport: false,
@@ -401,22 +554,27 @@ export default function ProprietarioHome() {
     };
     localStorage.setItem("currentUserProprietario", JSON.stringify(updatedCurrentUser));
     setCurrentUserProprietario(updatedCurrentUser);
-    
+ // Atualiza o infoUserProprietario
     const storedAllUsersObj = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
-    const storedAllUsers = Object.values(storedAllUsersObj);
+    
+    if (storedAllUsersObj[updatedCurrentUser.id]) {
+      storedAllUsersObj[updatedCurrentUser.id] = {
+        ...storedAllUsersObj[updatedCurrentUser.id],
+        my_sports_location: updatedCurrentUser.my_sports_location
+      };
+      
+      localStorage.setItem("infoUserProprietario", JSON.stringify(storedAllUsersObj));
+    }
 
-    const updatedAllUsers = storedAllUsers.map((user: any) => {
-      if (user.id === updatedCurrentUser.id) {
-        return {
-          ...user,
-          my_sports_location: updatedCurrentUser.my_sports_location
-        };
-      }
-      return user;
-    });
-
-    const updatedAllUsersObj = Object.fromEntries(updatedAllUsers.map(user => [user.id, user]));
-    localStorage.setItem("infoUserProprietario", JSON.stringify(updatedAllUsersObj));
+    // Remove a propriedade do mapMarkers
+     const storedMarkers = JSON.parse(localStorage.getItem('mapMarkers') || '[]');
+     const updatedMarkers = storedMarkers.filter((marker: any) => 
+       !(marker.title === editItem.name && 
+         marker.address?.cep === editItem.address?.cep && 
+         marker.address?.number === editItem.address?.number)
+     );
+     
+     localStorage.setItem('mapMarkers', JSON.stringify(updatedMarkers));
 
     showToast({
       type: "success",
@@ -426,6 +584,7 @@ export default function ProprietarioHome() {
     setEditItem(null);
     setNewModalLocalSport(false);
     setNameLocalSport('');
+    setTypeLocalSport('');
     setCep('');
     setNumber('');
     setAdressLocalSport('');
@@ -436,6 +595,7 @@ export default function ProprietarioHome() {
 
     setErrors({
       nameLocalSport: false,
+      typeLocalSport: false,
       cep: false,
       number: false,
       adressLocalSport: false,
@@ -503,6 +663,17 @@ export default function ProprietarioHome() {
                   onChange={handleNameChange}
                   hasError ={errors.nameLocalSport}
                 />
+                
+                <Input 
+                  id="type"
+                  type='select' 
+                  placeholder='Selecionar' 
+                  label='Tipo de propriedade' 
+                  onChange={handleTypeChange}
+                  options={typeOptions}
+                  value={typeLocalSport}
+                  hasError ={errors.typeLocalSport}
+                />
 
                 <S.ContainerWithTwoInputs>
                   <Input 
@@ -536,7 +707,7 @@ export default function ProprietarioHome() {
                   hasError ={errors.adressLocalSport}
                 />
 
-                <WeekdayMultiSelect value={selectedDays} onChange={(values) => {setSelectedDays(values), console.log("values ===>>>",values), setErrors(prev => ({ ...prev, selectedDays: false }));}} hasError={errors.selectedDays}/>
+                <WeekdayMultiSelect value={selectedDays} onChange={(values) => {setSelectedDays(values), setErrors(prev => ({ ...prev, selectedDays: false }));}} hasError={errors.selectedDays}/>
 
                 <S.ContainerWithTwoInputs>
                   <InputHours 

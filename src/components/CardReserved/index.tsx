@@ -40,6 +40,27 @@ export function CardReserved({
   const formattedAddress = `${address.street}, ${address.number} - ${address.city}, ${address.state}`;
   const dateAndTime = `${reserved_date} ${time_start} - ${time_end}`;
 
+  function formatPriceToNumber(priceString: string) {
+    if (!priceString || typeof priceString !== 'string') {
+        return 0;
+    }
+    
+    const numericString = priceString.replace(/[^\d,.]/g, '');
+    
+    if (numericString.includes(',')) {
+        return parseFloat(numericString.replace(/\./g, '').replace(',', '.'));
+    }
+    
+    return parseFloat(numericString);
+  }
+
+  function formatarMoedaBrasileira(valor: number) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(valor);
+  }
+
   return (
       <S.Card>
         <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
@@ -55,7 +76,7 @@ export function CardReserved({
         </SM>
 
         <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-          Valor: {price} - Pagamento: {payment_method}
+          Valor: {formatarMoedaBrasileira(formatPriceToNumber(price))} - Pagamento: {payment_method}
         </SM>
 
         <S.ContainerButton>
