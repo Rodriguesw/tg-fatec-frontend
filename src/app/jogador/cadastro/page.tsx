@@ -252,6 +252,7 @@ export default function JogadorCadastro() {
                 placeholder='Nome completo' 
                 label='Nome completo *' 
                 onChange={handleNameChange}
+                value={name}
                 hasError ={errors.name}
               />
 
@@ -261,6 +262,7 @@ export default function JogadorCadastro() {
                 placeholder='00/00/0000' 
                 label='Data de nascimento *' 
                 onChange={handleBirthDateChange}
+                value={birthDate}
                 hasError ={errors.birthDate}
               />
 
@@ -292,6 +294,7 @@ export default function JogadorCadastro() {
                 placeholder='email@mail.com' 
                 label='E-mail *' 
                 onChange={handleEmailChange}
+                value={email}
                 hasError ={errors.email}
               />
 
@@ -301,6 +304,7 @@ export default function JogadorCadastro() {
                 placeholder='********' 
                 label='Senha *' 
                 onChange={handlePasswordChange}
+                value={password}
                 hasError ={errors.password}
               />
 
@@ -310,6 +314,7 @@ export default function JogadorCadastro() {
                 placeholder='********' 
                 label='Confirmar senha *' 
                 onChange={handlePasswordConfirmationChange}
+                value={passwordConfirmation}
                 hasError ={errors.passwordConfirmation}
               />
             </S.ContentForm>

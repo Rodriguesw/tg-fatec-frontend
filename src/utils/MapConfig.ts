@@ -106,39 +106,13 @@ export const mapContainerStyle = {
   
   // RATING = 0.29, 1.44, 2.31, 3.48, 4.52
   export const defaultExtraMarkers  = [
-    {
-      id: 1,
-      lat: -23.5889,
-      lng: -48.0532,
-      title: 'Exemplo campo futebol',
-      icon: {
-        url: '/images/svg/icon-marker-map-green.svg',
-      },
-      address: {
-        cep: '18207390',
-        number: '123',
-      },
-      rating: 1.44
-    },
-    {
-      id: 2,
-      lat: -23.575531,
-      lng: -48.027288,
-      title: 'Arena Star Soccer',
-      icon: {
-        url: '/images/svg/icon-marker-map-blue.svg',
-      },
-      address: {
-        cep: '18213110',
-        number: '280',
-      },
-      rating: 3
-    },
     { 
-      id: 3,
+      id_local: 3,
+      id_proprietario: 1,
       lat: -23.600375,
       lng: -48.063587,
       title: 'Quadra de Futebol Socyte',
+      type: 'Society',
       icon: {
         url: '/images/svg/icon-marker-map-orange.svg',
       },
@@ -146,26 +120,39 @@ export const mapContainerStyle = {
         cep: '18207500',
         number: '403',
       },
+      time_end: "23:00",
+      time_start: "10:00",
+      days: ["Seg", "Sex"],
+      price: "R$ 150,50",
       rating: 5
     },
     {
-      id: 4,
+      id_local: 4,
+      id_proprietario: 1,
       lat: -23.605519,
       lng: -48.0680583,
       title: 'Quadra do Cambuí',
+      type: 'Society',
       icon: {
         url: '/images/svg/icon-marker-map-orange.svg',
       },
       address: {
         cep: '18207601',
+        number: '403',
       },
+      time_end: "21:00",
+      time_start: "16:00",
+      days: ["Qui", "Sex"],
+      price: "R$ 656,55",
       rating: 4.52
     },
     {
-      id: 5,
+      id_local: 5,
+      id_proprietario: 1,
       lat: -23.5761249,
       lng: -48.0290791,
       title: 'Arena KS Society',
+      type: 'Society',
       icon: {
         url: '/images/svg/icon-marker-map-orange.svg',
       },
@@ -173,13 +160,19 @@ export const mapContainerStyle = {
         cep: '18213110',
         number: '305',
       },
+      time_end: "20:00",
+      time_start: "12:00",
+      days: ["Ter", "Qui"],
+      price: "R$ 90,50",
       rating: 2.31
     },
     {
-      id: 6,
+      id_local: 6,
+      id_proprietario: 1,
       lat: -23.577428,
       lng: -48.0289618,
       title: 'Arena KF Futsal',
+      type: 'Futsal',
       icon: {
         url: '/images/svg/icon-marker-map-blue.svg',
       },
@@ -187,6 +180,10 @@ export const mapContainerStyle = {
         cep: '18213080',
         number: '85',
       },
+      time_end: "20:00",
+      time_start: "15:00",
+      days: ["Ter", "Qui"],
+      price: "R$ 110,50",
       rating: 3.48
     },
   ];

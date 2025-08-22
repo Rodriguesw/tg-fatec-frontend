@@ -483,7 +483,10 @@ export default function ProprietarioHome() {
             icon: getIconByType(typeLocalSport),
             address: {
               cep,
-              number
+              number,
+              street: adressLocalSport,
+              city: dataCep?.localidade,
+              state: dataCep?.uf
             },
             price: valuePerHour,
             time_start: valueInputStartHours,
@@ -497,6 +500,12 @@ export default function ProprietarioHome() {
           ...storedMarkers[markerIndex],
           title: nameLocalSport,
           icon: getIconByType(typeLocalSport),
+          address: {
+            ...storedMarkers[markerIndex].address,
+            cep,
+            number,
+            street: adressLocalSport
+          },
           price: valuePerHour,
           time_start: valueInputStartHours,
           time_end: valueInputEndHours,
@@ -505,6 +514,41 @@ export default function ProprietarioHome() {
       }
       
       localStorage.setItem('mapMarkers', JSON.stringify(storedMarkers));
+    } else {
+      // Se o marcador não foi encontrado no mapMarkers, mas deveria existir, vamos criar um novo
+      const fullAddress = `${adressLocalSport}, ${number}, ${dataCep?.localidade || ''}, ${dataCep?.uf || ''}`;
+      const coordinates = await geocodeAddress(fullAddress);
+      
+      if (coordinates) {
+        // Obter os marcadores existentes
+        const maxId = storedMarkers.reduce((max: number, marker: any) => 
+          marker.id > max ? marker.id : max, 0);
+        
+        // Criar o novo marcador
+        const newMarker = {
+          id: maxId + 1,
+          lat: coordinates.lat,
+          lng: coordinates.lng,
+          title: nameLocalSport,
+          icon: getIconByType(typeLocalSport),
+          address: {
+            cep,
+            number,
+            street: adressLocalSport,
+            city: dataCep?.localidade,
+            state: dataCep?.uf
+          },
+          rating: 0, // Rating inicial como 0
+          price: valuePerHour, // Valor por hora
+          time_start: valueInputStartHours, // Hora de início
+          time_end: valueInputEndHours, // Hora de término
+          days: selectedDays // Dias da semana disponíveis
+        };
+        
+        // Adicionar o novo marcador à lista e salvar no localStorage
+        storedMarkers.push(newMarker);
+        localStorage.setItem('mapMarkers', JSON.stringify(storedMarkers));
+      }
     }
 
     showToast({

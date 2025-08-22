@@ -507,16 +507,37 @@ export default function JogadorHome() {
                               value={selectedMarker.rating}
                               />
 
+                            <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
+                              Tipo de propriedade: <br/> {selectedMarker?.type}
+                            </MD>
+
                             <MD 
                               family={theme.fonts.inter}
                               color={theme.colors.branco.secundario}
                               >
-                                {/* {console.log('CEP Data:', cepData)} */}
-                                {cepData?.logradouro} {cepData?.numero ? `, ${cepData?.numero}` : ''} - {cepData?.localidade}, {cepData?.uf}
+                              Endereço: <br/>
+                              {cepData?.logradouro} {cepData?.numero ? `, ${cepData?.numero}` : ''} - {cepData?.localidade}, {cepData?.uf}
                             </MD>
-                          </S.ContainerModalRatingAndAdress>
 
-                          <S.ContainerModalRatingAndAdress>
+                            <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
+                              Dias de funcionamento: <br/> {selectedMarker?.days.map((day: string) => {
+                                switch(day) {
+                                  case 'Seg': return 'Segunda';
+                                  case 'Ter': return 'Terça';
+                                  case 'Qua': return 'Quarta';
+                                  case 'Qui': return 'Quinta';
+                                  case 'Sex': return 'Sexta';
+                                  case 'Sab': return 'Sábado';
+                                  case 'Dom': return 'Domingo';
+                                  default: return day;
+                                }
+                              }).join(', ')}
+                            </MD>
+
+                            <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
+                              Horário de funcionamento: <br/> {selectedMarker?.time_start} - {selectedMarker?.time_end}
+                            </MD>
+
                             <MD 
                               family={theme.fonts.inter}
                               color={theme.colors.branco.secundario}
