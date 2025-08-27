@@ -239,7 +239,7 @@ export default function ProprietarioPerfil() {
   const handleLogout = () => {
     localStorage.removeItem("currentUserProprietario");
 
-    router.push("/");
+    router.push("/proprietario/login");
   }
 
   const closeModal = () => {

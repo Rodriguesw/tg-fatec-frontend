@@ -84,18 +84,11 @@ export default function JogadorLogin() {
   useEffect(() => {
     setIsMounted(true);
 
-    const getUsersFromStorage = (): Record<number, UserJogador> => {
-      try {
-        const data = localStorage.getItem("infoUser");
-
-        return data ? JSON.parse(data) : {};
-      } catch {
-        return {};
-      }
-    };
-
-    const users = getUsersFromStorage();
-    if (Object.keys(users).length === 0) {
+    // Verifica se o localStorage "infoUser" já existe
+    const infoUserExists = localStorage.getItem("infoUser") !== null;
+    
+    // Só cria o usuário de teste se o localStorage "infoUser" não existir
+    if (!infoUserExists) {
       const dataUserTest: UserJogador = {
         id: 1,
         name: "Matheus Henrique",
