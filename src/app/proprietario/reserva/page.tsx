@@ -36,6 +36,13 @@ export default function ProprietarioReservados() {
   const handleCancelReservation = () => {
     if (reservationToDelete === null || !currentUserProprietario) return;
 
+    // Encontrar a reserva que será cancelada para obter o user_id
+    const reservationToCancel = currentUserProprietario.reservations?.find(
+      (res: any) => res.id === reservationToDelete
+    );
+
+    if (!reservationToCancel) return;
+
     // === 1. Atualizar currentUserProprietario ===
     const updatedReservations = (currentUserProprietario.reservations ?? []).filter(
       (res: any) => res.id !== reservationToDelete
@@ -67,7 +74,30 @@ export default function ProprietarioReservados() {
       localStorage.setItem("infoUserProprietario", JSON.stringify(updatedInfoUser));
     }
 
-    // === 3. Resetar estados ===
+    // === 3. Atualizar infoUser (remover a reserva do jogador) ===
+    if (reservationToCancel.user_id) {
+      const infoUser = JSON.parse(localStorage.getItem("infoUser") || "{}");
+      const userId = reservationToCancel.user_id;
+      
+      if (infoUser[userId]) {
+        // Remover a reserva do array reserved_sports_location do jogador
+        const updatedUserReservations = (infoUser[userId].reserved_sports_location ?? []).filter(
+          (loc: any) => loc.id !== reservationToDelete
+        );
+
+        const updatedInfoUser = {
+          ...infoUser,
+          [userId]: {
+            ...infoUser[userId],
+            reserved_sports_location: updatedUserReservations
+          }
+        };
+
+        localStorage.setItem("infoUser", JSON.stringify(updatedInfoUser));
+      }
+    }
+
+    // === 4. Resetar estados ===
     setOpenSettings(false);
     setReservationToDelete(null);
   };
@@ -82,28 +112,31 @@ export default function ProprietarioReservados() {
         <S.Content>
           <TitleWithButtons title='Reservados'/>
 
-          {currentUserProprietario?.reservations?.length > 0 ? (
-            currentUserProprietario.reservations.map((order: any) => (
-              <CardReservedProperty 
-                key={order.id} 
-                order={order}
-                onDelete={(id) => {
-                  setReservationToDelete(id);
-                  setOpenSettings(true);
-                }}
-              />
-            ))
-          ) :(
-            <S.NotFoundEvent>
-              <img src="/images/svg/icon-calendar-event.svg" alt="Nenhuma reserva encontrada"/>
 
-              <LG 
-                family={theme.fonts.inter}
-                color={theme.colors.branco.secundario}>
-                Você não tem reservas para os próximos dias.
-              </LG>
-            </S.NotFoundEvent>
-          )}
+          <S.ContainerCards>
+            {currentUserProprietario?.reservations?.length > 0 ? (
+              currentUserProprietario.reservations.map((order: any) => (
+                  <CardReservedProperty 
+                    key={order.id} 
+                    order={order}
+                    onDelete={(id) => {
+                      setReservationToDelete(id);
+                      setOpenSettings(true);
+                    }}
+                  />
+              ))
+            ) :(
+              <S.NotFoundEvent>
+                <img src="/images/svg/icon-calendar-event.svg" alt="Nenhuma reserva encontrada"/>
+
+                <LG 
+                  family={theme.fonts.inter}
+                  color={theme.colors.branco.secundario}>
+                  Você não tem reservas para os próximos dias.
+                </LG>
+              </S.NotFoundEvent>
+            )}
+          </S.ContainerCards>
         </S.Content>           
 
         <Navbar />

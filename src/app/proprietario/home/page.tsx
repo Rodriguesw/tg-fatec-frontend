@@ -171,6 +171,12 @@ export default function ProprietarioHome() {
 
   const handleMethodChange = (value: string) => {
     setMethod(value);
+    setErrors(prev => ({ ...prev, method: false }));
+  };
+
+  const handleDaysChange = (days: string[]) => {
+    setSelectedDays(days);
+    setErrors(prev => ({ ...prev, selectedDays: false }));
   };
 
   const validateCEP = (cep: string): boolean => {
@@ -232,7 +238,7 @@ export default function ProprietarioHome() {
       !cep ||
       !number ||
       !adressLocalSport ||
-      !selectedDays ||
+      selectedDays.length === 0 ||
       !valueInputStartHours ||
       !valueInputEndHours ||
       !valuePerHour ||
@@ -414,6 +420,44 @@ export default function ProprietarioHome() {
 
   const handleSavedSportLocation = async () => {
     if (!editItem) return;
+
+    if (
+      !nameLocalSport ||
+      !typeLocalSport ||
+      !cep ||
+      !number ||
+      !adressLocalSport ||
+      selectedDays.length === 0 ||
+      !valueInputStartHours ||
+      !valueInputEndHours ||
+      !valuePerHour ||
+      !method
+    ) {
+      const newErrors: FormErrors = {
+        nameLocalSport: !nameLocalSport,
+        typeLocalSport: !typeLocalSport,
+        cep: !validateCEP(cep),
+        number: !validateNumber(number),
+        adressLocalSport: !adressLocalSport,
+        selectedDays: selectedDays.length === 0,
+        valueInputStartHours: !valueInputStartHours,
+        valueInputEndHours: !valueInputEndHours,
+        valuePerHour: !validateCurrency(valuePerHour),
+        method: !method,
+      };
+      
+      setErrors(newErrors);
+      
+      const hasErrors = Object.values(newErrors).some(error => error);
+
+      if (hasErrors) {
+        showToast({
+          type: "error",
+          message: "Verifique todos os campos em vermelho.",
+        });
+        return;
+      }
+    }
 
     const storedData = JSON.parse(localStorage.getItem("currentUserProprietario") || "{}");
 
@@ -688,7 +732,7 @@ export default function ProprietarioHome() {
           <S.ContainerModalLocalSport>
             <Dialog.Header width="100%" display="flex" flexDirection="row" justifyContent="space-between">
                 <H3 color={theme.colors.laranja}>
-                    {editItem ? 'Editar quadra' : "Nova quadra"}
+                    {editItem ? 'Editar propriedade' : "Nova propriedade"}
                 </H3>
 
                 <button onClick={() => {closeModal()}}>
@@ -751,7 +795,7 @@ export default function ProprietarioHome() {
                   hasError ={errors.adressLocalSport}
                 />
 
-                <WeekdayMultiSelect value={selectedDays} onChange={(values) => {setSelectedDays(values), setErrors(prev => ({ ...prev, selectedDays: false }));}} hasError={errors.selectedDays}/>
+                <WeekdayMultiSelect value={selectedDays} onChange={handleDaysChange} hasError={errors.selectedDays}/>
 
                 <S.ContainerWithTwoInputs>
                   <InputHours 

@@ -337,6 +337,36 @@ export default function JogadorHome() {
     // Salva infoUser atualizado
     localStorage.setItem("infoUser", JSON.stringify(infoUsers));
 
+    // Adiciona a reserva ao infoUserProprietario
+    const infoUserProprietarioRaw = localStorage.getItem("infoUserProprietario");
+    const infoUserProprietario = infoUserProprietarioRaw ? JSON.parse(infoUserProprietarioRaw) : {};
+    
+    // Encontra o proprietário da quadra nos marcadores
+    const proprietarioId = Object.keys(infoUserProprietario).find(id => {
+      const proprietario = infoUserProprietario[id];
+      return proprietario.my_sports_location?.some((location: any) => 
+        location.name === selectedMarker.title && 
+        location.address?.cep === cepData.cep && 
+        location.address?.number === cepData.numero
+      );
+    });
+
+    if (proprietarioId) {
+      // Inicializa o array de reservas se não existir
+      if (!infoUserProprietario[proprietarioId].reservations) {
+        infoUserProprietario[proprietarioId].reservations = [];
+      }
+      
+      // Adiciona a reserva ao proprietário
+      infoUserProprietario[proprietarioId].reservations.push({
+        ...novaReserva,
+        user_id: currentUser.id,
+      });
+      
+      // Salva infoUserProprietario atualizado
+      localStorage.setItem("infoUserProprietario", JSON.stringify(infoUserProprietario));
+    }
+
     // Feedback e limpeza
     showToast({
       type: 'success',

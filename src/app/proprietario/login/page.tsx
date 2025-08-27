@@ -26,6 +26,7 @@ interface UserProprietario {
   my_sports_location?: {
     id?: number;
     name?: string;
+    type?: string;
     address?: {
       cep?: string;
       number?: string;
@@ -152,6 +153,7 @@ export default function LoginProprietario() {
         my_sports_location: [{
           id: 1782,
           name: "Arena KS Society",
+          type: "futebol",
           address: {
             cep: "18213-110",
             number: "305",
@@ -160,7 +162,7 @@ export default function LoginProprietario() {
             neighborhood: "Vila Macia",
             state: "SP"
           },
-          days: ["Seg", "Qua", "Qui", "SÁB"],
+          days: ["Seg", "Qua", "Qui", "Sex"],
           time_start: "06:00",
           time_end: "23:00",
           price: "R$ 100,00",
@@ -226,7 +228,11 @@ export default function LoginProprietario() {
         }]
       };
 
-      localStorage.setItem("infoUser", JSON.stringify({1: dataUserJogadorTest}));
+      // Só cria o infoUser se ele não existir no localStorage
+      const existingInfoUser = localStorage.getItem("infoUser");
+      if (!existingInfoUser) {
+        localStorage.setItem("infoUser", JSON.stringify({1: dataUserJogadorTest}));
+      }
 
       const existingUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
 

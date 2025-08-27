@@ -18,7 +18,7 @@ export const Wrapper = styled(C.Flex)`
 
     display: flex;
     align-items: flex-end;
-    justify-content: space-between;
+    justify-content: space-around;
 
     border-radius: 16px 16px 0 0;
     background-color: #00000033; 

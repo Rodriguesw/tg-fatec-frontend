@@ -39,11 +39,11 @@ export function Navbar() {
                         <SM family={theme.fonts.inter}>HOME</SM>
                     </S.Button>
 
-                    <S.Button active={currentPath === '/proprietario/pedidos'} onClick={() => router.push('/proprietario/pedidos')}>
+                    {/* <S.Button active={currentPath === '/proprietario/pedidos'} onClick={() => router.push('/proprietario/pedidos')}>
                         <img src="/images/svg/icon-calendar.svg" alt=''/>
 
                         <SM family={theme.fonts.inter}>PEDIDOS</SM>
-                    </S.Button>
+                    </S.Button> */}
 
                     <S.Button active={currentPath === '/proprietario/reserva'} onClick={() => router.push('/proprietario/reserva')}>
                         <img src="/images/svg/icon-book-open.svg" alt=''/>

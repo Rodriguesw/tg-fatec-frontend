@@ -33,6 +33,35 @@ export const Content = styled(C.Flex)`
     justify-content: flex-start;
 `
 
+export const ContainerCards = styled(C.Flex)`
+    width: 100%;
+    height: 100%;
+
+    gap: 16px;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    overflow-y: auto;
+
+    /* Estilizando a barra de rolagem */
+    scrollbar-width: thin; /* Para navegadores compatíveis com CSS padrão */
+    scrollbar-color: transparent transparent;
+
+    /* Estilização para navegadores baseados em WebKit */
+    ::-webkit-scrollbar {
+        width: 1px; /* Largura da barra de rolagem */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: transparent; /* Deixa o "polegar" da barra transparente */
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: transparent; /* Deixa o fundo da barra transparente */
+    }
+`
+
 export const NotFoundEvent = styled(C.Flex)`
     width: 100%;
     height: 100%;

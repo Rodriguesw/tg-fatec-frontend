@@ -210,6 +210,7 @@ export default function JogadorReservas() {
                     family={theme.fonts.inter}
                     onClick={() => {
                       if (selectedCourtId !== null) {
+                        // Atualizar o currentUser removendo a reserva
                         const updatedReservations = currentUser.reserved_sports_location.filter(
                           (item: ReservedSportLocation) => item.id !== selectedCourtId
                         );
@@ -221,6 +222,47 @@ export default function JogadorReservas() {
 
                         setCurrentUser(updatedUser);
                         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                        
+                        // Remover a reserva do localStorage "infoUserProprietario"
+                        try {
+                          const infoUserProprietarioRaw = localStorage.getItem('infoUserProprietario');
+                          if (infoUserProprietarioRaw) {
+                            const infoUserProprietario = JSON.parse(infoUserProprietarioRaw);
+                            
+                            // Encontrar o proprietário que possui a quadra com o ID selecionado
+                            const selectedCourt = currentUser.reserved_sports_location.find(
+                              (court: any) => court.id === selectedCourtId
+                            );
+                            
+                            if (selectedCourt && infoUserProprietario) {
+                              // infoUserProprietario é um objeto com chaves que são IDs de proprietários
+                              Object.keys(infoUserProprietario).forEach(proprietarioId => {
+                                const proprietario = infoUserProprietario[proprietarioId];
+                                
+                                // Verificar se o proprietário tem a quadra com o mesmo nome e endereço
+                                if (proprietario.my_sports_location) {
+                                  const hasMatchingLocation = proprietario.my_sports_location.some((location: any) => 
+                                    location.name === selectedCourt.name && 
+                                    location.address?.cep === selectedCourt.address.cep && 
+                                    location.address?.number === selectedCourt.address.number
+                                  );
+                                  
+                                  // Se encontrou a quadra correspondente, remover a reserva
+                                  if (hasMatchingLocation && proprietario.reservations) {
+                                    proprietario.reservations = proprietario.reservations.filter(
+                                      (reservation: any) => reservation.id !== selectedCourtId
+                                    );
+                                  }
+                                }
+                              });
+                              
+                              // Salvar as alterações de volta no localStorage
+                              localStorage.setItem('infoUserProprietario', JSON.stringify(infoUserProprietario));
+                            }
+                          }
+                        } catch (error) {
+                          console.error('Erro ao atualizar infoUserProprietario:', error);
+                        }
                       }
 
                       setIsOpenModalCancel(false);
