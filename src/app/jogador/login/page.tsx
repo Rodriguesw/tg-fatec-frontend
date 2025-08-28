@@ -16,6 +16,55 @@ import { MD, LG, SM } from '@/styles/typographStyles';
 
 import { showToast } from '@/components/ToastAlert';
 
+interface UserProprietario {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  cnpj: string;
+  razaoSocial: string;
+  phone: string;
+  my_sports_location?: {
+    id?: number;
+    name?: string;
+    type?: string;
+    address?: {
+      cep?: string;
+      number?: string;
+      city?: string;
+      neighborhood?: string;
+      state?: string;
+      street?: string;
+    };
+    days?: string[];
+    time_start?: string;
+    time_end?: string;
+    price?: string;
+    payment_method?: string;
+    reserved_date?: string;
+  }[];
+  reservations?: {
+    id?: number;
+    user_id?: number;
+    my_sports_location_id?: number;
+    reserved_date?: string;
+    time_start?: string;
+    time_end?: string;
+    price?: string;
+    payment_method?: string;
+  }[];
+  orders?: {
+    id?: number;
+    user_id?: number;
+    my_sports_location_id?: number;
+    reserved_date?: string;
+    time_start?: string;
+    time_end?: string;
+    price?: string;
+    payment_method?: string;
+  }[];
+}
+
 interface UserJogador {
   id: number;
   name: string;
@@ -119,6 +168,77 @@ export default function JogadorLogin() {
 
       localStorage.setItem("infoUser", JSON.stringify({1: dataUserTest}));
     }
+
+    // Verifica se o localStorage "infoUserProprietario" já existe
+    const infoUserProprietarioExists = localStorage.getItem("infoUserProprietario") !== null;
+    
+    // Só cria os usuários proprietários de teste se o localStorage "infoUserProprietario" não existir
+    if (!infoUserProprietarioExists) {
+      const dataUserProprietarioTest: UserProprietario = {
+        id: 1,
+        name: "Matheus",
+        email: "matheushr39@gmail.com",
+        password: "admin",
+        cnpj: "11.080.217/0001-75",
+        razaoSocial: "Matheus Society LTDA",
+        phone: "15 99160-1215",
+        my_sports_location: [{
+          id: 1782,
+          name: "Arena KS Society",
+          type: "futebol",
+          address: {
+            cep: "18213-110",
+            number: "305",
+            street: "Rua Alceu Correa de Moraes",
+            city: "Itapetininga",
+            neighborhood: "Vila Macia",
+            state: "SP"
+          },
+          days: ["Seg", "Qua", "Qui", "Sex"],
+          time_start: "06:00",
+          time_end: "23:00",
+          price: "R$ 100,00",
+          payment_method: "Dinheiro",
+        }],
+        reservations: [{
+          id: 1,
+          user_id: 1,
+          my_sports_location_id: 1782,
+          reserved_date: "2025-09-01",
+          time_start: "08:00",
+          time_end: "10:00",
+          price: "R$ 100,00",
+          payment_method: "Dinheiro"
+        }],
+        orders: [{
+          id: 1,
+          user_id: 1,
+          my_sports_location_id: 1782,
+          reserved_date: "2025-10-01",
+          time_start: "12:00",
+          time_end: "10:00",
+          price: "R$ 100,00",
+          payment_method: "Dinheiro"
+        }]
+      };
+
+      const dataUserProprietarioTestTwo: UserProprietario = {
+        id: 2,
+        name: "Thiago",
+        email: "teste@teste.com",
+        password: "teste",
+        cnpj: "11.080.217/0001-75",
+        phone: "15 99160-1215",
+        razaoSocial: "Thiago Society LTDA",
+      };
+
+      const existingUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
+
+      existingUsers[dataUserProprietarioTest.id] = dataUserProprietarioTest;
+      existingUsers[dataUserProprietarioTestTwo.id] = dataUserProprietarioTestTwo;
+
+      localStorage.setItem("infoUserProprietario", JSON.stringify(existingUsers));
+    }
   }, []);
 
   const validateFields = (): boolean => {
@@ -179,6 +299,8 @@ export default function JogadorLogin() {
         router.push('/jogador/home');
       } else {
         setErrors(prev => ({ ...prev, form: true }));
+
+        setIsLoading(false); 
         
         showToast({
           type: 'error',
@@ -186,12 +308,12 @@ export default function JogadorLogin() {
         });
       }
     } catch (error) {
+      setIsLoading(false); 
+
       showToast({
         type: 'error',
         message: 'Ocorreu um erro durante o login'
       });
-    } finally {
-      setIsLoading(false); 
     }
   };
 

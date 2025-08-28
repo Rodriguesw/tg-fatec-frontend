@@ -193,8 +193,8 @@ export default function LoginProprietario() {
       const dataUserTestTwo: UserProprietario = {
         id: 2,
         name: "Thiago",
-        email: "matheushr@gmail.com",
-        password: "admin",
+        email: "teste@teste.com",
+        password: "teste",
         cnpj: "11.080.217/0001-75",
         phone: "15 99160-1215",
         razaoSocial: "Thiago Society LTDA",
@@ -306,18 +306,20 @@ export default function LoginProprietario() {
       } else {
         setErrors((prev) => ({ ...prev, form: true }));
 
+        setIsLoading(false);
+
         showToast({
           type: "error",
           message: "Email ou senha inválidos",
         });
       }
     } catch (error) {
+      setIsLoading(false);
+
       showToast({
         type: "error",
         message: "Ocorreu um erro durante o login",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 

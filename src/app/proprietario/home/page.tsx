@@ -189,7 +189,7 @@ export default function ProprietarioHome() {
   };
 
   const validateCurrency = (value: string): boolean => {
-    return /^R\$\s\d+,\d{2}$/.test(value);
+    return /^R\$\s[\d\.]+,\d{2}$/.test(value);
   };
 
   // Função para geocodificar endereço e obter coordenadas
@@ -232,6 +232,7 @@ export default function ProprietarioHome() {
   };
 
   const handleCreateLocalSport = async () => {
+    console.log("valuePerHour", valuePerHour)
     if (
       !nameLocalSport ||
       !typeLocalSport ||
@@ -256,6 +257,8 @@ export default function ProprietarioHome() {
         valuePerHour: !validateCurrency(valuePerHour),
         method: !method,
       };
+
+      console.log("valuePerHour", !validateCurrency(valuePerHour))
       
       setErrors(newErrors);
       
@@ -335,6 +338,7 @@ export default function ProprietarioHome() {
           lng: coordinates.lng,
           title: nameLocalSport,
           icon: getIconByType(typeLocalSport),
+          type: typeLocalSport, // Adicionando o tipo do local esportivo
           address: {
             cep,
             number
@@ -525,6 +529,7 @@ export default function ProprietarioHome() {
             lng: coordinates.lng,
             title: nameLocalSport,
             icon: getIconByType(typeLocalSport),
+            type: typeLocalSport, // Adicionando o tipo do local esportivo
             address: {
               cep,
               number,
@@ -544,6 +549,7 @@ export default function ProprietarioHome() {
           ...storedMarkers[markerIndex],
           title: nameLocalSport,
           icon: getIconByType(typeLocalSport),
+          type: typeLocalSport, // Adicionando o tipo do local esportivo
           address: {
             ...storedMarkers[markerIndex].address,
             cep,
@@ -575,6 +581,7 @@ export default function ProprietarioHome() {
           lng: coordinates.lng,
           title: nameLocalSport,
           icon: getIconByType(typeLocalSport),
+          type: typeLocalSport, // Adicionando o tipo do local esportivo
           address: {
             cep,
             number,
