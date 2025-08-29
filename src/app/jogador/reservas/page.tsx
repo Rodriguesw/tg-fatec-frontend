@@ -13,7 +13,7 @@ import { MD, LG, SM } from '@/styles/typographStyles';
 import { CardReserved } from '@/components/CardReserved';
 import { Modal } from '@/components/Modal';
 
-import { Dialog } from "@chakra-ui/react"
+import { Dialog, Button } from "@chakra-ui/react"
 import { it } from 'node:test';
 
 interface ReservedSportLocation {
@@ -43,6 +43,8 @@ export default function JogadorReservas() {
 
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [isModalCancelamentoProprietario, setIsModalCancelamentoProprietario] = useState(false);
+  const [reservaCancelada, setReservaCancelada] = useState<any>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -58,6 +60,58 @@ export default function JogadorReservas() {
       }
     }
   }, []);
+
+  // Função para verificar se alguma reserva foi cancelada pelo proprietário
+  const verificarCancelamentoProprietario = () => {
+    if (!currentUser || !currentUser.id) return;
+    
+    try {
+      // Buscar as informações do usuário no localStorage infoUser
+      const infoUserRaw = localStorage.getItem('infoUser');
+      if (!infoUserRaw) return;
+      
+      const infoUser = JSON.parse(infoUserRaw);
+      const userId = currentUser.id;
+      
+      // Verificar se o usuário existe no infoUser
+      if (!infoUser[userId]) return;
+      
+      // Comparar as reservas do infoUser com as reservas do currentUser
+      const reservasInfoUser = infoUser[userId].reserved_sports_location || [];
+      const reservasCurrentUser = currentUser.reserved_sports_location || [];
+      
+      // Se o usuário tem menos reservas no currentUser do que no infoUser,
+      // significa que alguma reserva foi cancelada pelo proprietário
+      if (reservasCurrentUser.length < reservasInfoUser.length) {
+        // Encontrar qual reserva foi cancelada
+        const reservasCanceladas = reservasInfoUser.filter(reservaInfo => 
+          !reservasCurrentUser.some((reservaCurrent: any) => reservaCurrent.id === reservaInfo.id)
+        );
+        
+        if (reservasCanceladas.length > 0) {
+          // Pegar a primeira reserva cancelada encontrada
+          const reservaCancelada = reservasCanceladas[0];
+          
+          // Atualizar o estado para mostrar o modal
+          setReservaCancelada(reservaCancelada);
+          setIsModalCancelamentoProprietario(true);
+          
+          // Atualizar o infoUser para remover a reserva cancelada
+          infoUser[userId].reserved_sports_location = reservasCurrentUser;
+          localStorage.setItem('infoUser', JSON.stringify(infoUser));
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao verificar cancelamento pelo proprietário:', error);
+    }
+  };
+  
+  // Verificar cancelamentos quando o componente montar e o currentUser estiver disponível
+  useEffect(() => {
+    if (currentUser) {
+      verificarCancelamentoProprietario();
+    }
+  }, [currentUser]);
 
   if (!isMounted || !currentUser) return null;
 
@@ -276,6 +330,46 @@ export default function JogadorReservas() {
           </S.ContainerModalEdit>
         </Modal>
       }
+
+      {/* Modal de alerta de cancelamento pelo proprietário */}
+      {isModalCancelamentoProprietario && reservaCancelada && (
+        <Modal isOpen={isModalCancelamentoProprietario} onClose={() => setIsModalCancelamentoProprietario(false)}>
+          <S.ContainerModalEdit>
+            <Dialog.Header>
+              <Dialog.Title textAlign="center">
+                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                  Reserva Cancelada
+                </LG>
+              </Dialog.Title>
+            </Dialog.Header>
+            
+            <Dialog.Body
+              gap="16px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+            >
+              <SM
+                family={theme.fonts.inter}
+                color={theme.colors.branco.secundario}
+              >
+                O proprietário cancelou a sua reserva {reservaCancelada.name} do dia {reservaCancelada.reserved_date} e horário {reservaCancelada.time_start} às {reservaCancelada.time_end}.
+              </SM>
+
+              <S.ContainerButtonModalCancel>
+                <S.Button
+                  onClick={() => setIsModalCancelamentoProprietario(false)}
+                >
+                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    Entendi
+                  </MD>
+                </S.Button>
+              </S.ContainerButtonModalCancel>
+            </Dialog.Body>
+          </S.ContainerModalEdit>
+        </Modal>
+      )}
     </S.Container>
   );
 }
