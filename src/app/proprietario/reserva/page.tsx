@@ -44,8 +44,9 @@ export default function ProprietarioReservados() {
     if (!reservationToCancel) return;
 
     // === 1. Atualizar currentUserProprietario ===
-    const updatedReservations = (currentUserProprietario.reservations ?? []).filter(
-      (res: any) => res.id !== reservationToDelete
+    // Atualizar o status da reserva para cancelado em vez de removê-la
+    const updatedReservations = (currentUserProprietario.reservations ?? []).map(
+      (res: any) => res.id === reservationToDelete ? { ...res, status: "cancelado" } : res
     );
 
     const updatedCurrentUser = {
@@ -61,28 +62,31 @@ export default function ProprietarioReservados() {
     const infoUserProprietario = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
 
     if (infoUserProprietario[currentUserProprietario.id]) {
+      // Atualizar o status da reserva para cancelado em vez de removê-la
+      const updatedReservationsInfo = (infoUserProprietario[currentUserProprietario.id].reservations ?? []).map(
+        (res: any) => res.id === reservationToDelete ? { ...res, status: "cancelado" } : res
+      );
+
       const updatedInfoUser = {
         ...infoUserProprietario,
         [currentUserProprietario.id]: {
           ...infoUserProprietario[currentUserProprietario.id],
-          reservations: (infoUserProprietario[currentUserProprietario.id].reservations ?? []).filter(
-            (res: any) => res.id !== reservationToDelete
-          ),
+          reservations: updatedReservationsInfo,
         },
       };
 
       localStorage.setItem("infoUserProprietario", JSON.stringify(updatedInfoUser));
     }
 
-    // === 3. Atualizar infoUser (remover a reserva do jogador) ===
+    // === 3. Atualizar infoUser (atualizar o status da reserva do jogador) ===
     if (reservationToCancel.user_id) {
       const infoUser = JSON.parse(localStorage.getItem("infoUser") || "{}");
       const userId = reservationToCancel.user_id;
       
       if (infoUser[userId]) {
-        // Remover a reserva do array reserved_sports_location do jogador
-        const updatedUserReservations = (infoUser[userId].reserved_sports_location ?? []).filter(
-          (loc: any) => loc.id !== reservationToDelete
+        // Atualizar o status da reserva para cancelado em vez de removê-la
+        const updatedUserReservations = (infoUser[userId].reserved_sports_location ?? []).map(
+          (loc: any) => loc.id === reservationToDelete ? { ...loc, status: "cancelado" } : loc
         );
 
         const updatedInfoUser = {
@@ -93,6 +97,8 @@ export default function ProprietarioReservados() {
           }
         };
 
+        // Remover o flag de modal já mostrado para que o modal seja exibido novamente
+        localStorage.removeItem("modalCancelamentoMostrado");
         localStorage.setItem("infoUser", JSON.stringify(updatedInfoUser));
       }
     }
@@ -114,8 +120,10 @@ export default function ProprietarioReservados() {
 
 
           <S.ContainerCards>
-            {currentUserProprietario?.reservations?.length > 0 ? (
-              currentUserProprietario.reservations.map((order: any) => (
+            {currentUserProprietario?.reservations?.filter((order: any) => order.status !== "cancelado")?.length > 0 ? (
+              currentUserProprietario.reservations
+                .filter((order: any) => order.status !== "cancelado")
+                .map((order: any) => (
                   <CardReservedProperty 
                     key={order.id} 
                     order={order}

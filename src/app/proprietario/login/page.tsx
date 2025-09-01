@@ -150,44 +150,9 @@ export default function LoginProprietario() {
         cnpj: "11.080.217/0001-75",
         razaoSocial: "Matheus Society LTDA",
         phone: "15 99160-1215",
-        my_sports_location: [{
-          id: 1782,
-          name: "Arena KS Society",
-          type: "futebol",
-          address: {
-            cep: "18213-110",
-            number: "305",
-            street: "Rua Alceu Correa de Moraes",
-            city: "Itapetininga",
-            neighborhood: "Vila Macia",
-            state: "SP"
-          },
-          days: ["Seg", "Qua", "Qui", "Sex"],
-          time_start: "06:00",
-          time_end: "23:00",
-          price: "R$ 100,00",
-          payment_method: "Dinheiro",
-          }],
-        reservations: [{
-          id: 1,
-          user_id: 1,
-          my_sports_location_id: 1782,
-          reserved_date: "2025-09-01",
-          time_start: "08:00",
-          time_end: "10:00",
-          price: "R$ 100,00",
-          payment_method: "Dinheiro"
-        }],
-        orders: [{
-          id: 1,
-          user_id: 1,
-          my_sports_location_id: 1782,
-          reserved_date: "2025-10-01",
-          time_start: "12:00",
-          time_end: "10:00",
-          price: "R$ 100,00",
-          payment_method: "Dinheiro"
-        }]
+        my_sports_location: [],
+        reservations: [],
+        orders: []
       };
 
       const dataUserTestTwo: UserProprietario = {
@@ -208,24 +173,7 @@ export default function LoginProprietario() {
         team: "sao_paulo",
         email: "matheushr39@gmail.com",
         password: "teste",
-        reserved_sports_location: [{
-          id: 1782,
-          name: "Arena KS Society",
-          address: {
-            id: 12,
-            cep: "18213110",
-            number: "305",
-            street: "Rua Alceu Correa de Moraes",
-            city: "Itapetininga",
-            neighborhood: "Vila Macia",
-            state: "SP"
-          },
-          time_start: "20:00",
-          time_end: "23:00",
-          price: "R$ 300,00",
-          payment_method: "Dinheiro",
-          reserved_date: "29/03/2025",
-        }]
+        reserved_sports_location: []
       };
 
       // Só cria o infoUser se ele não existir no localStorage

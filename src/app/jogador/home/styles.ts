@@ -42,6 +42,17 @@ export const Content = styled(C.Flex)`
     justify-content: flex-start;
 `
 
+export const ContentWithLoading = styled(C.Flex)`
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+`
+
 export const ContainerInput = styled(C.Flex)`
     width: 100%;
     height: auto;
@@ -201,21 +212,6 @@ export const ContainerModalFormTooltip = styled(C.Flex)`
     }
 `
 
-export const ContainerNoHoursAvailable = styled(C.Flex)`
-    width: 100%;
-    height: auto;
-    padding: 16px;
-    
-    margin-top: 16px;
-    align-items: center;
-    justify-content: center;
-    
-    text-align: center;
-    border-radius: 8px;
-    border: 1px solid ${theme.colors.vermelho};
-    background-color: rgba(217, 49, 49, 0.1);
-`
-
 export const ContainerModalFormReserva = styled(C.Flex)`
     width: 100%;
     height: auto;
@@ -243,12 +239,6 @@ export const Button = styled(C.Button)`
     
     border-radius: 12px;
     background-color: ${theme.colors.verde.principal};
-    
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        background-color: ${theme.colors.branco.secundario};
-    }
 `
 
 export const ContainerModalPaymentQrCode= styled(C.Flex)`

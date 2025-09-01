@@ -41,10 +41,16 @@ export default function JogadorReservas() {
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
   const [isOpenModalCancel, setIsOpenModalCancel] = useState(false);
 
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  interface CurrentUser {
+    id: string;
+    reserved_sports_location?: (ReservedSportLocation & { status?: string; view?: boolean })[];
+    [key: string]: any;
+  }
+
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isModalCancelamentoProprietario, setIsModalCancelamentoProprietario] = useState(false);
-  const [reservaCancelada, setReservaCancelada] = useState<any>(null);
+  const [reservaCancelada, setReservaCancelada] = useState<ReservedSportLocation & { status?: string; view?: boolean } | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -66,58 +72,50 @@ export default function JogadorReservas() {
     if (!currentUser || !currentUser.id) return;
     
     try {
-      // Buscar as informações do usuário no localStorage infoUser
-      const infoUserRaw = localStorage.getItem('infoUser');
-      if (!infoUserRaw) return;
-      
-      const infoUser = JSON.parse(infoUserRaw);
-      const userId = currentUser.id;
-      
-      // Verificar se o usuário existe no infoUser
-      if (!infoUser[userId]) return;
-      
-      // Comparar as reservas do infoUser com as reservas do currentUser
-      const reservasInfoUser = infoUser[userId].reserved_sports_location || [];
+      // Verificar diretamente no currentUser se há reservas canceladas sem a propriedade view
       const reservasCurrentUser = currentUser.reserved_sports_location || [];
       
-      // Se o usuário tem menos reservas no currentUser do que no infoUser,
-      // significa que alguma reserva foi cancelada pelo proprietário
-      if (reservasCurrentUser.length < reservasInfoUser.length) {
-        // Encontrar qual reserva foi cancelada
-        const reservasCanceladas = reservasInfoUser.filter(reservaInfo => 
-          !reservasCurrentUser.some((reservaCurrent: any) => reservaCurrent.id === reservaInfo.id)
-        );
+      // Encontrar reservas com status "cancelado" e sem a propriedade "view"
+      const reservasCanceladas = reservasCurrentUser.filter((reserva: ReservedSportLocation & { status?: string; view?: boolean }) => 
+        reserva.status === "cancelado" && reserva.view !== true
+      );
+      
+      if (reservasCanceladas.length > 0) {
+        // Pegar a primeira reserva cancelada encontrada
+        const reservaCancelada = reservasCanceladas[0];
         
-        if (reservasCanceladas.length > 0) {
-          // Pegar a primeira reserva cancelada encontrada
-          const reservaCancelada = reservasCanceladas[0];
-          
-          // Atualizar o estado para mostrar o modal
-          setReservaCancelada(reservaCancelada);
-          setIsModalCancelamentoProprietario(true);
-          
-          // Atualizar o infoUser para remover a reserva cancelada
-          infoUser[userId].reserved_sports_location = reservasCurrentUser;
-          localStorage.setItem('infoUser', JSON.stringify(infoUser));
-        }
+        // Atualizar o estado para mostrar o modal
+        setReservaCancelada(reservaCancelada);
+        setIsModalCancelamentoProprietario(true);
       }
     } catch (error) {
       console.error('Erro ao verificar cancelamento pelo proprietário:', error);
     }
   };
   
-  // Verificar cancelamentos quando o componente montar e o currentUser estiver disponível
+  // Verificar cancelamentos quando o componente montar e quando currentUser mudar
   useEffect(() => {
-    if (currentUser) {
+    let isMounted = true;
+    
+    if (currentUser && isMounted) {
       verificarCancelamentoProprietario();
     }
-  }, [currentUser]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [currentUser]);  // Adicionada a dependência de currentUser para verificar cancelamentos quando o usuário mudar
 
   if (!isMounted || !currentUser) return null;
 
-  const hasEvents = currentUser.reserved_sports_location?.length > 0;
-  const selectedCourt = currentUser.reserved_sports_location?.find(
-    (court: any) => court.id === selectedCourtId
+  // Verificar se há eventos não cancelados
+  const hasEvents = (currentUser?.reserved_sports_location?.filter((item: ReservedSportLocation & { status?: string; view?: boolean }) => 
+    item.status !== "cancelado"
+  ) || [])?.length > 0;
+  
+  const selectedCourt = currentUser?.reserved_sports_location?.find(
+    (court: ReservedSportLocation & { status?: string; view?: boolean }) => court.id === selectedCourtId && 
+    court.status !== "cancelado"
   );
 
   console.log("currentUser",currentUser)
@@ -132,7 +130,9 @@ export default function JogadorReservas() {
 
             <S.ContainerCard>
               {hasEvents ? (
-                currentUser?.reserved_sports_location?.map((item: ReservedSportLocation) => (
+                currentUser?.reserved_sports_location?.filter((item: ReservedSportLocation & { status?: string; view?: boolean }) => 
+                  item.status !== "cancelado"
+                ).map((item: ReservedSportLocation & { status?: string; view?: boolean }) => (
                   <CardReserved
                     key={item.id}
                     id={item.id} 
@@ -265,9 +265,9 @@ export default function JogadorReservas() {
                     onClick={() => {
                       if (selectedCourtId !== null) {
                         // Atualizar o currentUser removendo a reserva
-                        const updatedReservations = currentUser.reserved_sports_location.filter(
+                        const updatedReservations = currentUser?.reserved_sports_location?.filter(
                           (item: ReservedSportLocation) => item.id !== selectedCourtId
-                        );
+                        ) || [];
 
                         const updatedUser = {
                           ...currentUser,
@@ -284,7 +284,7 @@ export default function JogadorReservas() {
                             const infoUserProprietario = JSON.parse(infoUserProprietarioRaw);
                             
                             // Encontrar o proprietário que possui a quadra com o ID selecionado
-                            const selectedCourt = currentUser.reserved_sports_location.find(
+                            const selectedCourt = currentUser?.reserved_sports_location?.find(
                               (court: any) => court.id === selectedCourtId
                             );
                             
@@ -359,7 +359,38 @@ export default function JogadorReservas() {
 
               <S.ContainerButtonModalCancel>
                 <S.Button
-                  onClick={() => setIsModalCancelamentoProprietario(false)}
+                  onClick={() => {
+                    // Marcar a reserva como visualizada
+                    try {
+                      if (currentUser && reservaCancelada) {
+                        // Atualizar a propriedade view da reserva cancelada no currentUser
+                        const updatedReservas = currentUser.reserved_sports_location?.map((reserva: ReservedSportLocation & { status?: string; view?: boolean }) => {
+                          if (reserva.id === reservaCancelada.id) {
+                            return { ...reserva, view: true };
+                          }
+                          return reserva;
+                        }) || [];
+                        
+                        const updatedCurrentUser = {
+                          ...currentUser,
+                          reserved_sports_location: updatedReservas
+                        };
+                        
+                        // Atualizar o localStorage primeiro
+                        localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
+                        
+                        // Usar setTimeout para adiar a atualização do estado
+                        // Isso quebra o ciclo de renderização atual
+                        setTimeout(() => {
+                          setCurrentUser(updatedCurrentUser);
+                        }, 0);
+                      }
+                    } catch (error) {
+                      console.error('Erro ao atualizar propriedade view da reserva:', error);
+                    }
+                    
+                    setIsModalCancelamentoProprietario(false);
+                  }}
                 >
                   <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                     Entendi

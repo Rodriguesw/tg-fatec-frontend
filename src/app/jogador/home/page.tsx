@@ -251,15 +251,6 @@ export default function JogadorHome() {
     const hasEndHourError = valueInputEndHours === '';
     const hasIgualHours = valueInputStartHours === valueInputEndHours;
     const hasStarBiggerThanEnd = valueInputStartHours > valueInputEndHours;
-    
-    // Verificar se os horários estão dentro do horário de funcionamento
-    const startHour = getHourAsNumber(valueInputStartHours);
-    const endHour = getHourAsNumber(valueInputEndHours);
-    const minAllowedHour = getHourAsNumber(selectedMarker?.time_start || '06:00');
-    const maxAllowedHour = getHourAsNumber(selectedMarker?.time_end || '22:00');
-    
-    const isStartHourOutOfBounds = startHour < minAllowedHour || startHour > maxAllowedHour;
-    const isEndHourOutOfBounds = endHour < minAllowedHour || endHour > maxAllowedHour;
 
     const willSetEndHourToZero = hasIgualHours;
     const hasZeroHours = hasIgualHours || valueInputEndHours === "00:00";
@@ -274,25 +265,17 @@ export default function JogadorHome() {
       hasStartHourError ||
       hasEndHourError ||
       hasZeroHours || 
-      hasStarBiggerThanEnd ||
-      isStartHourOutOfBounds ||
-      isEndHourOutOfBounds;
+      hasStarBiggerThanEnd;
 
     setMethodPaymentMoneyError(hasMethodPaymentMoneyError);
     setHasErrorDate(hasDateError);
-    setHasErrorStartHours(hasStartHourError || isStartHourOutOfBounds);
-    setHasErrorEndHours(hasEndHourError || hasZeroHours || hasStarBiggerThanEnd || isEndHourOutOfBounds);
+    setHasErrorStartHours(hasStartHourError);
+    setHasErrorEndHours(hasEndHourError || hasZeroHours || hasStarBiggerThanEnd);
 
     if (hasAnyError) {
-      let errorMessage = 'Verifique todos os campos em vermelho.';
-      
-      if (isStartHourOutOfBounds || isEndHourOutOfBounds) {
-        errorMessage = `Os horários devem estar entre ${selectedMarker?.time_start} e ${selectedMarker?.time_end} (horário de funcionamento).`;
-      }
-      
       showToast({
         type: 'error',
-        message: errorMessage,
+        message: 'Verifique todos os campos em vermelho.',
       });
       return;
     }
@@ -466,7 +449,25 @@ export default function JogadorHome() {
     return nextHour >= 22 ? 22 : nextHour;
   };
 
-  if (!isMounted || !userLocation) return null;
+  // Mostrar tela de carregamento enquanto aguarda a montagem do componente ou a localização
+  if (!isMounted || !userLocation) {
+    return (
+      <S.Container>
+        <S.Wrapper>
+          <Header />
+
+          <S.ContentWithLoading>
+            <S.ContainerLoading style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                <Spinner size="xl" color={theme.colors.branco.principal} />
+              </div>
+            </S.ContainerLoading>
+          </S.ContentWithLoading>
+          <Navbar />
+        </S.Wrapper>
+      </S.Container>
+    );
+  }
 
   return (
     <S.Container>
@@ -742,63 +743,48 @@ export default function JogadorHome() {
                     <InputDays onChange={handleDateChange} hasError={hasErrorDate}/>
                   </S.ContainerModalFormInputs>
 
-                  {isToday && getDynamicMinHour() >= getHourAsNumber(selectedMarker?.time_end || '23:00') ? (
-                    <S.ContainerNoHoursAvailable>
-                      <SM 
-                        family={theme.fonts.inter}
-                        color={theme.colors.vermelho}
-                        >
-                        Não temos horários disponíveis, verifique outro dia para reservar.
-                      </SM>
-                    </S.ContainerNoHoursAvailable>
-                  ) : (
-                    <>
-                      <S.ContainerModalFormInputs>
-                        <MD 
-                          family={theme.fonts.inter}
-                          color={theme.colors.branco.secundario}
-                          >
-                          Início:
-                        </MD>
+                  <S.ContainerModalFormInputs>
+                    <MD 
+                      family={theme.fonts.inter}
+                      color={theme.colors.branco.secundario}
+                      >
+                      Início:
+                    </MD>
 
-                        <InputHours 
-                          disabled={valueInputDate !== '' ? false : true}
-                          value={valueInputStartHours} 
-                          onChange={handleHoursStartChange}  
-                          minHour={isToday ? Math.max(getDynamicMinHour(), getHourAsNumber(selectedMarker?.time_start || '06:00')) : getHourAsNumber(selectedMarker?.time_start || '06:00')}
-                          maxHour={Math.max(0, getHourAsNumber(selectedMarker?.time_end || '23:00') - 1)}
-                          isToday={isToday}
-                          hasError={hasErrorStartHours}
-                        />
-                      </S.ContainerModalFormInputs>
+                    <InputHours 
+                      disabled={valueInputDate !== '' ? false : true}
+                      value={valueInputStartHours} 
+                      onChange={handleHoursStartChange}  
+                      minHour={getDynamicMinHour()}
+                      maxHour={22}
+                      isToday={isToday}
+                      hasError={hasErrorStartHours}
+                    />
+                  </S.ContainerModalFormInputs>
 
-                      <S.ContainerModalFormInputs>
-                        <MD 
-                          family={theme.fonts.inter}
-                          color={theme.colors.branco.secundario}
-                          >
-                          Término:
-                        </MD>
+                  <S.ContainerModalFormInputs>
+                    <MD 
+                      family={theme.fonts.inter}
+                      color={theme.colors.branco.secundario}
+                      >
+                      Término:
+                    </MD>
 
-                        <InputHours 
-                          disabled={valueInputStartHours !== '' ? false : true}
-                          value={valueInputEndHours} 
-                          onChange={handleHoursEndChange}
-                          minHour={Math.max(minEndHour, getHourAsNumber(selectedMarker?.time_start || '06:00'))}
-                          maxHour={getHourAsNumber(selectedMarker?.time_end || '23:00')}
-                          hasError={hasErrorEndHours}
-                          />
-                      </S.ContainerModalFormInputs>
-                    </>
-                  )}
+                    <InputHours 
+                      disabled={valueInputStartHours !== '' ? false : true}
+                      value={valueInputEndHours} 
+                      onChange={handleHoursEndChange}
+                      minHour={minEndHour}
+                      maxHour={23}
+                      hasError={hasErrorEndHours}
+                      />
+                      
+                  </S.ContainerModalFormInputs>
 
                   
                 </S.ContainerModalFormReserva>
 
-                <S.Button 
-                  onClick={handleSubmitReserva}
-                  disabled={isToday && getDynamicMinHour() >= getHourAsNumber(selectedMarker?.time_end || '23:00')}
-                >
+                <S.Button onClick={handleSubmitReserva}>
                     <LG 
                       weight={700} 
                       color={theme.colors.branco.principal} 
