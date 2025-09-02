@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import AvatarEditor from 'react-avatar-editor';
 
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
@@ -9,11 +10,11 @@ import { Modal } from '@/components/Modal';
 import { Input } from '@/components/Input';
 import { showToast } from '@/components/ToastAlert';
 
-import { Dialog, Spinner } from "@chakra-ui/react"
+import { Dialog, Spinner, Button as ChakraButton } from "@chakra-ui/react"
+import { LG, MD, SM } from "@/styles/typographStyles";
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { LG, MD, SM } from '@/styles/typographStyles';
 
 interface FormErrors {
   name: boolean;
@@ -31,12 +32,20 @@ export default function JogadorPerfil() {
   
   const [openMyData, setOpenMyData] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
+  const [openPhotoEditor, setOpenPhotoEditor] = useState(false);
   
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('');
   const [team, setTeam] = useState('');
   const [email, setEmail] = useState('');
+  const [photo, setPhoto] = useState<string | null>(null);
+  
+  // Estados para o editor de imagem
+  const [image, setImage] = useState<File | null>(null);
+  const [scale, setScale] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const editorRef = useRef<AvatarEditor | null>(null);
   
   const [errors, setErrors] = useState<FormErrors>({
     name: false,
@@ -78,6 +87,11 @@ export default function JogadorPerfil() {
       setGender(parsedUser.gender)
       setTeam(parsedUser.team)
       setEmail(parsedUser.email)
+      
+      // Carregar a foto do usuário, se existir
+      if (parsedUser.photo) {
+        setPhoto(parsedUser.photo);
+      }
     } 
   }, []);
 
@@ -146,6 +160,59 @@ export default function JogadorPerfil() {
       return true;
     };
 
+  // Função para lidar com o upload de imagem
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImage(file);
+      setOpenPhotoEditor(true);
+    }
+  };
+
+  // Função para salvar a imagem editada
+  const handleSaveImage = () => {
+    if (editorRef.current) {
+      const canvas = editorRef.current.getImageScaledToCanvas();
+      const dataURL = canvas.toDataURL('image/png');
+      setPhoto(dataURL);
+      
+      // Atualizar o usuário com a nova foto
+      try {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const infoUserRaw = localStorage.getItem('infoUser');
+        const infoUser = infoUserRaw ? JSON.parse(infoUserRaw) : {};
+
+        const updatedUser = {
+          ...currentUser,
+          photo: dataURL
+        };
+
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+        if (updatedUser.id) {
+          infoUser[updatedUser.id] = {
+            ...infoUser[updatedUser.id],
+            photo: dataURL
+          };
+          localStorage.setItem('infoUser', JSON.stringify(infoUser));
+        }
+
+        showToast({
+          type: 'success',
+          message: 'Foto atualizada com sucesso!'
+        });
+
+        setOpenPhotoEditor(false);
+      } catch (error) {
+        console.error('Erro ao salvar a imagem:', error);
+        showToast({
+          type: 'error',
+          message: 'Erro ao salvar a imagem'
+        });
+      }
+    }
+  };
+
   const handleSavedChanges = () => {
     if (!validateFields()) {
       return;
@@ -165,6 +232,7 @@ export default function JogadorPerfil() {
         gender,
         team,
         email,
+        photo: photo || currentUser.photo // Manter a foto atual ou usar a nova
       };
 
       setTimeout(() => {
@@ -172,7 +240,10 @@ export default function JogadorPerfil() {
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
 
         if (updatedUser.id) {
-          infoUser[updatedUser.id] = updatedUser;
+          infoUser[updatedUser.id] = {
+            ...infoUser[updatedUser.id],
+            ...updatedUser
+          };
           localStorage.setItem('infoUser', JSON.stringify(infoUser));
         }
 
@@ -233,7 +304,58 @@ export default function JogadorPerfil() {
 
           <S.Content>
               <S.ContainerPhoto>
-                <img src="/images/png/user-photo.png" alt="Foto do usuário"/>
+                <img 
+                  src={photo || "/images/png/user-photo.png"} 
+                  alt="Foto do usuário"
+                />
+                <S.PhotoButtonsContainer>
+                  <S.PhotoButton as="label" htmlFor="photo-upload">
+                    <img src="/images/svg/camera.svg" alt="Câmera" />
+                    <input 
+                      type="file" 
+                      id="photo-upload" 
+                      accept="image/*" 
+                      style={{ display: 'none' }} 
+                      onChange={handleImageUpload} 
+                    />
+                  </S.PhotoButton>
+                  <S.PhotoButton 
+                    onClick={() => {
+                      setPhoto(null);
+                      
+                      // Atualizar o localStorage
+                      try {
+                        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                        const infoUserRaw = localStorage.getItem('infoUser');
+                        const infoUser = infoUserRaw ? JSON.parse(infoUserRaw) : {};
+
+                        const updatedUser = {
+                          ...currentUser,
+                          photo: null
+                        };
+
+                        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+
+                        if (updatedUser.id && infoUser[updatedUser.id]) {
+                          infoUser[updatedUser.id] = {
+                            ...infoUser[updatedUser.id],
+                            photo: null
+                          };
+                          localStorage.setItem('infoUser', JSON.stringify(infoUser));
+                        }
+
+                        showToast({
+                          type: 'success',
+                          message: 'Foto removida com sucesso!'
+                        });
+                      } catch (error) {
+                        console.error('Erro ao remover a foto:', error);
+                      }
+                    }}
+                  >
+                    <img src="/images/svg/trash.svg" alt="Lixeira" />
+                  </S.PhotoButton>
+                </S.PhotoButtonsContainer>
               </S.ContainerPhoto>
 
               <S.ContainerButtons>
@@ -265,6 +387,84 @@ export default function JogadorPerfil() {
             
           <Navbar />
       </S.Wrapper>
+
+      {openPhotoEditor && (
+        <Modal isOpen={openPhotoEditor} onClose={() => setOpenPhotoEditor(false)}>
+          <S.ContainerModalEdit>
+            <Dialog.Header>
+              <Dialog.Title textAlign="center">
+                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                  Editar foto
+                </LG>
+              </Dialog.Title>
+            </Dialog.Header>
+
+            <Dialog.Body
+              gap="16px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+            >
+              {image && (
+                <>
+                  <AvatarEditor
+                    ref={editorRef}
+                    image={image}
+                    width={250}
+                    height={250}
+                    border={50}
+                    borderRadius={125}
+                    color={[0, 0, 0, 0.6]}
+                    scale={scale}
+                    rotate={rotation}
+                  />
+                  
+                  <S.EditorControls>
+                    <S.ControlGroup>
+                      <S.ControlLabel>Zoom</S.ControlLabel>
+                      <S.RangeInput 
+                        type="range" 
+                        min="1" 
+                        max="3" 
+                        step="0.01" 
+                        value={scale} 
+                        onChange={(e) => setScale(parseFloat(e.target.value))} 
+                      />
+                    </S.ControlGroup>
+                    
+                    <S.ControlGroup>
+                      <S.ControlLabel>Rotação</S.ControlLabel>
+                      <S.RangeInput 
+                        type="range" 
+                        min="0" 
+                        max="360" 
+                        step="1" 
+                        value={rotation} 
+                        onChange={(e) => setRotation(parseInt(e.target.value))} 
+                      />
+                    </S.ControlGroup>
+                  </S.EditorControls>
+                  
+                  <S.ContainerButtonModalRegister>
+                    <S.ModalButton onClick={() => setOpenPhotoEditor(false)}>
+                      <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                        Cancelar
+                      </MD>
+                    </S.ModalButton>
+                    
+                    <S.ModalButton onClick={handleSaveImage}>
+                      <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                        Salvar
+                      </MD>
+                    </S.ModalButton>
+                  </S.ContainerButtonModalRegister>
+                </>
+              )}
+            </Dialog.Body>
+          </S.ContainerModalEdit>
+        </Modal>
+      )}
 
       {openMyData && 
         <Modal isOpen={openMyData} onClose={() => setOpenMyData(false)}>

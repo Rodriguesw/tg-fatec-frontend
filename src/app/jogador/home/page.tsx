@@ -451,7 +451,6 @@ export default function JogadorHome() {
 
   if (!isMounted || !userLocation) return null;
 
-  // Mostrar tela de carregamento enquanto aguarda a montagem do componente ou a localização
   if (!userLocation) {
     return (
       <S.Container>
@@ -558,7 +557,7 @@ export default function JogadorHome() {
                               />
 
                             <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
-                              Tipo de propriedade: <br/> {selectedMarker?.type}
+                              Tipo de propriedade: <br/> {selectedMarker?.type === 'Futsal' ? 'Quadra Futsal' : selectedMarker?.type === 'Society' ? 'Campo Society' : 'Campo Futebol'}
                             </MD>
 
                             <MD 

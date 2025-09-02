@@ -66,9 +66,9 @@ export default function ProprietarioHome() {
   ];
   
   const typeOptions = [
-    { label: 'Futsal', value: 'Futsal' },
-    { label: 'Society', value: 'Society' },
-    { label: 'Futebol', value: 'Futebol' },
+    { label: 'Quadra Futsal', value: 'Futsal' },
+    { label: 'Campo Society', value: 'Society' },
+    { label: 'Campo Futebol', value: 'Futebol' },
   ];
 
   const [errors, setErrors] = useState<FormErrors>({});

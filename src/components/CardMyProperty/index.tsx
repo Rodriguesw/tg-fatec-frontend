@@ -36,7 +36,7 @@ export function CardMyProperty({ onEdit }: { onEdit: (item: any) => void }) {
                 </LG>
 
                 <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                  Tipo de propriedade: {item?.type}
+                  Tipo de propriedade: {item?.type === 'Futsal' ? 'Quadra Futsal' : item?.type === 'Society' ? 'Campo Society' : 'Campo Futebol'}
                 </SM>
 
                 <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>

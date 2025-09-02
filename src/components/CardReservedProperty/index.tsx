@@ -3,29 +3,49 @@ import { theme } from '@/styles/theme';
 import { LG, MD, SM } from '@/styles/typographStyles';
 
 export function CardReservedProperty({ order, onDelete }: { order: any; onDelete: (id: number) => void }) {
+  // Buscar informações do usuário do currentUserProprietario e infoUser como fallback
+  const currentUserProprietario = JSON.parse(localStorage.getItem('currentUserProprietario') || '{}');
   const infoUser = JSON.parse(localStorage.getItem('infoUser') || '{}');
-  const reservist = infoUser[order.user_id]; 
+  
+  // Buscar o usuário que fez a reserva
+  const reservist = infoUser[order.user_id];
   const reservistName = reservist?.name ?? 'Usuário desconhecido';
 
-  // Verificar se order tem as informações completas ou se precisamos buscar do reservist
+  // Verificar se order tem as informações completas ou se precisamos buscar das reservas do proprietário
   let locationName = order.name || 'Local não especificado';
   let reservedDate = order.reserved_date || 'Data não especificada';
   let timeStart = order.time_start || '';
   let timeEnd = order.time_end || '';
+  let price = order.price || '';
+  let payment_method = order.payment_method || '';
   
   // Para o primeiro tipo de objeto de reserva (que não tem name diretamente)
   if (!order.name && order.my_sports_location_id) {
-    // Tentar encontrar a quadra correspondente nas reservas do usuário
-    const matchingLocation = reservist?.reserved_sports_location?.find(
-      (loc: any) => loc.id === order.my_sports_location_id
+    // Primeiro, tentar encontrar a quadra correspondente nas reservas do proprietário
+    const matchingReservation = currentUserProprietario.reservations?.find(
+      (res: any) => res.id === order.id
     );
     
-    if (matchingLocation) {
-      locationName = matchingLocation.name;
-      // Formatar a data se estiver em formato ISO
-      if (order.reserved_date && order.reserved_date.includes('-')) {
-        const [year, month, day] = order.reserved_date.split('-');
-        reservedDate = `${day}/${month}/${year}`;
+    if (matchingReservation) {
+      locationName = matchingReservation.name;
+      reservedDate = matchingReservation.reserved_date;
+      timeStart = matchingReservation.time_start;
+      timeEnd = matchingReservation.time_end;
+      price = matchingReservation.price;
+      payment_method = matchingReservation.payment_method;
+    } else {
+      // Fallback: tentar encontrar a quadra correspondente nas reservas do usuário
+      const matchingLocation = reservist?.reserved_sports_location?.find(
+        (loc: any) => loc.id === order.my_sports_location_id
+      );
+      
+      if (matchingLocation) {
+        locationName = matchingLocation.name;
+        // Formatar a data se estiver em formato ISO
+        if (order.reserved_date && order.reserved_date.includes('-')) {
+          const [year, month, day] = order.reserved_date.split('-');
+          reservedDate = `${day}/${month}/${year}`;
+        }
       }
     }
   }
@@ -53,6 +73,10 @@ export function CardReservedProperty({ order, onDelete }: { order: any; onDelete
 
             <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
                 {reservedDate} - {timeStart} às {timeEnd}
+            </SM>
+
+            <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+                Valor: {price} - Pagamento: {payment_method}
             </SM>
           </S.CardContentDataAndHours>
         </S.CardContentUserInfo>

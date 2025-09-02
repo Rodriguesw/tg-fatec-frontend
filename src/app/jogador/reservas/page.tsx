@@ -376,8 +376,40 @@ export default function JogadorReservas() {
                           reserved_sports_location: updatedReservas
                         };
                         
-                        // Atualizar o localStorage primeiro
+                        // Atualizar o localStorage currentUser
                         localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
+                        
+                        // Atualizar também no localStorage infoUser
+                        try {
+                          const infoUserRaw = localStorage.getItem('infoUser');
+                          if (infoUserRaw) {
+                            const infoUser = JSON.parse(infoUserRaw);
+                            
+                            // Verificar se o usuário existe no infoUser
+                            if (infoUser[currentUser.id]) {
+                              // Atualizar a propriedade view da reserva cancelada no infoUser
+                              const updatedInfoUserReservas = infoUser[currentUser.id].reserved_sports_location?.map(
+                                (reserva: ReservedSportLocation & { status?: string; view?: boolean }) => {
+                                  if (reserva.id === reservaCancelada.id) {
+                                    return { ...reserva, view: true };
+                                  }
+                                  return reserva;
+                                }
+                              ) || [];
+                              
+                              // Atualizar o objeto infoUser
+                              infoUser[currentUser.id] = {
+                                ...infoUser[currentUser.id],
+                                reserved_sports_location: updatedInfoUserReservas
+                              };
+                              
+                              // Salvar de volta no localStorage
+                              localStorage.setItem('infoUser', JSON.stringify(infoUser));
+                            }
+                          }
+                        } catch (infoUserError) {
+                          console.error('Erro ao atualizar infoUser:', infoUserError);
+                        }
                         
                         // Usar setTimeout para adiar a atualização do estado
                         // Isso quebra o ciclo de renderização atual

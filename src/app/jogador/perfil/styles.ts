@@ -36,14 +36,41 @@ export const Content = styled(C.Flex)`
 export const ContainerPhoto = styled(C.Flex)`
     width: 100%;
     height: auto;
+    position: relative;
 
     align-items: center;
     justify-content: center;
 
     >img{
         width: 160px;
-        height: auto;
+        height: 160px;
         border-radius: 50%;
+        object-fit: cover;
+    }
+`
+
+export const PhotoButtonsContainer = styled(C.Flex)`
+    position: absolute;
+    bottom: 0;
+    right: calc(50% - 80px);
+    display: flex;
+    gap: 8px;
+`
+
+export const PhotoButton = styled(C.Button)`
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: ${theme.colors.azul.principal};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    
+    > img {
+        width: 16px;
+        height: 16px;
+        fill: #fff;
     }
 `
 
@@ -137,4 +164,50 @@ export const ModalButton = styled(C.Button)`
     
     border-radius: 12px;
     background-color: ${theme.colors.vermelho};
+`
+
+export const EditorControls = styled(C.Flex)`
+    width: 100%;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+`
+
+export const ControlGroup = styled(C.Flex)`
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+`
+
+export const ControlLabel = styled.label`
+    color: ${theme.colors.branco.principal};
+    font-family: ${theme.fonts.inter};
+    font-size: 14px;
+`
+
+export const RangeInput = styled.input`
+    width: 100%;
+    height: 4px;
+    border: 1px solid ${theme.colors.azul.principal};
+    background: ${theme.colors.azul.principal};
+    border-radius: 4px;
+    /* -webkit-appearance: none; */
+    
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: ${theme.colors.branco.principal};
+        cursor: pointer;
+    }
+    
+    &::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: ${theme.colors.branco.principal};
+        cursor: pointer;
+        border: none;
+    }
 `
