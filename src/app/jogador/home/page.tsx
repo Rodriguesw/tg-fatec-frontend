@@ -449,8 +449,10 @@ export default function JogadorHome() {
     return nextHour >= 22 ? 22 : nextHour;
   };
 
+  if (!isMounted || !userLocation) return null;
+
   // Mostrar tela de carregamento enquanto aguarda a montagem do componente ou a localização
-  if (!isMounted || !userLocation) {
+  if (!userLocation) {
     return (
       <S.Container>
         <S.Wrapper>
