@@ -3,6 +3,7 @@
 import { Spinner } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { encryptPassword } from '@/utils/crypto';
 
 import { Input } from '@/components/Input';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
@@ -145,6 +146,9 @@ export default function ProprietarioCadastroClient() {
 
       const ids = Object.keys(existingOwners).map(Number);
       const newId = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+      
+      // Criptografa a senha antes de salvar
+      const hashedPassword = await encryptPassword(password);
   
       const payload: Owner = {
         id: newId,
@@ -153,7 +157,7 @@ export default function ProprietarioCadastroClient() {
         phone: telefone,
         nome: responsavel,
         email,
-        password,
+        password: hashedPassword, // Senha criptografada
       };
   
       await new Promise(resolve => setTimeout(resolve, 500));

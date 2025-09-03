@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { encryptPassword, verifyPassword } from '@/utils/crypto';
 
 import { Spinner } from "@chakra-ui/react";
 
@@ -142,52 +143,49 @@ export default function LoginProprietario() {
 
     const users = getUsersFromStorage();
     if (Object.keys(users).length === 0) {
-      const dataUserTest: UserProprietario = {
-        id: 1,
-        name: "Matheus",
-        email: "matheushr39@gmail.com",
-        password: "admin",
-        cnpj: "11.080.217/0001-75",
-        razaoSocial: "Matheus Society LTDA",
-        phone: "15 99160-1215",
-        my_sports_location: [],
-        reservations: [],
-        orders: []
+      // Função para criar usuários de teste com senhas criptografadas
+      const createTestUsers = async () => {
+        const adminPassword = await encryptPassword("admin");
+        const testePassword = await encryptPassword("teste");
+        
+        const dataUserTest: UserProprietario = {
+          id: 1,
+          name: "Matheus",
+          email: "matheushr39@gmail.com",
+          password: adminPassword, // Senha criptografada
+          cnpj: "11.080.217/0001-75",
+          razaoSocial: "Matheus Society LTDA",
+          phone: "15 99160-1215",
+          my_sports_location: [],
+          reservations: [],
+          orders: []
+        };
+
+        const dataUserTestTwo: UserProprietario = {
+          id: 2,
+          name: "Thiago",
+          email: "teste@teste.com",
+          password: testePassword, // Senha criptografada
+          cnpj: "11.080.217/0001-75",
+          phone: "15 99160-1215",
+          razaoSocial: "Thiago Society LTDA",
+        };
+
+        // Só cria o infoUser se ele não existir no localStorage
+        const existingInfoUser = localStorage.getItem("infoUser");
+        if (!existingInfoUser) {
+          // O usuário jogador já está sendo criado com senha criptografada na página de login do jogador
+        }
+
+        const existingUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
+
+        existingUsers[dataUserTest.id] = dataUserTest;
+        existingUsers[dataUserTestTwo.id] = dataUserTestTwo;
+
+        localStorage.setItem("infoUserProprietario", JSON.stringify(existingUsers));
       };
-
-      const dataUserTestTwo: UserProprietario = {
-        id: 2,
-        name: "Thiago",
-        email: "teste@teste.com",
-        password: "teste",
-        cnpj: "11.080.217/0001-75",
-        phone: "15 99160-1215",
-        razaoSocial: "Thiago Society LTDA",
-      };
-
-      const dataUserJogadorTest: UserJogador = {
-        id: 1,
-        name: "Matheus Henrique",
-        birth_date: "2004-02-04",
-        gender: "male",
-        team: "sao_paulo",
-        email: "matheushr39@gmail.com",
-        password: "teste",
-        reserved_sports_location: []
-      };
-
-      // Só cria o infoUser se ele não existir no localStorage
-      const existingInfoUser = localStorage.getItem("infoUser");
-      if (!existingInfoUser) {
-        localStorage.setItem("infoUser", JSON.stringify({1: dataUserJogadorTest}));
-      }
-
-      const existingUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
-
-      existingUsers[dataUserTest.id] = dataUserTest;
-      existingUsers[dataUserTestTwo.id] = dataUserTestTwo;
-
-      localStorage.setItem("infoUserProprietario", JSON.stringify(existingUsers));
+      
+      createTestUsers();
     }
   }, []);
 
@@ -248,8 +246,14 @@ export default function LoginProprietario() {
       );
       const user = Object.values<UserProprietario>(users).find((u: UserProprietario) => u.email === email);
 
-      if (user && user.password === password) {
-        localStorage.setItem("currentUserProprietario", JSON.stringify(user));
+      // Verifica se o usuário existe e se a senha está correta
+      if (user && await verifyPassword(password, user.password)) {
+        // Não envia a senha em texto plano para o currentUser
+        const userToStore = {
+          ...user,
+          password: await encryptPassword(password) // Mantém a senha criptografada
+        };
+        localStorage.setItem("currentUserProprietario", JSON.stringify(userToStore));
         router.push("/proprietario/home");
       } else {
         setErrors((prev) => ({ ...prev, form: true }));

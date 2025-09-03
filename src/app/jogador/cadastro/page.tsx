@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { encryptPassword } from '@/utils/crypto';
 
 import { Spinner } from '@chakra-ui/react';
 
@@ -201,6 +202,9 @@ export default function JogadorCadastro() {
 
       const ids = Object.keys(existingUsers).map(Number);
       const newId = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+      
+      // Criptografa a senha antes de salvar
+      const hashedPassword = await encryptPassword(password);
   
       const payload: User = {
         id: newId,
@@ -209,7 +213,7 @@ export default function JogadorCadastro() {
         gender,
         team,
         email,
-        password,
+        password: hashedPassword, // Senha criptografada
       };
   
       await new Promise(resolve => setTimeout(resolve, 500));

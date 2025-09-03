@@ -46,6 +46,8 @@ export const ContainerPhoto = styled(C.Flex)`
         height: 160px;
         border-radius: 50%;
         object-fit: cover;
+
+        border: 2px solid ${theme.colors.branco.secundario};
     }
 `
 
@@ -152,7 +154,9 @@ export const PhotoButtonsContainer = styled(C.Flex)`
 export const PhotoButton = styled(C.Button)`
     width: 32px;
     height: 32px;
+    min-width: 32px;
     border-radius: 50%;
+    border: 1px solid ${theme.colors.branco.secundario};
     background-color: ${theme.colors.azul.principal};
     display: flex;
     align-items: center;

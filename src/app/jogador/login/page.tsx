@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { encryptPassword, verifyPassword } from '@/utils/crypto';
 
 import { Spinner } from "@chakra-ui/react"
 
@@ -138,18 +139,25 @@ export default function JogadorLogin() {
     
     // Só cria o usuário de teste se o localStorage "infoUser" não existir
     if (!infoUserExists) {
-      const dataUserTest: UserJogador = {
-        id: 1,
-        name: "Matheus Henrique",
-        birth_date: "2004-02-04",
-        gender: "male",
-        team: "sao_paulo",
-        email: "matheushr39@gmail.com",
-        password: "teste",
-        reserved_sports_location: []
-      };
+      // Função para criar usuário de teste com senha criptografada
+      const createTestUser = async () => {
+        const hashedPassword = await encryptPassword("teste");
+        
+        const dataUserTest: UserJogador = {
+          id: 1,
+          name: "Matheus Henrique",
+          birth_date: "2004-02-04",
+          gender: "male",
+          team: "sao_paulo",
+          email: "matheushr39@gmail.com",
+          password: hashedPassword, // Senha criptografada
+          reserved_sports_location: []
+        };
 
-      localStorage.setItem("infoUser", JSON.stringify({1: dataUserTest}));
+        localStorage.setItem("infoUser", JSON.stringify({1: dataUserTest}));
+      };
+      
+      createTestUser();
     }
 
     // Verifica se o localStorage "infoUserProprietario" já existe
@@ -157,35 +165,43 @@ export default function JogadorLogin() {
     
     // Só cria os usuários proprietários de teste se o localStorage "infoUserProprietario" não existir
     if (!infoUserProprietarioExists) {
-      const dataUserProprietarioTest: UserProprietario = {
-        id: 1,
-        name: "Matheus",
-        email: "matheushr39@gmail.com",
-        password: "admin",
-        cnpj: "11.080.217/0001-75",
-        razaoSocial: "Matheus Society LTDA",
-        phone: "15 99160-1215",
-        my_sports_location: [],
-        reservations: [],
-        orders: []
+      // Função para criar usuários proprietários de teste com senhas criptografadas
+      const createProprietarioTestUsers = async () => {
+        const adminPassword = await encryptPassword("admin");
+        const testePassword = await encryptPassword("teste");
+        
+        const dataUserProprietarioTest: UserProprietario = {
+          id: 1,
+          name: "Matheus",
+          email: "matheushr39@gmail.com",
+          password: adminPassword, // Senha criptografada
+          cnpj: "11.080.217/0001-75",
+          razaoSocial: "Matheus Society LTDA",
+          phone: "15 99160-1215",
+          my_sports_location: [],
+          reservations: [],
+          orders: []
+        };
+
+        const dataUserProprietarioTestTwo: UserProprietario = {
+          id: 2,
+          name: "Thiago",
+          email: "teste@teste.com",
+          password: testePassword, // Senha criptografada
+          cnpj: "11.080.217/0001-75",
+          phone: "15 99160-1215",
+          razaoSocial: "Thiago Society LTDA",
+        };
+
+        const existingUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
+
+        existingUsers[dataUserProprietarioTest.id] = dataUserProprietarioTest;
+        existingUsers[dataUserProprietarioTestTwo.id] = dataUserProprietarioTestTwo;
+
+        localStorage.setItem("infoUserProprietario", JSON.stringify(existingUsers));
       };
-
-      const dataUserProprietarioTestTwo: UserProprietario = {
-        id: 2,
-        name: "Thiago",
-        email: "teste@teste.com",
-        password: "teste",
-        cnpj: "11.080.217/0001-75",
-        phone: "15 99160-1215",
-        razaoSocial: "Thiago Society LTDA",
-      };
-
-      const existingUsers = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
-
-      existingUsers[dataUserProprietarioTest.id] = dataUserProprietarioTest;
-      existingUsers[dataUserProprietarioTestTwo.id] = dataUserProprietarioTestTwo;
-
-      localStorage.setItem("infoUserProprietario", JSON.stringify(existingUsers));
+      
+      createProprietarioTestUsers();
     }
   }, []);
 
@@ -242,8 +258,14 @@ export default function JogadorLogin() {
       const users: Record<number, UserJogador> = JSON.parse(localStorage.getItem("infoUser") || "{}");
       const user = Object.values<UserJogador>(users).find((u: UserJogador) => u.email === email);
       
-      if (user && user.password === password) {
-        localStorage.setItem("currentUser", JSON.stringify(user));
+      // Verifica se o usuário existe e se a senha está correta
+      if (user && await verifyPassword(password, user.password)) {
+        // Não envia a senha criptografada para o currentUser
+        const userToStore = {
+          ...user,
+          password: await encryptPassword(password) // Mantém a senha criptografada
+        };
+        localStorage.setItem("currentUser", JSON.stringify(userToStore));
         router.push('/jogador/home');
       } else {
         setErrors(prev => ({ ...prev, form: true }));

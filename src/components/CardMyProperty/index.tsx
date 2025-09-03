@@ -44,7 +44,7 @@ export function CardMyProperty({ onEdit }: { onEdit: (item: any) => void }) {
                 </SM>
 
                 <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                  Dias: {item.days.join(', ')} <br/> Horários: {item.time_start} às {item.time_end}
+                  {item.days.length > 1 ? "Dias" : "Dia"}: {item.days.join(', ')} <br/> Horários: {item.time_start} às {item.time_end}
                 </SM>
 
                 <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
