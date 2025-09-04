@@ -293,6 +293,7 @@ export default function JogadorHome() {
         neighborhood: cepData.bairro,
         state: cepData.uf,
       },
+      status: 'ativo',
       time_start: valueInputStartHours,
       time_end: valueInputEndHours,
       price: `R$ ${valorReserva.toFixed(2).replace('.', ',')}`,
@@ -507,7 +508,7 @@ export default function JogadorHome() {
                   />
                 )}
 
-                {markers.map((marker, index) => (
+                {markers.filter(marker => marker.status !== 'excluido').map((marker, index) => (
                   <Marker
                     key={index}
                     position={{ lat: marker.lat, lng: marker.lng }}

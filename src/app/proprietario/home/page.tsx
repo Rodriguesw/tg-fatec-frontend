@@ -645,38 +645,125 @@ export default function ProprietarioHome() {
   const handleDeletedSportLocation = () => {
     if (!editItem) return;
 
+    // Obter dados atualizados do localStorage
     const storedCurrentUser = JSON.parse(localStorage.getItem("currentUserProprietario") || "{}");
-    const updatedLocations = storedCurrentUser.my_sports_location.filter(
-      (location: any) => location.id !== editItem.id
+    
+    // 1. Atualiza o status da propriedade para 'excluido'
+    const updatedLocations = storedCurrentUser.my_sports_location.map(
+      (location: any) => {
+        if (location.id === editItem.id) {
+          return {
+            ...location,
+            status: 'excluido'
+          };
+        }
+        return location;
+      }
     );
+    
+    // 2. Atualiza as reservas relacionadas a esta propriedade no currentUserProprietario
+    // Verificando o formato exato das reservas no objeto
+    const updatedReservations = (storedCurrentUser.reservations || []).map(
+      (reservation: any) => {
+        // Verifica se a reserva está relacionada à propriedade excluída
+        if (reservation.name === editItem.name && 
+            reservation.address?.cep === editItem.address?.cep && 
+            reservation.address?.number === editItem.address?.number) {
+          return {
+            ...reservation,
+            status: 'excluido'
+          };
+        }
+        return reservation;
+      }
+    );
+    
+    // 3. Atualiza o currentUserProprietario no localStorage
     const updatedCurrentUser = {
       ...storedCurrentUser,
-      my_sports_location: updatedLocations
+      my_sports_location: updatedLocations,
+      reservations: updatedReservations
     };
     localStorage.setItem("currentUserProprietario", JSON.stringify(updatedCurrentUser));
     setCurrentUserProprietario(updatedCurrentUser);
- // Atualiza o infoUserProprietario
+    
+    // 4. Atualiza o infoUserProprietario
     const storedAllUsersObj = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
     
     if (storedAllUsersObj[updatedCurrentUser.id]) {
       storedAllUsersObj[updatedCurrentUser.id] = {
         ...storedAllUsersObj[updatedCurrentUser.id],
-        my_sports_location: updatedCurrentUser.my_sports_location
+        my_sports_location: updatedLocations,
+        reservations: updatedReservations
       };
       
       localStorage.setItem("infoUserProprietario", JSON.stringify(storedAllUsersObj));
     }
+    
+    // 5. Atualiza as reservas dos jogadores no infoUser
+    const infoUser = JSON.parse(localStorage.getItem("infoUser") || "{}");
+    let infoUserUpdated = false;
+    
+    // Percorre todos os usuários jogadores
+    Object.keys(infoUser).forEach((userId) => {
+      if (infoUser[userId] && infoUser[userId].reserved_sports_location) {
+        // Atualiza o status das reservas relacionadas à propriedade excluída
+        const updatedUserReservations = infoUser[userId].reserved_sports_location.map(
+          (reservation: any) => {
+            if (reservation.name === editItem.name && 
+                reservation.address?.cep === editItem.address?.cep && 
+                reservation.address?.number === editItem.address?.number) {
+              console.log("Marcando reserva de jogador como excluída:", reservation.id);
+              return {
+                ...reservation,
+                status: 'excluido'
+              };
+            }
+            return reservation;
+          }
+        );
+        
+        // Se houve alteração nas reservas, atualiza o usuário
+        if (JSON.stringify(updatedUserReservations) !== JSON.stringify(infoUser[userId].reserved_sports_location)) {
+          infoUser[userId] = {
+            ...infoUser[userId],
+            reserved_sports_location: updatedUserReservations
+          };
+          
+          infoUserUpdated = true;
+        }
+      }
+    });
+    
+    if (infoUserUpdated) {
+      localStorage.setItem("infoUser", JSON.stringify(infoUser));
+    }
 
-    // Remove a propriedade do mapMarkers
-     const storedMarkers = JSON.parse(localStorage.getItem('mapMarkers') || '[]');
-     const updatedMarkers = storedMarkers.filter((marker: any) => 
-       !(marker.title === editItem.name && 
-         marker.address?.cep === editItem.address?.cep && 
-         marker.address?.number === editItem.address?.number)
-     );
-     
-     localStorage.setItem('mapMarkers', JSON.stringify(updatedMarkers));
+    // 6. Atualiza o status no mapMarkers para 'excluido' em vez de remover
+    const storedMarkers = JSON.parse(localStorage.getItem('mapMarkers') || '[]');
+    const updatedMarkers = storedMarkers.map((marker: any) => {
+      if (marker.title === editItem.name && 
+          marker.address?.cep === editItem.address?.cep && 
+          marker.address?.number === editItem.address?.number) {
+        return {
+          ...marker,
+          status: 'excluido'
+        };
+      }
+      return marker;
+    });
+    
+    localStorage.setItem('mapMarkers', JSON.stringify(updatedMarkers));
 
+    // Exibe o estado final das reservas após todas as atualizações
+    console.log("Formato das reservas após atualização:", 
+      JSON.stringify(JSON.parse(localStorage.getItem("currentUserProprietario") || "{}").reservations));
+
+    // Limpa o estado e fecha o modal
+    setEditItem(null);
+    setOpenDeleteLocal(false);
+    
+    // Exibe mensagem de sucesso
     showToast({
       type: "success",
       message: "Propriedade excluída com sucesso!",
@@ -717,7 +804,7 @@ export default function ProprietarioHome() {
           <S.Content>
             <TitleWithButtons buttonAdd={true} title='Minhas propriedades' onClick={() => {setNewModalLocalSport(true), setEditItem(null)}}/>
               
-            {currentUserProprietario?.my_sports_location?.length > 0 ? (
+            {currentUserProprietario?.my_sports_location?.filter((item: any) => item.status !== 'excluido')?.length > 0 ? (
               <CardMyProperty onEdit={handleEdit} />
             ):(
             <S.ContainerNotFoundLocal>
@@ -918,6 +1005,12 @@ export default function ProprietarioHome() {
                   family={theme.fonts.inter}
                   color={theme.colors.branco.secundario}>
                   Tem certeza de que deseja excluir permanente sua propriedade?
+                </SM>
+
+                <SM
+                  family={theme.fonts.inter}
+                  color={theme.colors.branco.secundario}>
+                  Ao excluir a propriedade, todas as reservas agendadas serão canceladas.
                 </SM>
   
                 <S.ContainerButtonModalEdit>

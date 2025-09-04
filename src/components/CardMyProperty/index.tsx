@@ -28,7 +28,9 @@ export function CardMyProperty({ onEdit }: { onEdit: (item: any) => void }) {
 
   return (
     <S.Container>
-      {getDataMySportsLocations.my_sports_location.map((item: any) => (
+      {getDataMySportsLocations.my_sports_location
+        .filter((item: any) => item.status !== 'excluido')
+        .map((item: any) => (
         <S.Card key={item.id}>
               <S.CardContent>
                 <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>

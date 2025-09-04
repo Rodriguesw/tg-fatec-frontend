@@ -125,6 +125,7 @@ export const mapContainerStyle = {
     days: string[];
     price: string;
     rating: number;
+    status?: string;
   };
 
   export const defaultExtraMarkers: MarkerType[] = [];

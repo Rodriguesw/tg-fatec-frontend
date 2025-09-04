@@ -48,7 +48,7 @@ export const ContainerPhoto = styled(C.Flex)<ContainerPhotoProps>`
     >img{
         width: 160px;
         height: 160px;
-        padding: ${props => props.hasPhoto ? '0' : '24px'};
+        padding: ${props => props.hasPhoto ? '0' : '10px'};
 
         border-radius: 50%;
         object-fit: cover;

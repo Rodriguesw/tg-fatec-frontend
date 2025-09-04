@@ -120,9 +120,22 @@ export default function ProprietarioReservados() {
 
 
           <S.ContainerCards>
-            {currentUserProprietario?.reservations?.filter((order: any) => order.status !== "cancelado")?.length > 0 ? (
+            {currentUserProprietario?.reservations?.filter((order: any) => order.status !== "cancelado" && order.status !== "excluido")?.length > 0 ? (
               currentUserProprietario.reservations
-                .filter((order: any) => order.status !== "cancelado")
+                .filter((order: any) => order.status !== "cancelado" && order.status !== "excluido")
+                .sort((a: any, b: any) => {
+                  // Converter datas para formato comparável (assumindo formato DD/MM/YYYY)
+                  const dateA = a.reserved_date.split('/').reverse().join('-');
+                  const dateB = b.reserved_date.split('/').reverse().join('-');
+                  
+                  // Comparar datas
+                  if (dateA !== dateB) {
+                    return new Date(dateA).getTime() - new Date(dateB).getTime();
+                  }
+                  
+                  // Se as datas forem iguais, comparar horários de início
+                  return a.time_start.localeCompare(b.time_start);
+                })
                 .map((order: any) => (
                   <CardReservedProperty 
                     key={order.id} 

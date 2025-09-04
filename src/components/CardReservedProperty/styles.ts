@@ -56,20 +56,29 @@ export const CardContent = styled(C.Flex)`
 `
 
 export const ContainerUserPhoto = styled(C.Flex)`
-    width: auto;
-    height: auto;
+    min-width: 77px;
+    max-width: 77px;
+    min-height: 77px;
+    max-height: 77px;
 
     align-items: center;
     justify-content: center;
 
+    border-radius: 50%;
+    border: 2px solid ${theme.colors.branco.secundario};
+
     >img{
-        width: 77px;
-        height: auto;
+        max-width: 77px;
+        max-height: 77px;
+        min-height: 77px;
+        min-width: 77px;
+
+        border-radius: 50%;
     }
 `
 
 export const CardContentUserInfo = styled(C.Flex)`
-    width: auto;
+    width: 100%;
     height: auto;
    
     gap: 6px;

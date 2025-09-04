@@ -75,9 +75,9 @@ export default function JogadorReservas() {
       // Verificar diretamente no currentUser se há reservas canceladas sem a propriedade view
       const reservasCurrentUser = currentUser.reserved_sports_location || [];
       
-      // Encontrar reservas com status "cancelado" e sem a propriedade "view"
+      // Encontrar reservas com status "cancelado" ou "excluido" e sem a propriedade "view"
       const reservasCanceladas = reservasCurrentUser.filter((reserva: ReservedSportLocation & { status?: string; view?: boolean }) => 
-        reserva.status === "cancelado" && reserva.view !== true
+        (reserva.status === "cancelado" || reserva.status === "excluido") && reserva.view !== true
       );
       
       if (reservasCanceladas.length > 0) {
@@ -108,17 +108,46 @@ export default function JogadorReservas() {
 
   if (!isMounted || !currentUser) return null;
 
-  // Verificar se há eventos não cancelados
+  // Verificar se há eventos não cancelados e não excluídos
   const hasEvents = (currentUser?.reserved_sports_location?.filter((item: ReservedSportLocation & { status?: string; view?: boolean }) => 
-    item.status !== "cancelado"
+    item.status !== "cancelado" && item.status !== "excluido"
   ) || [])?.length > 0;
   
   const selectedCourt = currentUser?.reserved_sports_location?.find(
     (court: ReservedSportLocation & { status?: string; view?: boolean }) => court.id === selectedCourtId && 
-    court.status !== "cancelado"
+    court.status !== "cancelado" && court.status !== "excluido"
   );
 
-  console.log("currentUser",currentUser)
+  // Ordenar as reservas do mais próximo para o mais distante
+  // Se o dia for igual, ordenar pelo horário de início
+  const sortedReservations = [...(currentUser?.reserved_sports_location || [])]
+    .filter((item: ReservedSportLocation & { status?: string; view?: boolean }) => 
+      item.status !== "cancelado" && item.status !== "excluido"
+    )
+    .sort((a, b) => {
+      // Converter as datas para objetos Date para comparação
+      const dateA = new Date(a.reserved_date.split('/').reverse().join('-'));
+      const dateB = new Date(b.reserved_date.split('/').reverse().join('-'));
+      
+      // Comparar as datas
+      const dateComparison = dateA.getTime() - dateB.getTime();
+      
+      // Se as datas forem iguais, comparar os horários de início
+      if (dateComparison === 0) {
+        // Converter os horários para minutos para facilitar a comparação
+        const [hoursA, minutesA] = a.time_start.split(':').map(Number);
+        const [hoursB, minutesB] = b.time_start.split(':').map(Number);
+        
+        const timeA = hoursA * 60 + minutesA;
+        const timeB = hoursB * 60 + minutesB;
+        
+        return timeA - timeB;
+      }
+      
+      return dateComparison;
+    });
+
+  console.log("currentUser", currentUser);
 
   return (
     <S.Container>
@@ -130,9 +159,7 @@ export default function JogadorReservas() {
 
             <S.ContainerCard>
               {hasEvents ? (
-                currentUser?.reserved_sports_location?.filter((item: ReservedSportLocation & { status?: string; view?: boolean }) => 
-                  item.status !== "cancelado"
-                ).map((item: ReservedSportLocation & { status?: string; view?: boolean }) => (
+                sortedReservations.map((item: ReservedSportLocation & { status?: string; view?: boolean }) => (
                   <CardReserved
                     key={item.id}
                     id={item.id} 
@@ -338,7 +365,7 @@ export default function JogadorReservas() {
             <Dialog.Header>
               <Dialog.Title textAlign="center">
                 <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                  Reserva Cancelada
+                  {reservaCancelada.status === "excluido" ? "Local Excluído" : "Reserva Cancelada"}
                 </LG>
               </Dialog.Title>
             </Dialog.Header>
@@ -354,7 +381,10 @@ export default function JogadorReservas() {
                 family={theme.fonts.inter}
                 color={theme.colors.branco.secundario}
               >
-                O proprietário cancelou a sua reserva {reservaCancelada.name} do dia {reservaCancelada.reserved_date} e horário {reservaCancelada.time_start} às {reservaCancelada.time_end}.
+                {reservaCancelada.status === "excluido" 
+                  ? `O proprietário deletou o cadastro do local ${reservaCancelada.name}, sua reserva do dia ${reservaCancelada.reserved_date} e horário ${reservaCancelada.time_start} às ${reservaCancelada.time_end} foi cancelada.`
+                  : `O proprietário cancelou a sua reserva ${reservaCancelada.name} do dia ${reservaCancelada.reserved_date} e horário ${reservaCancelada.time_start} às ${reservaCancelada.time_end}.`
+                }
               </SM>
 
               <S.ContainerButtonModalCancel>

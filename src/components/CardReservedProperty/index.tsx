@@ -50,6 +50,27 @@ export function CardReservedProperty({ order, onDelete }: { order: any; onDelete
     }
   }
 
+  function formatPriceToNumber(priceString: string) {
+    if (!priceString || typeof priceString !== 'string') {
+        return 0;
+    }
+    
+    const numericString = priceString.replace(/[^\d,.]/g, '');
+    
+    if (numericString.includes(',')) {
+        return parseFloat(numericString.replace(/\./g, '').replace(',', '.'));
+    }
+    
+    return parseFloat(numericString);
+  }
+
+  function formatarMoedaBrasileira(valor: number) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    }).format(valor);
+  }
+
   return (
     <S.Card>
       <S.CardContent>
@@ -57,7 +78,7 @@ export function CardReservedProperty({ order, onDelete }: { order: any; onDelete
           {reservist?.photo ? (
             <img src={reservist?.photo} alt="Foto do usuário"/>
           ) : (
-            <img src="/images/png/user-photo.png" alt="Foto do usuário"/>
+            <img src="/images/svg/icon-user.svg" alt="Foto do usuário"/>
           )}
         </S.ContainerUserPhoto>
 
@@ -76,7 +97,7 @@ export function CardReservedProperty({ order, onDelete }: { order: any; onDelete
             </SM>
 
             <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                Valor: {price} - Pagamento: {payment_method}
+                Valor: {formatarMoedaBrasileira(formatPriceToNumber(price))} - Pagamento: {payment_method}
             </SM>
           </S.CardContentDataAndHours>
         </S.CardContentUserInfo>
