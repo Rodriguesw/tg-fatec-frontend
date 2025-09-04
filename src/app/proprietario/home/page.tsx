@@ -286,6 +286,7 @@ export default function ProprietarioHome() {
         city: dataCep?.localidade, 
         state: dataCep?.uf,
       },
+      status: 'ativo',
       days: selectedDays,
       time_start: valueInputStartHours,
       time_end: valueInputEndHours,
@@ -343,6 +344,7 @@ export default function ProprietarioHome() {
             cep,
             number
           },
+          status: 'ativo',
           rating: 0, // Rating inicial como 0
           price: valuePerHour, // Valor por hora
           time_start: valueInputStartHours, // Hora de início
@@ -477,6 +479,7 @@ export default function ProprietarioHome() {
             number,
             street: adressLocalSport,
           },
+          status: 'ativo',
           days: selectedDays,
           time_start: valueInputStartHours,
           time_end: valueInputEndHours,
@@ -537,6 +540,7 @@ export default function ProprietarioHome() {
               city: dataCep?.localidade,
               state: dataCep?.uf
             },
+            status: 'ativo',
             price: valuePerHour,
             time_start: valueInputStartHours,
             time_end: valueInputEndHours,
@@ -556,6 +560,7 @@ export default function ProprietarioHome() {
             number,
             street: adressLocalSport
           },
+          status: 'ativo',
           price: valuePerHour,
           time_start: valueInputStartHours,
           time_end: valueInputEndHours,
@@ -589,6 +594,7 @@ export default function ProprietarioHome() {
             city: dataCep?.localidade,
             state: dataCep?.uf
           },
+          status: 'ativo',
           rating: 0, // Rating inicial como 0
           price: valuePerHour, // Valor por hora
           time_start: valueInputStartHours, // Hora de início
