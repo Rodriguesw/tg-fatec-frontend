@@ -2,6 +2,10 @@ import styled from "styled-components";
 import * as C from '@chakra-ui/react'
 import { theme } from "@/styles/theme";
 
+interface ContainerPhotoProps {
+    hasPhoto: boolean;
+}
+
 export const Container = styled(C.Flex)`
     width: 100%;
     height: 100vh;
@@ -33,7 +37,7 @@ export const Content = styled(C.Flex)`
     justify-content: flex-start;
 `
 
-export const ContainerPhoto = styled(C.Flex)`
+export const ContainerPhoto = styled(C.Flex)<ContainerPhotoProps>`
     width: 100%;
     height: auto;
     position: relative;
@@ -44,6 +48,8 @@ export const ContainerPhoto = styled(C.Flex)`
     >img{
         width: 160px;
         height: 160px;
+        padding: ${props => props.hasPhoto ? '0' : '24px'};
+        
         border-radius: 50%;
         object-fit: cover;
 

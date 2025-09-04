@@ -336,9 +336,9 @@ export default function ProprietarioPerfil() {
           <Header />
 
           <S.Content>
-            <S.ContainerPhoto>
+            <S.ContainerPhoto hasPhoto={!!photo}>
               <img 
-                src={photo || "/images/png/user-photo.png"} 
+                src={photo || "/images/svg/icon-user.svg"} 
                 alt="Foto do usuário"
               />
               <S.PhotoButtonsContainer>

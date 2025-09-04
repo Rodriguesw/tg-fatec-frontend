@@ -303,9 +303,9 @@ export default function JogadorPerfil() {
           <Header />
 
           <S.Content>
-              <S.ContainerPhoto>
+              <S.ContainerPhoto hasPhoto={!!photo}>
                 <img 
-                  src={photo || "/images/png/icon-user-gray.png"} 
+                  src={photo || "/images/svg/icon-user.svg"} 
                   alt="Foto do usuário"
                 />
                 <S.PhotoButtonsContainer>
