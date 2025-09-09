@@ -1,7 +1,7 @@
 import { useState } from "react"
 import DatePicker from "react-datepicker"
 
-import { format } from "date-fns"
+import { format, getDay } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
 import "react-datepicker/dist/react-datepicker.css"
@@ -11,9 +11,10 @@ import * as S from "./styles"
 interface InputDaysProps {
   hasError?: boolean
   onChange: (value: string) => void
+  availableDays?: string[] // Array com os dias disponíveis: ['Seg', 'Ter', etc]
 }
 
-export default function InputDays({ onChange, hasError = false }: InputDaysProps) {
+export default function InputDays({ onChange, hasError = false, availableDays }: InputDaysProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const today = new Date()
 
@@ -26,6 +27,30 @@ export default function InputDays({ onChange, hasError = false }: InputDaysProps
     }
   }
 
+  // Função para filtrar os dias da semana disponíveis
+  const filterAvailableDays = (date: Date) => {
+    // Se não houver dias disponíveis especificados, permite todos os dias
+    if (!availableDays || availableDays.length === 0) {
+      return true
+    }
+
+    const dayOfWeek = getDay(date) // 0 = domingo, 1 = segunda, ..., 6 = sábado
+    
+    // Mapeia os dias da semana para os códigos usados no sistema
+    const dayMap: { [key: number]: string } = {
+      0: 'Dom', // Domingo
+      1: 'Seg', // Segunda
+      2: 'Ter', // Terça
+      3: 'Qua', // Quarta
+      4: 'Qui', // Quinta
+      5: 'Sex', // Sexta
+      6: 'Sáb'  // Sábado
+    }
+
+    // Verifica se o dia da semana está na lista de dias disponíveis
+    return availableDays.includes(dayMap[dayOfWeek])
+  }
+
   return (
     <S.Container $hasError={hasError}>
       <DatePicker
@@ -36,6 +61,7 @@ export default function InputDays({ onChange, hasError = false }: InputDaysProps
         placeholderText="00/00/0000"
         className="input-date"
         locale={ptBR}
+        filterDate={filterAvailableDays}
         />
     </S.Container>
   )

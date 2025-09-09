@@ -215,6 +215,7 @@ export default function JogadorHome() {
     return parseInt(hourStr, 10)
   }
 
+  // Calcula o horário mínimo de término (sempre 1h após o início)
   const minEndHour = getHourAsNumber(valueInputStartHours) + 1
 
   const formatToHtmlDate = (raw: string) => {
@@ -251,9 +252,13 @@ export default function JogadorHome() {
     const hasEndHourError = valueInputEndHours === '';
     const hasIgualHours = valueInputStartHours === valueInputEndHours;
     const hasStarBiggerThanEnd = valueInputStartHours > valueInputEndHours;
-
-    const willSetEndHourToZero = hasIgualHours;
-    const hasZeroHours = hasIgualHours || valueInputEndHours === "00:00";
+    
+    // Verificar se o horário de início é o horário de fechamento da propriedade
+    const isClosingHour = valueInputStartHours === selectedMarker?.time_end;
+    
+    // Se for o horário de fechamento, permitimos que o horário de término seja 1h depois
+    const willSetEndHourToZero = hasIgualHours && !isClosingHour;
+    const hasZeroHours = (hasIgualHours && !isClosingHour) || valueInputEndHours === "00:00";
 
     if (willSetEndHourToZero) {
       setValueInputEndHours("00:00");
@@ -393,6 +398,13 @@ export default function JogadorHome() {
   const handleHoursEndChange = (value: string) => {
     setValueInputEndHours(value)
     setHasErrorEndHours(false) // remove o erro ao escolher uma data válida
+    
+    // Se o horário de início for igual ao horário de fechamento da propriedade,
+    // e o horário de término for 1 hora depois, consideramos válido
+    if (valueInputStartHours === selectedMarker?.time_end && 
+        getHourAsNumber(value) === getHourAsNumber(selectedMarker?.time_end) + 1) {
+      setHasErrorEndHours(false)
+    }
   }
 
   function formatPriceToNumber(priceString: string) {
@@ -570,18 +582,28 @@ export default function JogadorHome() {
                             </MD>
 
                             <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
-                              Dias de funcionamento: <br/> {selectedMarker?.days.map((day: string) => {
-                                switch(day) {
-                                  case 'Seg': return 'Segunda';
-                                  case 'Ter': return 'Terça';
-                                  case 'Qua': return 'Quarta';
-                                  case 'Qui': return 'Quinta';
-                                  case 'Sex': return 'Sexta';
-                                  case 'Sab': return 'Sábado';
-                                  case 'Dom': return 'Domingo';
-                                  default: return day;
-                                }
-                              }).join(', ')}
+                              Dias de funcionamento: <br/> {selectedMarker?.days
+                                .map((day: string) => {
+                                  return { 
+                                    original: day, 
+                                    order: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].indexOf(day),
+                                    full: (() => {
+                                      switch(day) {
+                                        case 'Seg': return 'Segunda';
+                                        case 'Ter': return 'Terça';
+                                        case 'Qua': return 'Quarta';
+                                        case 'Qui': return 'Quinta';
+                                        case 'Sex': return 'Sexta';
+                                        case 'Sáb': return 'Sábado';
+                                        case 'Dom': return 'Domingo';
+                                        default: return day;
+                                      }
+                                    })()
+                                  };
+                                })
+                                .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
+                                .map((day: { full: string }) => day.full)
+                                .join(', ')}
                             </MD>
 
                             <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
@@ -742,7 +764,11 @@ export default function JogadorHome() {
                       Data:
                     </MD>
 
-                    <InputDays onChange={handleDateChange} hasError={hasErrorDate}/>
+                    <InputDays 
+                      onChange={handleDateChange} 
+                      hasError={hasErrorDate}
+                      availableDays={selectedMarker?.days} // Passa os dias disponíveis da propriedade
+                    />
                   </S.ContainerModalFormInputs>
 
                   <S.ContainerModalFormInputs>
@@ -754,6 +780,7 @@ export default function JogadorHome() {
                     </MD>
 
                     <InputHours 
+                      id="start-hours"
                       disabled={valueInputDate !== '' ? false : true}
                       value={valueInputStartHours} 
                       onChange={handleHoursStartChange}  
@@ -761,6 +788,8 @@ export default function JogadorHome() {
                       maxHour={22}
                       isToday={isToday}
                       hasError={hasErrorStartHours}
+                      propertyTimeStart={selectedMarker?.time_start}
+                      propertyTimeEnd={selectedMarker?.time_end}
                     />
                   </S.ContainerModalFormInputs>
 
@@ -773,12 +802,15 @@ export default function JogadorHome() {
                     </MD>
 
                     <InputHours 
+                      id="end-hours"
                       disabled={valueInputStartHours !== '' ? false : true}
                       value={valueInputEndHours} 
                       onChange={handleHoursEndChange}
                       minHour={minEndHour}
                       maxHour={23}
                       hasError={hasErrorEndHours}
+                      propertyTimeStart={selectedMarker?.time_start}
+                      propertyTimeEnd={selectedMarker?.time_end}
                       />
                       
                   </S.ContainerModalFormInputs>

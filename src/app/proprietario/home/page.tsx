@@ -232,7 +232,6 @@ export default function ProprietarioHome() {
   };
 
   const handleCreateLocalSport = async () => {
-    console.log("valuePerHour", valuePerHour)
     if (
       !nameLocalSport ||
       !typeLocalSport ||
@@ -253,7 +252,7 @@ export default function ProprietarioHome() {
         adressLocalSport: !adressLocalSport,
         selectedDays: selectedDays.length === 0,
         valueInputStartHours: !valueInputStartHours,
-        valueInputEndHours: !valueInputEndHours,
+        valueInputEndHours: !valueInputEndHours || valueInputStartHours > valueInputEndHours,
         valuePerHour: !validateCurrency(valuePerHour),
         method: !method,
       };
@@ -903,7 +902,7 @@ export default function ProprietarioHome() {
                     disabled={false}
                     value={valueInputStartHours} 
                     onChange={handleHoursStartChange}  
-                    minHour={6}
+                    minHour={0}
                     maxHour={22}
                     hasError={errors.valueInputStartHours}
                     width='100%'

@@ -46,7 +46,19 @@ export function CardMyProperty({ onEdit }: { onEdit: (item: any) => void }) {
                 </SM>
 
                 <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                  {item.days.length > 1 ? "Dias" : "Dia"}: {item.days.join(', ')} <br/> Horários: {item.time_start} às {item.time_end}
+                  {item.days.length > 1 ? "Dias" : "Dia"}: {
+                    item.days
+                      .map((day: string) => {
+                        return { 
+                          original: day, 
+                          order: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].indexOf(day),
+                          display: day
+                        };
+                      })
+                      .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
+                      .map((day: { display: string }) => day.display)
+                      .join(', ')
+                  } <br/> Horários: {item.time_start} às {item.time_end}
                 </SM>
 
                 <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
