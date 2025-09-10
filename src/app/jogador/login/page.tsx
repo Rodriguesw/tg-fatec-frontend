@@ -142,6 +142,7 @@ export default function JogadorLogin() {
       // Função para criar usuário de teste com senha criptografada
       const createTestUser = async () => {
         const hashedPassword = await encryptPassword("teste");
+        const hashedPasswordTwo = await encryptPassword("t");
         
         const dataUserTest: UserJogador = {
           id: 1,
@@ -154,7 +155,22 @@ export default function JogadorLogin() {
           reserved_sports_location: []
         };
 
-        localStorage.setItem("infoUser", JSON.stringify({1: dataUserTest}));
+        const dataUserTestTwo: UserProprietario = {
+          id: 2,
+          name: "Thiago",
+          email: "teste@teste.com",
+          password: hashedPasswordTwo, // Senha criptografada
+          cnpj: "11.080.217/0001-75",
+          phone: "15 99160-1215",
+          razaoSocial: "Thiago Society LTDA",
+        };
+
+        const existingUsers = JSON.parse(localStorage.getItem("infoUser") || "{}");
+
+        existingUsers[dataUserTest.id] = dataUserTest;
+        existingUsers[dataUserTestTwo.id] = dataUserTestTwo;
+
+        localStorage.setItem("infoUser", JSON.stringify(existingUsers));
       };
       
       createTestUser();

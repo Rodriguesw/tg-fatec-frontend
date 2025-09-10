@@ -17,6 +17,7 @@ interface InputHoursProps {
   width?: string
   propertyTimeStart?: string // Horário de início de funcionamento da propriedade
   propertyTimeEnd?: string // Horário de término de funcionamento da propriedade
+  availableHours?: string[] // Lista de horários disponíveis (sem conflito com reservas existentes)
 }
 
 export function InputHours({
@@ -33,6 +34,7 @@ export function InputHours({
   width,
   propertyTimeStart,
   propertyTimeEnd,
+  availableHours = [],
 }: InputHoursProps) {
   const [timeValue, setTimeValue] = useState('00:00')
 
@@ -79,13 +81,29 @@ export function InputHours({
       }
     }
 
+    // Gera todos os horários possíveis dentro do intervalo
+    const allPossibleHours = []
     for (let i = adjustedMin; i <= adjustedMax; i++) {
-      options.push(`${i.toString().padStart(2, '0')}:00`)
+      allPossibleHours.push(`${i.toString().padStart(2, '0')}:00`)
     }
-
-    return options
+    
+    // Se temos uma lista de horários disponíveis, filtramos as opções
+    if (availableHours && availableHours.length > 0) {
+      // Para o horário de início, mostramos apenas os horários disponíveis
+      if (id === 'start-hours') {
+        return allPossibleHours.filter(hour => availableHours.includes(hour))
+      } 
+      // Para o horário de término, a lógica é diferente - mostramos horários após o início selecionado
+      else if (id === 'end-hours' && value) {
+        // Se já temos um horário de início selecionado, mostramos apenas horários após ele
+        return allPossibleHours
+      }
+    }
+    
+    return allPossibleHours
   }
 
+  // Gera as opções de horários com base nas regras e disponibilidade
   const hourOptions = generateHourOptions()
 
   useEffect(() => {

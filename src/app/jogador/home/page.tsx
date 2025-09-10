@@ -211,9 +211,98 @@ export default function JogadorHome() {
 
   // Converte o valor do horário para número (ex: "13:00" => 13)
   const getHourAsNumber = (time: string) => {
+    if (!time) return 0;
     const [hourStr] = time.split(':')
     return parseInt(hourStr, 10)
   }
+
+  // Função para obter todas as reservas ativas para uma data específica
+  const getReservedHours = (date: string, locationName: string, locationCep: string, locationNumber: string) => {
+    const formattedDate = formatToHtmlDate(date);
+    if (!formattedDate) return [];
+    
+    // Busca todas as reservas no localStorage
+    const infoUsersRaw = localStorage.getItem("infoUser");
+    if (!infoUsersRaw) return [];
+    
+    const infoUsers = JSON.parse(infoUsersRaw);
+    const reservedHours: {start: string, end: string}[] = [];
+    
+    // Percorre todos os usuários para encontrar reservas para esta localização e data
+    Object.values(infoUsers).forEach((user: any) => {
+      if (Array.isArray(user.reserved_sports_location)) {
+        user.reserved_sports_location.forEach((reservation: any) => {
+          // Verifica se a reserva é para a mesma localização, data e está ativa
+          if (reservation.name === locationName && 
+              reservation.address?.cep === locationCep && 
+              reservation.address?.number === locationNumber && 
+              reservation.reserved_date === formattedDate && 
+              reservation.status === 'ativo') {
+            
+            reservedHours.push({
+              start: reservation.time_start,
+              end: reservation.time_end
+            });
+          }
+        });
+      }
+    });
+    
+    return reservedHours;
+  }
+  
+  // Verifica se um horário está disponível (não conflita com reservas existentes)
+  const isHourAvailable = (hour: string, reservedHours: {start: string, end: string}[]) => {
+    const hourNum = getHourAsNumber(hour);
+    
+    // Verifica se o horário está dentro de alguma reserva existente
+    return !reservedHours.some(reservation => {
+      const startHour = getHourAsNumber(reservation.start);
+      const endHour = getHourAsNumber(reservation.end);
+      
+      // Se o horário está entre o início e fim de uma reserva, não está disponível
+      return hourNum >= startHour && hourNum < endHour;
+    });
+  }
+  
+  // Obtém os horários disponíveis para a data selecionada
+  const getAvailableHours = () => {
+    if (!selectedMarker || !valueInputDate) return [];
+    
+    const reservedHours = getReservedHours(
+      valueInputDate, 
+      selectedMarker.title, 
+      cepData?.cep, 
+      cepData?.numero
+    );
+    
+    // Horário de funcionamento da propriedade
+    const startHour = getHourAsNumber(selectedMarker.time_start);
+    const endHour = getHourAsNumber(selectedMarker.time_end);
+    
+    const availableHours: string[] = [];
+    
+    // Gera todos os horários possíveis dentro do horário de funcionamento
+    for (let hour = startHour; hour <= endHour; hour++) {
+      const hourStr = `${hour.toString().padStart(2, '0')}:00`;
+      
+      // Verifica se o horário está disponível
+      if (isHourAvailable(hourStr, reservedHours)) {
+        availableHours.push(hourStr);
+      }
+    }
+    
+    return availableHours;
+  }
+  
+  // Função auxiliar para formatar a data
+  const formatDateForReservation = (date: string) => {
+    return formatToHtmlDate(date);
+  }
+  
+  // A função isHourAvailable já está definida acima, não é necessário duplicá-la
+  
+  // A função getAvailableHours já está definida acima, não é necessário duplicá-la
 
   // Calcula o horário mínimo de término (sempre 1h após o início)
   const minEndHour = getHourAsNumber(valueInputStartHours) + 1
@@ -790,6 +879,7 @@ export default function JogadorHome() {
                       hasError={hasErrorStartHours}
                       propertyTimeStart={selectedMarker?.time_start}
                       propertyTimeEnd={selectedMarker?.time_end}
+                      availableHours={valueInputDate ? getAvailableHours() : []}
                     />
                   </S.ContainerModalFormInputs>
 
@@ -811,6 +901,7 @@ export default function JogadorHome() {
                       hasError={hasErrorEndHours}
                       propertyTimeStart={selectedMarker?.time_start}
                       propertyTimeEnd={selectedMarker?.time_end}
+                      availableHours={valueInputDate ? getAvailableHours() : []}
                       />
                       
                   </S.ContainerModalFormInputs>
