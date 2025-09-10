@@ -13,6 +13,24 @@ export const WeekdayMultiSelect = ({
   onChange,
   value = [] 
 }: WeekdayMultiSelectProps) => {
+  // Função para ordenar os dias selecionados na ordem padrão da semana
+  const handleValueChange = (details: { value: string[] }) => {
+    // Ordem padrão dos dias da semana
+    const orderMap: Record<string, number> = {
+      "Seg": 0,
+      "Ter": 1,
+      "Qua": 2,
+      "Qui": 3,
+      "Sex": 4,
+      "Sáb": 5,
+      "Dom": 6
+    };
+    
+    // Ordena os dias selecionados conforme a ordem padrão
+    const orderedValues = [...details.value].sort((a, b) => orderMap[a] - orderMap[b]);
+    onChange(orderedValues);
+  };
+
   return (
     <Select.Root
       multiple
@@ -20,7 +38,7 @@ export const WeekdayMultiSelect = ({
       size="sm"
       width="320px"
       value={value} 
-      onValueChange={(details) => onChange(details.value)}
+      onValueChange={handleValueChange}
     >
       <Select.HiddenSelect />
 

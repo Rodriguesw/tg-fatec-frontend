@@ -31,6 +31,8 @@ export default function ProprietarioRecuperarSenha() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
+  const [isLoadingNewPassword, setIsLoadingNewPassword] = useState(false);
+
   const [userCodeInput, setUserCodeInput] = useState<string[]>([]);
   const [verificationCode, setVerificationCode] = useState<string | null>(null);
 
@@ -121,6 +123,8 @@ export default function ProprietarioRecuperarSenha() {
   const handleVerifyCode = async (userInputArray: string[]) => {
     setIsLoadingVerifyCode(true);
 
+    await new Promise(resolve => setTimeout(resolve, 1700));
+
     const userInput = userInputArray.join("");
 
     console.log("Valor inserido nos pins:", userInput);
@@ -150,7 +154,7 @@ export default function ProprietarioRecuperarSenha() {
   };
 
   const handleNewPassword = async () => {
-    setIsLoading(true);
+    setIsLoadingNewPassword(true);
 
     try {
       if (!newPassword.trim()) {
@@ -168,6 +172,8 @@ export default function ProprietarioRecuperarSenha() {
         }); 
         return;
       }
+
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       const infoUser = localStorage.getItem("infoUserProprietario");
       const users = infoUser ? JSON.parse(infoUser) : [];
@@ -200,7 +206,7 @@ export default function ProprietarioRecuperarSenha() {
         message: 'Erro ao redefinir a senha'
       });
     } finally {
-      setIsLoading(false);
+      setIsLoadingNewPassword(false);
     }
   }
 
@@ -368,7 +374,7 @@ export default function ProprietarioRecuperarSenha() {
                   <MD 
                     color={theme.colors.branco.principal} 
                     family={theme.fonts.inter}>
-                    {isLoading ? <Spinner /> : 'Salvar'}
+                    {isLoadingNewPassword ? <Spinner /> : 'Salvar'}
                   </MD>
                 </S.Button>
               </S.ContainerButtonModalNewPassword>

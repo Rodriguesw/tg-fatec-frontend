@@ -99,6 +99,13 @@ export const ContainerContentModalLocalSport = styled(C.Flex)`
     }
 `
 
+export const LoadingContainer = styled(C.Flex)`
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+`
+
 export const ContainerWithTwoInputs = styled(C.Flex)`
     width: 100%;
     height: auto;

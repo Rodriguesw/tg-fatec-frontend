@@ -5,13 +5,14 @@ import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
 import { Modal } from '@/components/Modal';
-import { Dialog } from '@chakra-ui/react';
+import { Dialog, Spinner } from '@chakra-ui/react';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { LG, MD } from '@/styles/typographStyles';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { CardReservedProperty } from '@/components/CardReservedProperty';
+import { showToast } from '@/components/ToastAlert';
 
 export default function ProprietarioReservados() {
   const [isMounted, setIsMounted] = useState(false);
@@ -20,20 +21,30 @@ export default function ProprietarioReservados() {
   const [openSettings, setOpenSettings] = useState(false);
   const [reservationToDelete, setReservationToDelete] = useState<number | null>(null);
 
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [isLoadingContent, setIsLoadingContent] = useState(true);
+
   useEffect(() => {
     setIsMounted(true); 
   }, []);
 
   useEffect(() => {
+    setIsLoadingContent(true);
     const storedSport = localStorage.getItem('currentUserProprietario');
 
     if (storedSport) {
       const parsedUser = JSON.parse(storedSport);
       setCurrentUserProprietario(parsedUser);
     } 
+    
+    // Simula um tempo de carregamento para melhor experiência do usuário
+    setTimeout(() => {
+      setIsLoadingContent(false);
+    }, 1000);
   }, []);
 
-  const handleCancelReservation = () => {
+  const handleCancelReservation = async () => {
+    setIsLoadingDelete(true);
     if (reservationToDelete === null || !currentUserProprietario) return;
 
     // Encontrar a reserva que será cancelada para obter o user_id
@@ -43,6 +54,7 @@ export default function ProprietarioReservados() {
 
     if (!reservationToCancel) return;
 
+    await new Promise(resolve => setTimeout(resolve, 1750));
     // === 1. Atualizar currentUserProprietario ===
     // Atualizar o status da reserva para cancelado em vez de removê-la
     const updatedReservations = (currentUserProprietario.reservations ?? []).map(
@@ -103,7 +115,25 @@ export default function ProprietarioReservados() {
       }
     }
 
-    // === 4. Resetar estados ===
+    showToast({
+      type: 'success',
+      message: 'Reserva cancelada com sucesso'
+    });
+
+    // === 4. Simular uma chamada GET para atualizar a lista ===
+    setIsLoadingContent(true); // Ativa o loading da lista
+    
+    // Simula o tempo de uma requisição
+    setTimeout(() => {
+      // Aqui seria o lugar para fazer uma chamada GET real para atualizar os dados
+      // Como estamos usando localStorage, os dados já foram atualizados acima
+      
+      // Desativa o loading após "receber" os dados
+      setIsLoadingContent(false);
+    }, 1000);
+
+    // === 5. Resetar estados ===
+    setIsLoadingDelete(false);
     setOpenSettings(false);
     setReservationToDelete(null);
   };
@@ -120,7 +150,14 @@ export default function ProprietarioReservados() {
 
 
           <S.ContainerCards>
-            {currentUserProprietario?.reservations?.filter((order: any) => order.status !== "cancelado" && order.status !== "excluido")?.length > 0 ? (
+            {isLoadingContent ? (
+              <S.LoadingContainer>
+                <Spinner 
+                  size="xl" 
+                  color={theme.colors.branco.principal}
+                />
+              </S.LoadingContainer>
+            ) : currentUserProprietario?.reservations?.filter((order: any) => order.status !== "cancelado" && order.status !== "excluido")?.length > 0 ? (
               currentUserProprietario.reservations
                 .filter((order: any) => order.status !== "cancelado" && order.status !== "excluido")
                 .sort((a: any, b: any) => {
@@ -146,7 +183,7 @@ export default function ProprietarioReservados() {
                     }}
                   />
               ))
-            ) :(
+            ) : (
               <S.NotFoundEvent>
                 <img src="/images/svg/icon-calendar-event.svg" alt="Nenhuma reserva encontrada"/>
 
@@ -193,9 +230,13 @@ export default function ProprietarioReservados() {
                 </S.ModalButton>
 
                 <S.ModalButton onClick={handleCancelReservation}>
-                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                    Confirmar
-                  </MD>
+                  {isLoadingDelete ? (
+                    <Spinner />
+                  ) : (
+                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      Confirmar
+                    </MD>
+                  )}
                 </S.ModalButton>
               </S.ContainerButtonModalSettings>
             </Dialog.Body>

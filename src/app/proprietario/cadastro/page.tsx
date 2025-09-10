@@ -127,6 +127,8 @@ export default function ProprietarioCadastroClient() {
   
     try {
       setIsLoading(true);
+
+      await new Promise(resolve => setTimeout(resolve, 2300));
   
       const existingOwners: Record<number, Owner> = JSON.parse(localStorage.getItem("infoUserProprietario") || "{}");
       const emailExists = Object.values<Owner>(existingOwners).some(owner => owner.email === email);

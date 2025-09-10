@@ -49,10 +49,20 @@ export function CardMyProperty({ onEdit }: { onEdit: (item: any) => void }) {
                   {item.days.length > 1 ? "Dias" : "Dia"}: {
                     item.days
                       .map((day: string) => {
+                        const dayMap: { [key: string]: string } = {
+                          'Dom': 'Domingo',
+                          'Seg': 'Segunda',
+                          'Ter': 'Terça',
+                          'Qua': 'Quarta',
+                          'Qui': 'Quinta',
+                          'Sex': 'Sexta',
+                          'Sáb': 'Sábado'
+                        };
+                        
                         return { 
                           original: day, 
                           order: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].indexOf(day),
-                          display: day
+                          display: dayMap[day] || day // Fallback caso não encontre
                         };
                       })
                       .sort((a: { order: number }, b: { order: number }) => a.order - b.order)

@@ -78,6 +78,9 @@ export default function ProprietarioHome() {
   //Modal de confirmação de exclusão
   const [openDeleteLocal, setOpenDeleteLocal] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   useEffect(() => {
     setIsMounted(true); 
   }, []);
@@ -232,6 +235,8 @@ export default function ProprietarioHome() {
   };
 
   const handleCreateLocalSport = async () => {
+    setLoading(true);
+
     if (
       !nameLocalSport ||
       !typeLocalSport ||
@@ -271,6 +276,9 @@ export default function ProprietarioHome() {
         return;
       }
     }
+
+    // Simular atraso de requisição API (2 segundos)
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Cria o objeto do novo local esportivo
     const newSportsLocation = {
@@ -375,6 +383,8 @@ export default function ProprietarioHome() {
       setValuePerHour('');
     } catch (error) {
       console.error("Erro ao salvar quadra", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -424,6 +434,8 @@ export default function ProprietarioHome() {
   };
 
   const handleSavedSportLocation = async () => {
+    setLoading(true);
+
     if (!editItem) return;
 
     if (
@@ -463,6 +475,9 @@ export default function ProprietarioHome() {
         return;
       }
     }
+
+    // Simular atraso de requisição API (2 segundos)
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     const storedData = JSON.parse(localStorage.getItem("currentUserProprietario") || "{}");
 
@@ -568,6 +583,8 @@ export default function ProprietarioHome() {
       }
       
       localStorage.setItem('mapMarkers', JSON.stringify(storedMarkers));
+
+      setLoading(false);
     } else {
       // Se o marcador não foi encontrado no mapMarkers, mas deveria existir, vamos criar um novo
       const fullAddress = `${adressLocalSport}, ${number}, ${dataCep?.localidade || ''}, ${dataCep?.uf || ''}`;
@@ -604,6 +621,8 @@ export default function ProprietarioHome() {
         // Adicionar o novo marcador à lista e salvar no localStorage
         storedMarkers.push(newMarker);
         localStorage.setItem('mapMarkers', JSON.stringify(storedMarkers));
+
+        setLoading(false);
       }
     }
 
@@ -641,8 +660,12 @@ export default function ProprietarioHome() {
     });
   };
 
-  const handleDeletedSportLocation = () => {
+  const handleDeletedSportLocation = async () => {
     if (!editItem) return;
+
+    setLoadingDelete(true);
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // Obter dados atualizados do localStorage
     const storedCurrentUser = JSON.parse(localStorage.getItem("currentUserProprietario") || "{}");
@@ -768,6 +791,8 @@ export default function ProprietarioHome() {
       message: "Propriedade excluída com sucesso!",
     });
 
+    setLoadingDelete(false);
+
     setEditItem(null);
     setNewModalLocalSport(false);
     setNameLocalSport('');
@@ -793,6 +818,31 @@ export default function ProprietarioHome() {
     });
   };
 
+  // Dentro do seu componente
+const [showCard, setShowCard] = useState(false);
+const [isLoadingContent, setIsLoadingContent] = useState(true);
+
+useEffect(() => {
+  // Iniciar o loading quando o currentUserProprietario mudar
+  setIsLoadingContent(true);
+  
+  const hasLocations = currentUserProprietario?.my_sports_location?.filter(
+    (item: any) => item.status !== 'excluido'
+  )?.length > 0;
+
+  if (hasLocations) {
+    const timer = setTimeout(() => {
+      setShowCard(true);
+      setIsLoadingContent(false); // Finaliza o loading após definir o showCard
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  } else {
+    setShowCard(false);
+    setIsLoadingContent(false); // Finaliza o loading imediatamente se não houver locais
+  }
+}, [currentUserProprietario]);
+
   if (!isMounted) return null; 
 
   return (
@@ -803,7 +853,11 @@ export default function ProprietarioHome() {
           <S.Content>
             <TitleWithButtons buttonAdd={true} title='Minhas propriedades' onClick={() => {setNewModalLocalSport(true), setEditItem(null)}}/>
               
-            {currentUserProprietario?.my_sports_location?.filter((item: any) => item.status !== 'excluido')?.length > 0 ? (
+            {isLoadingContent ? (
+              <S.LoadingContainer>
+                <Spinner size="xl" color="#ffffff" />
+              </S.LoadingContainer>
+            ) : showCard ? (
               <CardMyProperty onEdit={handleEdit} />
             ):(
             <S.ContainerNotFoundLocal>
@@ -958,23 +1012,31 @@ export default function ProprietarioHome() {
                       </S.Button> 
     
                       <S.Button onClick={handleSavedSportLocation}>
-                        <MD 
-                        color={theme.colors.branco.principal} 
-                        family={theme.fonts.inter}>
-                          Salvar
-                      </MD>
-                    </S.Button>
+                        {loading ? (
+                          <Spinner />
+                        ) : (
+                          <MD 
+                          color={theme.colors.branco.principal} 
+                          family={theme.fonts.inter}>
+                            Salvar
+                          </MD>
+                        )}
+                      </S.Button>
                   </S.ContainerButtonModalEdit>
                  ) : (
                     <S.Button onClick={handleCreateLocalSport}>
-                      <LG 
+                      {loading ? (
+                        <Spinner />
+                      ) : (
+                        <LG 
                         weight={700} 
                         color={theme.colors.branco.principal} 
                         family={theme.fonts.inter}
                         >
                           Criar quadra
                       </LG>
-                    </S.Button>
+                 )}
+                 </S.Button>
                  )}
               </S.ContainerContentModalLocalSport>
             </Dialog.Body>
@@ -1020,9 +1082,13 @@ export default function ProprietarioHome() {
                   </S.Button>
   
                   <S.Button onClick={handleDeletedSportLocation}>
-                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                      Confirmar
-                    </MD>
+                    {loadingDelete ? (
+                      <Spinner />
+                    ) : (
+                      <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                        Confirmar
+                      </MD>
+                    )}
                   </S.Button>
                 </S.ContainerButtonModalEdit>
               </Dialog.Body>

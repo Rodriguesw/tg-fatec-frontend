@@ -131,3 +131,10 @@ export const ModalButton = styled(C.Button)`
     border-radius: 12px;
     background-color: ${theme.colors.vermelho};
 `
+
+export const LoadingContainer = styled(C.Flex)`
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+`

@@ -55,6 +55,7 @@ export default function ProprietarioPerfil() {
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   useEffect(() => {
     setIsMounted(true); 
@@ -232,12 +233,14 @@ export default function ProprietarioPerfil() {
     }
   };
 
-  const handleSavedChanges = () => {
+  const handleSavedChanges = async () => {
     if (!validateFields()) {
       return;
     }
     
     setIsLoading(true);
+
+    await new Promise(resolve => setTimeout(resolve, 2300));
 
     try {
       const currentUser = JSON.parse(localStorage.getItem('currentUserProprietario') || '{}');
@@ -276,12 +279,16 @@ export default function ProprietarioPerfil() {
     }
   };
   
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
+    setLoadingDelete(true);
+
     const userIdToDelete = currentUser.id;
   
     const infoUserProprietarioRaw = localStorage.getItem('infoUserProprietario');
   
     if (!infoUserProprietarioRaw) return;
+
+    await new Promise(resolve => setTimeout(resolve, 1800));
   
     try {
       const infoUserParsed = JSON.parse(infoUserProprietarioRaw);
@@ -299,6 +306,8 @@ export default function ProprietarioPerfil() {
       }
     } catch (error) {
       console.error('Erro ao fazer parse de infoUserProprietario:', error);
+    } finally {
+      setLoadingDelete(false);
     }
   
     setOpenSettings(false);
@@ -620,9 +629,13 @@ export default function ProprietarioPerfil() {
                 </S.ModalButton>
 
                 <S.ModalButton onClick={handleDeleteAccount}>
-                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                    Confirmar
-                  </MD>
+                  {loadingDelete ? (
+                    <Spinner/>
+                  ) : (
+                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      Confirmar
+                    </MD>
+                  )}
                 </S.ModalButton>
               </S.ContainerButtonModalSettings>
             </Dialog.Body>
