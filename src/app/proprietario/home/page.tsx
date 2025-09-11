@@ -14,7 +14,7 @@ import { Modal } from '@/components/Modal';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { CardMyProperty } from '@/components/CardMyProperty';
 
-import { Dialog, Spinner } from "@chakra-ui/react"
+import { Dialog, Spinner, Button, Image, Box } from "@chakra-ui/react"
 import { fetchCEP } from '@/services/BuscaCep';
 import  { WeekdayMultiSelect } from '@/components/Multiple';
 import { InputHours } from '@/components/inputHours';
@@ -50,6 +50,8 @@ export default function ProprietarioHome() {
   const [newModalLocalSport, setNewModalLocalSport] = useState(false);
 
   const [nameLocalSport, setNameLocalSport] = useState('');
+  const [propertyImages, setPropertyImages] = useState<string[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [typeLocalSport, setTypeLocalSport] = useState('');
   const [cep, setCep] = useState('');
   const [dataCep, setDataCep] = useState<CEPData | null>(null);
@@ -97,6 +99,48 @@ export default function ProprietarioHome() {
   const handleNameChange = (value: string) => {
     setNameLocalSport(value);
     setErrors(prev => ({ ...prev, nameLocalSport: false }));
+  };
+  
+  const handleImageUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const imageDataUrl = reader.result as string;
+          setPropertyImages(prev => [...prev, imageDataUrl]);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
+  };
+  
+  const handlePrevImage = () => {
+    setCurrentImageIndex(prev => 
+      prev === 0 ? propertyImages.length - 1 : prev - 1
+    );
+  };
+  
+  const handleNextImage = () => {
+    setCurrentImageIndex(prev => 
+      prev === propertyImages.length - 1 ? 0 : prev + 1
+    );
+  };
+  
+  const handleRemoveImage = () => {
+    if (propertyImages.length === 0) return;
+    
+    const newImages = [...propertyImages];
+    newImages.splice(currentImageIndex, 1);
+    
+    setPropertyImages(newImages);
+    if (currentImageIndex >= newImages.length) {
+      setCurrentImageIndex(Math.max(0, newImages.length - 1));
+    }
   };
   
   const handleTypeChange = (value: string) => {
@@ -298,7 +342,8 @@ export default function ProprietarioHome() {
       time_start: valueInputStartHours,
       time_end: valueInputEndHours,
       price: valuePerHour,
-      payment_method: method
+      payment_method: method,
+      images: propertyImages
     };
 
 
@@ -905,6 +950,70 @@ useEffect(() => {
                   hasError ={errors.nameLocalSport}
                 />
                 
+                <S.ImageCarouselContainer>
+                  {propertyImages.length > 0 ? (
+                    <>
+                      <S.ImageContainer>
+                        <Image 
+                          src={propertyImages[currentImageIndex]} 
+                          alt="Imagem da propriedade" 
+                          objectFit="cover"
+                          width="100%"
+                          height="100%"
+                        />
+                      </S.ImageContainer>
+                      
+                      {propertyImages.length > 1 && (
+                        <>
+                          <S.CarouselButton onClick={handlePrevImage}>
+                            &lt;
+                          </S.CarouselButton>
+                          <S.CarouselButton onClick={handleNextImage}>
+                            &gt;
+                          </S.CarouselButton>
+                        </>
+                      )}
+                      
+                      <Box position="absolute" top="10px" right="10px">
+                        <Button 
+                          size="sm" 
+                          colorScheme="red" 
+                          onClick={handleRemoveImage}
+                        >
+                          Remover
+                        </Button>
+                      </Box>
+                      
+                      <S.CarouselNavigation>
+                         {propertyImages.map((_, index) => (
+                           <S.CarouselDot 
+                             key={index} 
+                             active={index === currentImageIndex ? true : false}
+                             onClick={() => setCurrentImageIndex(index)}
+                           />
+                         ))}
+                       </S.CarouselNavigation>
+                    </>
+                  ) : (
+                    <S.ImageUploadButton onClick={handleImageUpload}>
+                      <Image src="/images/camera.svg" alt="Câmera" width="32px" height="32px" />
+                      <Box>Adicionar imagens da propriedade</Box>
+                    </S.ImageUploadButton>
+                  )}
+                  
+                  {propertyImages.length > 0 && (
+                    <Box position="absolute" bottom="40px" right="10px">
+                      <Button 
+                        size="sm" 
+                        colorScheme="blue" 
+                        onClick={handleImageUpload}
+                      >
+                        Adicionar mais
+                      </Button>
+                    </Box>
+                  )}
+                </S.ImageCarouselContainer>
+                
                 <Input 
                   id="type"
                   type='select' 
@@ -962,7 +1071,7 @@ useEffect(() => {
                     width='100%'
                   />
 
-                  <MD family={theme.fonts.inter} color={theme.colors.branco.principal}>
+                  <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
                     às
                   </MD>
 

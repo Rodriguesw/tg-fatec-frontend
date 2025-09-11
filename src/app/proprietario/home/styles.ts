@@ -75,7 +75,7 @@ export const ContainerContentModalLocalSport = styled(C.Flex)`
 
     overflow-y: auto;
 
-    >div:nth-child(2){
+    >div:nth-child(3){
         >div:last-child{
             width: 140px;
         }
@@ -96,6 +96,104 @@ export const ContainerContentModalLocalSport = styled(C.Flex)`
 
     ::-webkit-scrollbar-track {
         background-color: transparent; /* Deixa o fundo da barra transparente */
+    }
+`
+
+export const ImageCarouselContainer = styled(C.Flex)`
+    width: 100%;
+    height: 200px;
+    position: relative;
+    border-radius: 8px;
+    /* overflow: hidden; */
+    background-color: ${theme.colors.azul.principal};
+`
+
+export const ImageContainer = styled(C.Flex)`
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+`
+
+export const ImagePlaceholder = styled(C.Flex)`
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: ${theme.colors.azul.principal};
+    color: ${theme.colors.branco.principal};
+    gap: 8px;
+`
+
+export const ImageUploadButton = styled(C.Button)`
+    background-color: transparent;
+    border: 2px dashed ${theme.colors.branco.principal};
+    color: ${theme.colors.branco.principal};
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+`
+
+export const CarouselNavigation = styled(C.Flex)`
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    gap: 8px;
+`
+
+export const CarouselDot = styled(C.Box)<{ active?: boolean }>`
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: ${props => props.active ? theme.colors.laranja : theme.colors.branco.principal};
+    cursor: pointer;
+    opacity: ${props => props.active ? 1 : 0.5};
+    transition: all 0.2s;
+    
+    &:hover {
+        opacity: 0.8;
+    }
+`
+
+export const CarouselButton = styled(C.Button)`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    
+    &:first-of-type {
+        left: 10px;
+    }
+    
+    &:last-of-type {
+        right: 10px;
+    }
+    
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.7);
     }
 `
 
