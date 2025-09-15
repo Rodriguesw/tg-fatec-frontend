@@ -446,6 +446,8 @@ export default function ProprietarioHome() {
     setValueInputStartHours('')
     setValueInputEndHours('')
     setValuePerHour('')
+    setPropertyImages([]) // Limpar as imagens
+    setCurrentImageIndex(0) // Resetar o índice da imagem
 
     //LImpando erros
      setErrors({
@@ -474,6 +476,15 @@ export default function ProprietarioHome() {
     setValueInputEndHours(item.time_end);
     setValuePerHour(item.price);
     setMethod(item.payment_method);
+    
+    // Carregar as imagens salvas da propriedade
+    if (item.images && Array.isArray(item.images)) {
+      setPropertyImages(item.images);
+      setCurrentImageIndex(0); // Resetar para a primeira imagem
+    } else {
+      setPropertyImages([]);
+      setCurrentImageIndex(0);
+    }
 
     setNewModalLocalSport(true);
   };
@@ -543,7 +554,8 @@ export default function ProprietarioHome() {
           time_start: valueInputStartHours,
           time_end: valueInputEndHours,
           price: valuePerHour,
-          payment_method: method
+          payment_method: method,
+          images: propertyImages // Manter as imagens atualizadas
         };
       }
       return location;
@@ -603,7 +615,8 @@ export default function ProprietarioHome() {
             price: valuePerHour,
             time_start: valueInputStartHours,
             time_end: valueInputEndHours,
-            days: selectedDays
+            days: selectedDays,
+            images: propertyImages // Manter as imagens atualizadas
           };
         }
       } else {
@@ -623,7 +636,8 @@ export default function ProprietarioHome() {
           price: valuePerHour,
           time_start: valueInputStartHours,
           time_end: valueInputEndHours,
-          days: selectedDays
+          days: selectedDays,
+          images: propertyImages // Manter as imagens atualizadas
         };
       }
       
@@ -660,7 +674,8 @@ export default function ProprietarioHome() {
           price: valuePerHour, // Valor por hora
           time_start: valueInputStartHours, // Hora de início
           time_end: valueInputEndHours, // Hora de término
-          days: selectedDays // Dias da semana disponíveis
+          days: selectedDays, // Dias da semana disponíveis
+          images: propertyImages // Imagens da propriedade
         };
         
         // Adicionar o novo marcador à lista e salvar no localStorage
@@ -690,6 +705,8 @@ export default function ProprietarioHome() {
     setValueInputStartHours('')
     setValueInputEndHours('')
     setValuePerHour('')
+    setPropertyImages([]) // Limpar as imagens
+    setCurrentImageIndex(0) // Resetar o índice da imagem
 
     //LImpando erros
     setErrors({
@@ -974,10 +991,12 @@ useEffect(() => {
                         </>
                       )}
                       
-                      <Box position="absolute" top="10px" right="10px">
+                      <Box position="absolute" top="10px" right="10px" bg="red.500" p="2px" borderRadius="8px">
                         <Button 
                           size="sm" 
                           colorScheme="red" 
+                          bg="red.500"
+                          borderRadius="8px"
                           onClick={handleRemoveImage}
                         >
                           Remover
@@ -996,19 +1015,22 @@ useEffect(() => {
                     </>
                   ) : (
                     <S.ImageUploadButton onClick={handleImageUpload}>
-                      <Image src="/images/camera.svg" alt="Câmera" width="32px" height="32px" />
+                      <Image src="/images/svg/camera.svg" alt="Câmera" width="32px" height="32px" />
                       <Box>Adicionar imagens da propriedade</Box>
                     </S.ImageUploadButton>
                   )}
                   
                   {propertyImages.length > 0 && (
-                    <Box position="absolute" bottom="40px" right="10px">
+                    <Box position="absolute" bottom="10px" right="10px">
                       <Button 
                         size="sm" 
                         colorScheme="blue" 
+                        bg={theme.colors.verde.secundario}
+                        padding="8px"
+                        borderRadius="8px"
                         onClick={handleImageUpload}
                       >
-                        Adicionar mais
+                        Adicionar +
                       </Button>
                     </Box>
                   )}

@@ -114,6 +114,9 @@ export const ImageContainer = styled(C.Flex)`
     align-items: center;
     justify-content: center;
     overflow: hidden;
+
+    border-radius: 16px;
+    border: 2px dashed #FFFFFF25;
 `
 
 export const ImagePlaceholder = styled(C.Flex)`
@@ -129,10 +132,14 @@ export const ImagePlaceholder = styled(C.Flex)`
 
 export const ImageUploadButton = styled(C.Button)`
     background-color: transparent;
-    border: 2px dashed ${theme.colors.branco.principal};
-    color: ${theme.colors.branco.principal};
+    border-radius: 16px;
+    border: 2px dashed #FFFFFF25;
+    color: ${theme.colors.branco.secundario};
+
     width: 100%;
     height: 100%;
+    padding: 32px;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -175,7 +182,7 @@ export const CarouselButton = styled(C.Button)`
     transform: translateY(-50%);
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
-    border-radius: 50%;
+    border-radius: 8px;
     width: 32px;
     height: 32px;
     display: flex;
