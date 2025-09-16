@@ -103,14 +103,28 @@ export const ImageCarouselContainer = styled(C.Flex)`
     width: 100%;
     height: 200px;
     position: relative;
+
+    flex-direction: column;
+
     border-radius: 8px;
     /* overflow: hidden; */
     background-color: ${theme.colors.azul.principal};
 `
 
+export const Containerbuttons = styled(C.Flex)`
+    width: 100%;
+    height: 200px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    border-radius: 16px;
+    border: 2px dashed #FFFFFF25;
+`
+
 export const ImageContainer = styled(C.Flex)`
     width: 100%;
-    height: 100%;
+    height: 200px;
     align-items: center;
     justify-content: center;
     overflow: hidden;
@@ -137,7 +151,7 @@ export const ImageUploadButton = styled(C.Button)`
     color: ${theme.colors.branco.secundario};
 
     width: 100%;
-    height: 100%;
+    height: 200px;
     padding: 32px;
 
     display: flex;
@@ -154,10 +168,11 @@ export const ImageUploadButton = styled(C.Button)`
 `
 
 export const CarouselNavigation = styled(C.Flex)`
-    position: absolute;
-    bottom: 10px;
+    /* position: absolute;
+    bottom: 1px;
     left: 0;
-    right: 0;
+    right: 0; */
+    padding-top: 8px;
     justify-content: center;
     gap: 8px;
 `

@@ -25,7 +25,7 @@ import { InputHours } from '@/components/inputHours';
 import { RatingStars } from '@/components/RatingStars';
 import { showToast } from '@/components/ToastAlert';
 
-import { Dialog, Spinner } from "@chakra-ui/react"
+import { Box, Dialog, Image, Spinner } from "@chakra-ui/react"
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
@@ -39,6 +39,7 @@ export default function JogadorHome() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [searchLocation, setSearchLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isModalLocalization, setIsModalLocalization] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -143,6 +144,7 @@ export default function JogadorHome() {
   const handleMarkerClick = async (marker: any) => {
     setIsLoading(true)
     setSelectedMarker(marker);
+    setCurrentImageIndex(0); // Reset image index when selecting a new marker
     setIsModalLocalization(true);
 
     console.log('Marker clicked:', marker);
@@ -167,6 +169,7 @@ export default function JogadorHome() {
   const closeModal = () => {
     setIsModalLocalization(false);
     setSelectedMarker(null);
+    setCurrentImageIndex(0);
   };
 
   const geocodeAddress = async (address: string): Promise<{ lat: number; lng: number } | null> => {
@@ -654,6 +657,66 @@ export default function JogadorHome() {
                     ) : (
                         <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
                           <S.ContainerModalRatingAndAdress>
+                            {selectedMarker.images && selectedMarker.images.length > 0 ? (
+                              <Box mb="16px" position="relative" width="100%" height="200px" borderRadius="8px" overflow="hidden">
+                                <Image 
+                                  src={selectedMarker.images[currentImageIndex] || '/images/png/placeholder-image.png'}
+                                  alt={`Imagem ${currentImageIndex + 1} de ${selectedMarker.title}`}
+                                  objectFit="cover"
+                                  width="100%"
+                                  height="100%"
+                                />
+                                {selectedMarker.images.length > 1 && (
+                                  <>
+                                    <Box 
+                                      position="absolute" 
+                                      left="8px" 
+                                      top="50%" 
+                                      transform="translateY(-50%)"
+                                      bg="rgba(0,0,0,0.5)"
+                                      borderRadius="50%"
+                                      p="8px"
+                                      cursor="pointer"
+                                      onClick={() => setCurrentImageIndex(prev => 
+                                        prev === 0 ? selectedMarker.images.length - 1 : prev - 1
+                                      )}
+                                    >
+                                      <img src="/images/svg/icon-arrow-left.svg" alt="Anterior" width="16" height="16" />
+                                    </Box>
+                                    <Box 
+                                      position="absolute" 
+                                      right="8px" 
+                                      top="50%" 
+                                      transform="translateY(-50%)"
+                                      bg="rgba(0,0,0,0.5)"
+                                      borderRadius="50%"
+                                      p="8px"
+                                      cursor="pointer"
+                                      onClick={() => setCurrentImageIndex(prev => 
+                                        prev === selectedMarker.images.length - 1 ? 0 : prev + 1
+                                      )}
+                                    >
+                                      <img src="/images/svg/icon-arrow-right.svg" alt="Próxima" width="16" height="16" />
+                                    </Box>
+                                    <Box 
+                                      position="absolute" 
+                                      bottom="8px" 
+                                      left="50%" 
+                                      transform="translateX(-50%)"
+                                      bg="rgba(0,0,0,0.5)"
+                                      borderRadius="4px"
+                                      px="8px"
+                                      py="4px"
+                                    >
+                                      <SM color={theme.colors.branco.principal}>
+                                        {currentImageIndex + 1}/{selectedMarker.images.length}
+                                      </SM>
+                                    </Box>
+                                  </>
+                                )}
+                              </Box>
+                            ) : null}
+
                             <RatingStars 
                               value={selectedMarker.rating}
                               />

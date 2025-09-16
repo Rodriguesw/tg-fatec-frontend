@@ -80,6 +80,10 @@ export const ContainerDescription = styled(C.Flex)`
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+
+    >p{
+        text-align: start;
+    }
 `
 
 export const ContainerImagesCarrousel = styled(C.Flex)`

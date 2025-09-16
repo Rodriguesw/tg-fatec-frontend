@@ -426,6 +426,8 @@ export default function ProprietarioHome() {
       setValueInputStartHours('');
       setValueInputEndHours('');
       setValuePerHour('');
+      setPropertyImages([]) // Limpar as imagens
+      setCurrentImageIndex(0) // Resetar o índice da imagem
     } catch (error) {
       console.error("Erro ao salvar quadra", error);
     } finally {
@@ -721,7 +723,7 @@ export default function ProprietarioHome() {
       valuePerHour: false,
     });
   };
-
+  
   const handleDeletedSportLocation = async () => {
     if (!editItem) return;
 
@@ -974,7 +976,7 @@ useEffect(() => {
                         <Image 
                           src={propertyImages[currentImageIndex]} 
                           alt="Imagem da propriedade" 
-                          objectFit="cover"
+                          objectFit="contain"
                           width="100%"
                           height="100%"
                         />
@@ -991,7 +993,7 @@ useEffect(() => {
                         </>
                       )}
                       
-                      <Box position="absolute" top="10px" right="10px" bg="red.500" p="2px" borderRadius="8px">
+                      <Box opacity={0.85} position="absolute" top="10px" right="10px" bg="red.500" p="2px" borderRadius="8px">
                         <Button 
                           size="sm" 
                           colorScheme="red" 
@@ -1021,7 +1023,7 @@ useEffect(() => {
                   )}
                   
                   {propertyImages.length > 0 && (
-                    <Box position="absolute" bottom="10px" right="10px">
+                    <Box opacity={0.85} position="absolute" bottom="26px" right="10px">
                       <Button 
                         size="sm" 
                         colorScheme="blue" 
