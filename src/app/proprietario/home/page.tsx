@@ -401,7 +401,8 @@ export default function ProprietarioHome() {
           price: valuePerHour, // Valor por hora
           time_start: valueInputStartHours, // Hora de início
           time_end: valueInputEndHours, // Hora de término
-          days: selectedDays // Dias da semana disponíveis
+          days: selectedDays, // Dias da semana disponíveis
+          images: propertyImages // Adicionando as imagens da propriedade
         };
         
         // Adicionar o novo marcador à lista e salvar no localStorage

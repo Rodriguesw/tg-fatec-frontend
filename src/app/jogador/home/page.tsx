@@ -658,7 +658,7 @@ export default function JogadorHome() {
                         <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
                           <S.ContainerModalRatingAndAdress>
                             {selectedMarker.images && selectedMarker.images.length > 0 ? (
-                              <Box mb="16px" position="relative" width="100%" height="200px" borderRadius="8px" overflow="hidden">
+                              <Box position="relative" width="100%" height="200px" borderRadius="8px" overflow="hidden">
                                 <Image 
                                   src={selectedMarker.images[currentImageIndex] || '/images/png/placeholder-image.png'}
                                   alt={`Imagem ${currentImageIndex + 1} de ${selectedMarker.title}`}
@@ -717,9 +717,16 @@ export default function JogadorHome() {
                               </Box>
                             ) : null}
 
-                            <RatingStars 
+                            <div style={{display: 'flex', alignItems: 'flex-end'}}>
+                              <RatingStars 
                               value={selectedMarker.rating}
                               />
+
+                              <SM family={theme.fonts.inter} color={theme.colors.branco.secundario}>
+                               (0)
+                              </SM>
+                            </div>
+                            
 
                             <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
                               Tipo de propriedade: <br/> {selectedMarker?.type === 'Futsal' ? 'Quadra Futsal' : selectedMarker?.type === 'Society' ? 'Campo Society' : 'Campo Futebol'}
