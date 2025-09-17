@@ -876,7 +876,7 @@ export default function JogadorHome() {
                         family={theme.fonts.inter}
                         color={theme.colors.branco.secundario}
                         >
-                        Dinheiro 
+                        No local 
                       </MD>
 
                       <img src="/images/png/icon-payment-method-2.png" alt=" Pagamento em dinheiro"/>
@@ -888,7 +888,7 @@ export default function JogadorHome() {
                       <Tooltip 
                         id="dinheiro-tooltip" 
                         place="top"
-                        content="O pagamento em dinheiro deverá ser realizado diretamente com o proprietário do local. Ao selecionar essa opção, o proprietário será notificado sobre o método de pagamento escolhido."
+                        content="O pagamento deverá ser realizado diretamente com o proprietário do local. Ao selecionar essa opção, o proprietário será notificado sobre o método de pagamento escolhido."
                         style={{ 
                           backgroundColor: "#0D1321",
                           color: theme.colors.branco.principal,
