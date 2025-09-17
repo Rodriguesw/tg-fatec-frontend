@@ -62,9 +62,9 @@ export default function ProprietarioHome() {
   const [valueInputEndHours, setValueInputEndHours] = useState("");
   const [valuePerHour, setValuePerHour] = useState('');
 
-  const [method, setMethod] = useState('Dinheiro');
+  const [method, setMethod] = useState('No local');
   const methodOptions = [
-    { label: 'Dinheiro', value: 'Dinheiro' },
+    { label: 'No local', value: 'Dinheiro' },
   ];
   
   const typeOptions = [
@@ -305,12 +305,12 @@ export default function ProprietarioHome() {
         valuePerHour: !validateCurrency(valuePerHour),
         method: !method,
       };
-
-      console.log("valuePerHour", !validateCurrency(valuePerHour))
       
       setErrors(newErrors);
       
       const hasErrors = Object.values(newErrors).some(error => error);
+
+      setLoading(false);
 
       if (hasErrors) {
         showToast({

@@ -298,6 +298,72 @@ export default function JogadorHome() {
     return availableHours;
   }
   
+  // Verifica se um dia específico está totalmente ocupado para um local
+  const isDayFullyBooked = (date: Date, locationName: string, locationCep: string, locationNumber: string) => {
+    // Formata a data para o formato usado no sistema
+    const formattedDate = format(date, "dd/MM/yyyy");
+    
+    // Busca todas as reservas no localStorage
+    const infoUsersRaw = localStorage.getItem("infoUser");
+    if (!infoUsersRaw) return false;
+    
+    const infoUsers = JSON.parse(infoUsersRaw);
+    const reservedHours: {start: string, end: string}[] = [];
+    
+    // Percorre todos os usuários para encontrar reservas para esta localização e data
+    Object.values(infoUsers).forEach((user: any) => {
+      if (Array.isArray(user.reserved_sports_location)) {
+        user.reserved_sports_location.forEach((reservation: any) => {
+          // Verifica se a reserva é para a mesma localização, data e está ativa
+          if (reservation.name === locationName && 
+              reservation.address?.cep === locationCep && 
+              reservation.address?.number === locationNumber && 
+              reservation.reserved_date === formattedDate && 
+              reservation.status === 'ativo') {
+            
+            reservedHours.push({
+              start: reservation.time_start,
+              end: reservation.time_end
+            });
+          }
+        });
+      }
+    });
+    
+    // Se não há reservas, o dia não está ocupado
+    if (reservedHours.length === 0) return false;
+    
+    // Busca o local no localStorage para obter o horário de funcionamento
+    const markersRaw = localStorage.getItem('mapMarkers');
+    if (!markersRaw) return false;
+    
+    const markers = JSON.parse(markersRaw);
+    const location = markers.find((marker: any) => 
+      marker.title === locationName && 
+      marker.address?.cep === locationCep && 
+      marker.address?.number === locationNumber
+    );
+    
+    if (!location) return false;
+    
+    // Horário de funcionamento do local
+    const startHour = getHourAsNumber(location.time_start);
+    const endHour = getHourAsNumber(location.time_end);
+    
+    // Verifica se todas as horas do período de funcionamento estão ocupadas
+    for (let hour = startHour; hour < endHour; hour++) {
+      const hourStr = `${hour.toString().padStart(2, '0')}:00`;
+      
+      // Se encontrar pelo menos uma hora disponível, o dia não está totalmente ocupado
+      if (isHourAvailable(hourStr, reservedHours)) {
+        return false;
+      }
+    }
+    
+    // Se chegou até aqui, todas as horas estão ocupadas
+    return true;
+  }
+  
   // Função auxiliar para formatar a data
   const formatDateForReservation = (date: string) => {
     return formatToHtmlDate(date);
@@ -684,7 +750,10 @@ export default function JogadorHome() {
                                       <img src="/images/svg/icon-arrow-left.svg" alt="Anterior" width="16" height="16" />
                                     </Box>
                                     <Box 
+                                      display="flex"
                                       position="absolute" 
+                                      width="32px" 
+                                      height="32px"
                                       right="8px" 
                                       top="50%" 
                                       transform="translateY(-50%)"
@@ -696,7 +765,12 @@ export default function JogadorHome() {
                                         prev === selectedMarker.images.length - 1 ? 0 : prev + 1
                                       )}
                                     >
-                                      <img src="/images/svg/icon-arrow-right.svg" alt="Próxima" width="16" height="16" />
+                                      <Image 
+                                      src="/images/svg/icon-arrow-left.svg" 
+                                      alt="Próxima" 
+                                      width="16px" 
+                                      height="16px" 
+                                      style={{transform: 'rotate(180deg)', display: 'inline-block'}}/>
                                     </Box>
                                     <Box 
                                       position="absolute" 
@@ -927,6 +1001,12 @@ export default function JogadorHome() {
                       onChange={handleDateChange} 
                       hasError={hasErrorDate}
                       availableDays={selectedMarker?.days} // Passa os dias disponíveis da propriedade
+                      filterDate={(date) => !isDayFullyBooked(
+                        date,
+                        selectedMarker.title,
+                        cepData?.cep,
+                        cepData?.numero
+                      )}
                     />
                   </S.ContainerModalFormInputs>
 

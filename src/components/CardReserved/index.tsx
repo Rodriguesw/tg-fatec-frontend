@@ -76,7 +76,7 @@ export function CardReserved({
         </SM>
 
         <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-          Valor: {formatarMoedaBrasileira(formatPriceToNumber(price))} - Pagamento: {payment_method}
+          Valor: {formatarMoedaBrasileira(formatPriceToNumber(price))} - Pagamento: {payment_method === 'Dinheiro' ? 'No local' : payment_method}
         </SM>
 
         <S.ContainerButton>

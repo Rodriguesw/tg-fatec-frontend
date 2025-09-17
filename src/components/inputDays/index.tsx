@@ -12,9 +12,10 @@ interface InputDaysProps {
   hasError?: boolean
   onChange: (value: string) => void
   availableDays?: string[] // Array com os dias disponíveis: ['Seg', 'Ter', etc]
+  filterDate?: (date: Date) => boolean // Função adicional para filtrar datas (ex: dias totalmente ocupados)
 }
 
-export default function InputDays({ onChange, hasError = false, availableDays }: InputDaysProps) {
+export default function InputDays({ onChange, hasError = false, availableDays, filterDate }: InputDaysProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const today = new Date()
 
@@ -50,6 +51,23 @@ export default function InputDays({ onChange, hasError = false, availableDays }:
     // Verifica se o dia da semana está na lista de dias disponíveis
     return availableDays.includes(dayMap[dayOfWeek])
   }
+  
+  // Função combinada para filtrar datas
+  const combinedFilterDate = (date: Date) => {
+    // Primeiro verifica se o dia da semana está disponível
+    const isDayOfWeekAvailable = filterAvailableDays(date);
+    
+    // Se o dia da semana não estiver disponível, já retorna falso
+    if (!isDayOfWeekAvailable) return false;
+    
+    // Se houver uma função filterDate adicional, aplica-a também
+    if (filterDate) {
+      return filterDate(date);
+    }
+    
+    // Se não houver filterDate adicional, retorna o resultado do filtro de dias da semana
+    return isDayOfWeekAvailable;
+  }
 
   return (
     <S.Container $hasError={hasError}>
@@ -61,7 +79,7 @@ export default function InputDays({ onChange, hasError = false, availableDays }:
         placeholderText="00/00/0000"
         className="input-date"
         locale={ptBR}
-        filterDate={filterAvailableDays}
+        filterDate={combinedFilterDate}
         />
     </S.Container>
   )

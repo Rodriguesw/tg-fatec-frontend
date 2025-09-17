@@ -97,7 +97,7 @@ export function CardReservedProperty({ order, onDelete }: { order: any; onDelete
             </SM>
 
             <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                Valor: {formatarMoedaBrasileira(formatPriceToNumber(price))} - Pagamento: {payment_method}
+                Valor: {formatarMoedaBrasileira(formatPriceToNumber(price))} - Pagamento: {payment_method === 'Dinheiro' ? 'No local' : payment_method}
             </SM>
           </S.CardContentDataAndHours>
         </S.CardContentUserInfo>

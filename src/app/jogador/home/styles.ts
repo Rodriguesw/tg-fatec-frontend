@@ -74,7 +74,7 @@ export const ContainerModalContent = styled(C.Flex)<modalProps>`
     max-width: 360px;
     padding: 16px 16px 40px;
 
-    gap: 24px;
+    gap: 8px;
     align-items: center;
     flex-direction: column;
 

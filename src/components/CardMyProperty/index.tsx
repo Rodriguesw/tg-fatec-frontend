@@ -183,7 +183,7 @@ export function CardMyProperty({ onEdit }: { onEdit: (item: any) => void }) {
                     </SM>
 
                     <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                      Método de pagamento: {item.payment_method}
+                      Método de pagamento: {item.payment_method === 'Dinheiro' ? 'No local' : item.payment_method}
                     </SM>
                   </S.ContainerDescription>
               
