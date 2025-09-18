@@ -25,6 +25,19 @@ interface CardReservedProps {
   onClickCancel: (id: number) => void;
 }
 
+// Função auxiliar para verificar se uma data já passou
+export function isPastReservation(reservedDate: string): boolean {
+  // Formato esperado: DD/MM/YYYY
+  const [day, month, year] = reservedDate.split('/').map(Number);
+  const reservationDate = new Date(year, month - 1, day); // Mês em JS é 0-indexed
+  reservationDate.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas as datas
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  return reservationDate < today;
+}
+
 export function CardReserved({
   id, 
   name,

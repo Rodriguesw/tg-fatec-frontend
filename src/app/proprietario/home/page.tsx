@@ -62,7 +62,7 @@ export default function ProprietarioHome() {
   const [valueInputEndHours, setValueInputEndHours] = useState("");
   const [valuePerHour, setValuePerHour] = useState('');
 
-  const [method, setMethod] = useState('No local');
+  const [method, setMethod] = useState('Dinheiro');
   const methodOptions = [
     { label: 'No local', value: 'Dinheiro' },
   ];

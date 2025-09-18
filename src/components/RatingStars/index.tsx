@@ -7,17 +7,22 @@ import * as S from './styles';
 
 
 interface RatingStarsProps {
-  value: number;
+  value?: number;
+  onChange?: (value: number) => void;
+  size?: number;
+  interactive?: boolean;
 }
 
-export function RatingStars({ value }: RatingStarsProps) {
+export function RatingStars({ value = 0, onChange, size = 24, interactive = false }: RatingStarsProps) {
   
   return (
     <S.Container>
       <Rating 
-        readOnly 
+        readOnly={!interactive} 
         value={value} 
-        key={value} 
+        key={value}
+        style={{ maxWidth: size * 5 }}
+        onChange={onChange}
       />
     </S.Container>
   );

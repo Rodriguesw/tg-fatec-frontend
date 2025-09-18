@@ -61,12 +61,41 @@ export default function JogadorHome() {
 
   //Modal de Pagamento Pix
   const [isModalPix, setIsModalPix] = useState(false);
-
+  
+  //Modal de Avaliação
+  const [isModalAvaliacao, setIsModalAvaliacao] = useState(false);
+  const [reservaParaAvaliar, setReservaParaAvaliar] = useState<any>(null);
+  const [avaliacao, setAvaliacao] = useState(0);
 
   const initialLocationRef = useRef<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
+
+    // Verificar se há reservas passadas com rating "em-avaliacao"
+    if (typeof window !== 'undefined') {
+      const currentUserRaw = localStorage.getItem('currentUser');
+      if (currentUserRaw) {
+        try {
+          const currentUser = JSON.parse(currentUserRaw);
+          if (currentUser?.reserved_sports_location?.length > 0) {
+            // Procurar por reservas com rating "em-avaliacao"
+            const reservaParaAvaliar = currentUser.reserved_sports_location.find(
+              (reserva: any) => reserva.rating === "em-avaliacao"
+            );
+
+            console.log("reservaParaAvaliar", currentUser.reserved_sports_location)
+            
+            if (reservaParaAvaliar) {
+              setReservaParaAvaliar(reservaParaAvaliar);
+              setIsModalAvaliacao(true);
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao verificar reservas para avaliação:', error);
+        }
+      }
+    }
 
     navigator.permissions.query({ name: "geolocation" }).then((result) => {
       if (result.state === "granted" || result.state === "prompt") {
@@ -1091,6 +1120,228 @@ export default function JogadorHome() {
                 <S.ContainerModalPaymentQrCode>
                   <QRCodeSVG value="TESTE" size={200} />
                 </S.ContainerModalPaymentQrCode>
+              </Dialog.Body>
+            </S.ContainerModalReserva>
+          </Modal>
+        )}
+
+        {isModalAvaliacao && reservaParaAvaliar && (
+          <Modal isOpen={true} onClose={() => {
+            // Atualizar o rating para "nao-avaliado" quando o usuário fechar o modal sem avaliar
+            const currentUserRaw = localStorage.getItem('currentUser');
+            if (currentUserRaw && reservaParaAvaliar) {
+              const currentUser = JSON.parse(currentUserRaw);
+              
+              if (currentUser.reserved_sports_location) {
+                const updatedReservations = currentUser.reserved_sports_location.map((reserva: any) => {
+                  if (reserva.id === reservaParaAvaliar.id) {
+                    return {
+                      ...reserva,
+                      rating: "nao-avaliado"
+                    };
+                  }
+                  return reserva;
+                });
+                
+                currentUser.reserved_sports_location = updatedReservations;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // Atualizar também no infoUser
+                const infoUserRaw = localStorage.getItem('infoUser');
+                if (infoUserRaw) {
+                  const infoUser = JSON.parse(infoUserRaw);
+                  if (infoUser[currentUser.id]) {
+                    infoUser[currentUser.id].reserved_sports_location = updatedReservations;
+                    localStorage.setItem('infoUser', JSON.stringify(infoUser));
+                  }
+                }
+              }
+            }
+            
+            setIsModalAvaliacao(false);
+          }} width="400px">
+            <S.ContainerModalReserva>
+              <Dialog.Header width="100%" display="flex" flexDirection="row" justifyContent="space-between">
+                  <H3 color={theme.colors.laranja}>
+                      Avalie sua experiência
+                  </H3>
+
+                  <button onClick={() => {
+                    // Atualizar o rating para "nao-avaliado" quando o usuário clicar no botão de fechar
+                    const currentUserRaw = localStorage.getItem('currentUser');
+                    if (currentUserRaw && reservaParaAvaliar) {
+                      const currentUser = JSON.parse(currentUserRaw);
+                      
+                      if (currentUser.reserved_sports_location) {
+                        const updatedReservations = currentUser.reserved_sports_location.map((reserva: any) => {
+                          if (reserva.id === reservaParaAvaliar.id) {
+                            return {
+                              ...reserva,
+                              rating: "nao-avaliado"
+                            };
+                          }
+                          return reserva;
+                        });
+                        
+                        currentUser.reserved_sports_location = updatedReservations;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        
+                        // Atualizar também no infoUser
+                        const infoUserRaw = localStorage.getItem('infoUser');
+                        if (infoUserRaw) {
+                          const infoUser = JSON.parse(infoUserRaw);
+                          if (infoUser[currentUser.id]) {
+                            infoUser[currentUser.id].reserved_sports_location = updatedReservations;
+                            localStorage.setItem('infoUser', JSON.stringify(infoUser));
+                          }
+                        }
+                      }
+                    }
+                    
+                    setIsModalAvaliacao(false);
+                  }}>
+                    <img src="/images/svg/icon-close-white.svg" alt="Fechar"/>
+                  </button> 
+              </Dialog.Header>
+            
+              <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
+                <S.ContainerModalFormPayment>
+                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    {/* {reservaParaAvaliar.name} */}
+                    Teste
+                  </MD>
+
+                  <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+                    {/* Data: {reservaParaAvaliar.reserved_date} */}
+                     Data: 18/09/2025
+                  </SM>
+
+                  <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+                    {/* Horário: {reservaParaAvaliar.time_start} às {reservaParaAvaliar.time_end} */}
+                    Horário: 18:00 às 20:00
+                  </SM>
+                </S.ContainerModalFormPayment>
+
+                <S.ContainerModalFormReserva>
+                  <MD color={theme.colors.branco.secundario} family={theme.fonts.inter}>
+                    Sua avaliação:
+                  </MD>
+
+                  <RatingStars 
+                    value={avaliacao} 
+                    onChange={setAvaliacao} 
+                    size={30} 
+                    interactive={true}
+                  />
+                </S.ContainerModalFormReserva>
+
+                <S.ContainerButtonsAvaliacao>
+                  <S.Button onClick={() => {
+                    // Lógica para salvar a avaliação
+                    if (avaliacao > 0) {
+                      // Atualizar o currentUser no localStorage
+                      const currentUserRaw = localStorage.getItem('currentUser');
+                      if (currentUserRaw) {
+                        const currentUser = JSON.parse(currentUserRaw);
+                        
+                        // Atualizar a reserva com a avaliação
+                        if (currentUser.reserved_sports_location) {
+                          const updatedReservations = currentUser.reserved_sports_location.map((reserva: any) => {
+                            if (reserva.id === reservaParaAvaliar.id) {
+                              return {
+                                ...reserva,
+                                rating: avaliacao,
+                              };
+                            }
+                            return reserva;
+                          });
+                          
+                          currentUser.reserved_sports_location = updatedReservations;
+                          localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                          
+                          // Atualizar também no infoUser
+                          const infoUserRaw = localStorage.getItem('infoUser');
+                          if (infoUserRaw) {
+                            const infoUser = JSON.parse(infoUserRaw);
+                            if (infoUser[currentUser.id]) {
+                              infoUser[currentUser.id].reserved_sports_location = updatedReservations;
+                              localStorage.setItem('infoUser', JSON.stringify(infoUser));
+                            }
+                          }
+                        }
+                      }
+                      
+                      showToast({
+                        type: 'success',
+                        message: 'Avaliação enviada com sucesso!',
+                      });
+                      
+                      //set
+                      setAvaliacao(0);
+                      setIsModalAvaliacao(false);
+                    } else {
+                      showToast({
+                        type: 'error',
+                        message: 'Por favor, dê uma nota para a sua experiência.',
+                      });
+                    }
+                  }}>
+                    <LG 
+                      weight={700} 
+                      color={theme.colors.branco.principal} 
+                      family={theme.fonts.inter}
+                    >
+                      Enviar avaliação
+                    </LG>
+                  </S.Button>
+                  
+                  <S.ButtonSecondary onClick={() => {
+                    // Atualizar o rating para "nao-avaliado" quando o usuário clicar em "Não quero avaliar"
+                    const currentUserRaw = localStorage.getItem('currentUser');
+                    if (currentUserRaw && reservaParaAvaliar) {
+                      const currentUser = JSON.parse(currentUserRaw);
+                      
+                      if (currentUser.reserved_sports_location) {
+                        const updatedReservations = currentUser.reserved_sports_location.map((reserva: any) => {
+                          if (reserva.id === reservaParaAvaliar.id) {
+                            return {
+                              ...reserva,
+                              rating: "nao-avaliado"
+                            };
+                          }
+                          return reserva;
+                        });
+                        
+                        currentUser.reserved_sports_location = updatedReservations;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        
+                        // Atualizar também no infoUser
+                        const infoUserRaw = localStorage.getItem('infoUser');
+                        if (infoUserRaw) {
+                          const infoUser = JSON.parse(infoUserRaw);
+                          if (infoUser[currentUser.id]) {
+                            infoUser[currentUser.id].reserved_sports_location = updatedReservations;
+                            localStorage.setItem('infoUser', JSON.stringify(infoUser));
+                          }
+                        }
+                      }
+                    }
+                    
+                    showToast({
+                      type: 'info',
+                      message: 'Você optou por não avaliar esta reserva.',
+                    });
+                    setIsModalAvaliacao(false);
+                  }}>
+                    <LG 
+                      weight={700} 
+                      color={theme.colors.branco.principal} 
+                      family={theme.fonts.inter}
+                    >
+                      Não quero avaliar
+                    </LG>
+                  </S.ButtonSecondary>
+                </S.ContainerButtonsAvaliacao>
               </Dialog.Body>
             </S.ContainerModalReserva>
           </Modal>

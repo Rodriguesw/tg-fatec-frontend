@@ -10,7 +10,7 @@ import { TitleWithButtons } from '@/components/TitleWithButtons';
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { MD, LG, SM } from '@/styles/typographStyles';
-import { CardReserved } from '@/components/CardReserved';
+import { CardReserved, isPastReservation } from '@/components/CardReserved';
 import { Modal } from '@/components/Modal';
 
 import { Dialog, Button } from "@chakra-ui/react"
@@ -118,11 +118,21 @@ export default function JogadorReservas() {
     court.status !== "cancelado" && court.status !== "excluido"
   );
 
+  // Adicionar propriedade rating para reservas passadas
+  const reservationsWithRating = [...(currentUser?.reserved_sports_location || [])].map(item => {
+    if (isPastReservation(item.reserved_date) && item.status !== "cancelado" && item.status !== "excluido") {
+      return { ...item, rating: "em-avaliacao" };
+    }
+    return item;
+  });
+
   // Ordenar as reservas do mais próximo para o mais distante
   // Se o dia for igual, ordenar pelo horário de início
-  const sortedReservations = [...(currentUser?.reserved_sports_location || [])]
-    .filter((item: ReservedSportLocation & { status?: string; view?: boolean }) => 
-      item.status !== "cancelado" && item.status !== "excluido"
+  const sortedReservations = [...reservationsWithRating]
+    .filter((item: ReservedSportLocation & { status?: string; view?: boolean; rating?: string }) => 
+      item.status !== "cancelado" && 
+      item.status !== "excluido"
+      // Não filtrar mais as reservas passadas para que apareçam com a propriedade rating
     )
     .sort((a, b) => {
       // Converter as datas para objetos Date para comparação
@@ -147,7 +157,8 @@ export default function JogadorReservas() {
       return dateComparison;
     });
 
-  console.log("currentUser", currentUser);
+  //consoles para ver as reservas com a propriedade rating
+  console.log("sortedReservations", sortedReservations);
 
   return (
     <S.Container>

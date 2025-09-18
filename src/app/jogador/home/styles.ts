@@ -239,7 +239,20 @@ export const Button = styled(C.Button)`
     
     border-radius: 12px;
     background-color: ${theme.colors.verde.principal};
-`
+    
+    &:hover {
+        background-color: ${theme.colors.laranja};
+        opacity: 0.8;
+    }
+`;
+
+export const ButtonSecondary = styled(Button)``;
+
+export const ContainerButtonsAvaliacao = styled(C.Flex)`
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+`;
 
 export const ContainerModalPaymentQrCode= styled(C.Flex)`
     width: auto;
