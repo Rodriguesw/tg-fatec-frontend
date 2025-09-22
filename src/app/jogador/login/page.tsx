@@ -86,6 +86,7 @@ interface UserJogador {
       state?: string;
       street?: string;
     };
+    status?: string;
     time_start?: string;
     time_end?: string;
     price?: string;
@@ -152,7 +153,84 @@ export default function JogadorLogin() {
           team: "sao_paulo",
           email: "matheushr39@gmail.com",
           password: hashedPassword, // Senha criptografada
-          reserved_sports_location: []
+          reserved_sports_location: [
+              {
+                  id: 1758551642154,
+                  name: "Arena KS Futebol",
+                  address: {
+                      id: 1758551642155,
+                      cep: "18207-570",
+                      number: "505",
+                      street: "Rua Rui Vieira de Moraes",
+                      city: "Itapetininga",
+                      neighborhood: "Vila Carolina",
+                      state: "SP"
+                  },
+                  status: "ativo",
+                  time_start: "09:00",
+                  time_end: "10:00",
+                  price: "R$ 55,05",
+                  reserved_date: "22/09/2025",
+                  payment_method: "Dinheiro"
+              },
+              {
+                  id: 1758551648701,
+                  name: "Arena KS Futebol",
+                  address: {
+                      id: 1758551648702,
+                      cep: "18207-570",
+                      number: "505",
+                      street: "Rua Rui Vieira de Moraes",
+                      city: "Itapetininga",
+                      neighborhood: "Vila Carolina",
+                      state: "SP"
+                  },
+                  status: "ativo",
+                  time_start: "10:00",
+                  time_end: "11:00",
+                  price: "R$ 55,05",
+                  reserved_date: "22/09/2025",
+                  payment_method: "Dinheiro"
+              },
+              {
+                  id: 1758551660697,
+                  name: "Arena KS Futebol",
+                  address: {
+                      id: 1758551660698,
+                      cep: "18207-570",
+                      number: "505",
+                      street: "Rua Rui Vieira de Moraes",
+                      city: "Itapetininga",
+                      neighborhood: "Vila Carolina",
+                      state: "SP"
+                  },
+                  status: "ativo",
+                  time_start: "11:00",
+                  time_end: "12:00",
+                  price: "R$ 55,05",
+                  reserved_date: "22/09/2025",
+                  payment_method: "Dinheiro"
+              },
+              {
+                  id: 1758551668170,
+                  name: "Arena KS Futebol",
+                  address: {
+                      id: 1758551668171,
+                      cep: "18207-570",
+                      number: "505",
+                      street: "Rua Rui Vieira de Moraes",
+                      city: "Itapetininga",
+                      neighborhood: "Vila Carolina",
+                      state: "SP"
+                  },
+                  status: "ativo",
+                  time_start: "12:00",
+                  time_end: "13:00",
+                  price: "R$ 55,05",
+                  reserved_date: "22/09/2025",
+                  payment_method: "Dinheiro"
+              }
+          ]
         };
 
         const dataUserTestTwo: UserProprietario = {

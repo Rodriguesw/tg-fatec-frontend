@@ -239,11 +239,6 @@ export const Button = styled(C.Button)`
     
     border-radius: 12px;
     background-color: ${theme.colors.verde.principal};
-    
-    &:hover {
-        background-color: ${theme.colors.laranja};
-        opacity: 0.8;
-    }
 `;
 
 export const ButtonSecondary = styled(Button)``;

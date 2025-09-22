@@ -69,8 +69,106 @@ export default function JogadorHome() {
 
   const initialLocationRef = useRef<{ lat: number; lng: number } | null>(null);
 
+  // Função para verificar se uma reserva já passou
+  const isReservationPassed = (reservedDate: string, timeEnd: string) => {
+    const now = new Date();
+    const today = now.toLocaleDateString('pt-BR');
+    
+    // Converte a data da reserva para o formato Date
+    const [day, month, year] = reservedDate.split('/');
+    const reservationDate = new Date(`${year}-${month}-${day}T${timeEnd}:00`);
+    
+    // Se a data da reserva é anterior à data atual, a reserva já passou
+    if (reservedDate < today) {
+      return true;
+    }
+    
+    // Se a data da reserva é igual à data atual, verifica se o horário já passou
+    if (reservedDate === today) {
+      return now > reservationDate;
+    }
+
+    //PARA TESTES
+    // if (reservedDate === today) {
+    //   const nowPlus5h = new Date(now);
+    //   nowPlus5h.setHours(now.getHours() + 5);
+
+    //   console.log("nowPlus5h:", nowPlus5h)
+    //   console.log("reservationDate:", reservationDate)
+    //   console.log("nowPlus5h > reservationDate:", nowPlus5h > reservationDate)
+    //   return nowPlus5h > reservationDate;
+    // }
+    
+    return false;
+  };
+  
+  // Função para atualizar reservas passadas
+  const updatePassedReservations = () => {
+    if (typeof window === 'undefined') return;
+    
+    const currentUserRaw = localStorage.getItem('currentUser');
+    if (!currentUserRaw) return;
+    
+    try {
+      const currentUser = JSON.parse(currentUserRaw);
+      if (!currentUser?.reserved_sports_location?.length) return;
+      
+      let updated = false;
+      const updatedReservations = currentUser.reserved_sports_location.map((reserva: any) => {
+        // Verifica se a reserva já passou e está com status "ativo"
+        if (isReservationPassed(reserva.reserved_date, reserva.time_end) && reserva.status === 'ativo') {
+          updated = true;
+          return {
+            ...reserva,
+            status: 'concluido',
+            rating: 'em-avaliacao'
+          };
+        }
+        return reserva;
+      });
+      
+      // Se houve alterações, atualiza o localStorage
+      if (updated) {
+        const updatedUser = {
+          ...currentUser,
+          reserved_sports_location: updatedReservations
+        };
+        
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        
+        // Atualiza também no infoUser
+        const infoUserRaw = localStorage.getItem('infoUser');
+        if (infoUserRaw) {
+          const infoUser = JSON.parse(infoUserRaw);
+          if (infoUser[currentUser.id]) {
+            infoUser[currentUser.id] = {
+              ...infoUser[currentUser.id],
+              reserved_sports_location: updatedReservations
+            };
+            localStorage.setItem('infoUser', JSON.stringify(infoUser));
+          }
+        }
+        
+        // Procura por reservas com rating "em-avaliacao" para mostrar o modal
+        const reservaParaAvaliar = updatedReservations.find(
+          (reserva: any) => reserva.rating === "em-avaliacao"
+        );
+        
+        if (reservaParaAvaliar) {
+          setReservaParaAvaliar(reservaParaAvaliar);
+          setIsModalAvaliacao(true);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar reservas passadas:', error);
+    }
+  };
+
   useEffect(() => {
     setIsMounted(true);
+
+    // Verifica e atualiza reservas passadas
+    updatePassedReservations();
 
     // Verificar se há reservas passadas com rating "em-avaliacao"
     if (typeof window !== 'undefined') {
@@ -83,8 +181,6 @@ export default function JogadorHome() {
             const reservaParaAvaliar = currentUser.reserved_sports_location.find(
               (reserva: any) => reserva.rating === "em-avaliacao"
             );
-
-            console.log("reservaParaAvaliar", currentUser.reserved_sports_location)
             
             if (reservaParaAvaliar) {
               setReservaParaAvaliar(reservaParaAvaliar);
@@ -751,8 +847,7 @@ export default function JogadorHome() {
                       <Spinner color={theme.colors.branco.principal} />
                     ) : (
                         <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
-                          <S.ContainerModalRatingAndAdress>
-                            {selectedMarker.images && selectedMarker.images.length > 0 ? (
+                          <S.ContainerModalRatingAndAdress>{selectedMarker.images && selectedMarker.images.length > 0 ? (
                               <Box position="relative" width="100%" height="200px" borderRadius="8px" overflow="hidden">
                                 <Image 
                                   src={selectedMarker.images[currentImageIndex] || '/images/png/placeholder-image.png'}
@@ -826,7 +921,7 @@ export default function JogadorHome() {
                               />
 
                               <SM family={theme.fonts.inter} color={theme.colors.branco.secundario}>
-                               (0)
+                               ({selectedMarker.avaliacoes ? selectedMarker.avaliacoes.length : 0})
                               </SM>
                             </div>
                             
@@ -1207,18 +1302,15 @@ export default function JogadorHome() {
               <Dialog.Body gap="24px" display="flex" flexDirection="column" alignItems="center">
                 <S.ContainerModalFormPayment>
                   <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                    {/* {reservaParaAvaliar.name} */}
-                    Teste
+                    {reservaParaAvaliar.name}
                   </MD>
 
                   <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                    {/* Data: {reservaParaAvaliar.reserved_date} */}
-                     Data: 18/09/2025
+                    Data: {reservaParaAvaliar.reserved_date}
                   </SM>
 
                   <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                    {/* Horário: {reservaParaAvaliar.time_start} às {reservaParaAvaliar.time_end} */}
-                    Horário: 18:00 às 20:00
+                    Horário: {reservaParaAvaliar.time_start} às {reservaParaAvaliar.time_end}
                   </SM>
                 </S.ContainerModalFormPayment>
 
@@ -1267,6 +1359,57 @@ export default function JogadorHome() {
                               infoUser[currentUser.id].reserved_sports_location = updatedReservations;
                               localStorage.setItem('infoUser', JSON.stringify(infoUser));
                             }
+                          }
+                          
+                          // Atualizar a avaliação no mapMarkers
+                          const mapMarkersRaw = localStorage.getItem('mapMarkers');
+                          if (mapMarkersRaw && reservaParaAvaliar) {
+                            const mapMarkers = JSON.parse(mapMarkersRaw);
+                            
+                            // Converter a avaliação para o formato correto (0.29, 1.44, 2.31, 3.48, 4.52)
+                            let ratingValue;
+                            switch(Math.round(avaliacao)) {
+                              case 1: ratingValue = 0.29; break;
+                              case 2: ratingValue = 1.44; break;
+                              case 3: ratingValue = 2.31; break;
+                              case 4: ratingValue = 3.48; break;
+                              case 5: ratingValue = 4.52; break;
+                              default: ratingValue = 0; break;
+                            }
+                            
+                            // Encontrar o local correspondente no mapMarkers
+                            const updatedMapMarkers = mapMarkers.map((marker: any) => {
+                              if (marker.title === reservaParaAvaliar.name && 
+                                  marker.address?.cep === reservaParaAvaliar.address?.cep && 
+                                  marker.address?.number === reservaParaAvaliar.address?.number) {
+                                
+                                // Criar ou atualizar o array de avaliações
+                                const avaliacoes = marker.avaliacoes || [];
+                                
+                                // Gerar um ID único para a avaliação
+                                const avaliacaoId = `aval_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+                                
+                                // Adicionar a nova avaliação ao array
+                                avaliacoes.push({
+                                  id: avaliacaoId,
+                                  userId: currentUser.id,
+                                  rating: ratingValue
+                                });
+                                
+                                // Calcular a média das avaliações
+                                const somaAvaliacoes = avaliacoes.reduce((soma: number, aval: any) => soma + aval.rating, 0);
+                                const mediaAvaliacoes = somaAvaliacoes / avaliacoes.length;
+                                
+                                return {
+                                  ...marker,
+                                  rating: mediaAvaliacoes,
+                                  avaliacoes: avaliacoes
+                                };
+                              }
+                              return marker;
+                            });
+                            
+                            localStorage.setItem('mapMarkers', JSON.stringify(updatedMapMarkers));
                           }
                         }
                       }

@@ -13,7 +13,7 @@ import { MD, LG, SM } from '@/styles/typographStyles';
 import { CardReserved, isPastReservation } from '@/components/CardReserved';
 import { Modal } from '@/components/Modal';
 
-import { Dialog, Button } from "@chakra-ui/react"
+import { Dialog, Button, Spinner } from "@chakra-ui/react"
 import { it } from 'node:test';
 
 interface ReservedSportLocation {
@@ -52,10 +52,13 @@ export default function JogadorReservas() {
   const [isModalCancelamentoProprietario, setIsModalCancelamentoProprietario] = useState(false);
   const [reservaCancelada, setReservaCancelada] = useState<ReservedSportLocation & { status?: string; view?: boolean } | null>(null);
 
+  const [isLoadingContent, setIsLoadingContent] = useState(true);
+
   useEffect(() => {
     setIsMounted(true);
 
     if (typeof window !== 'undefined') {
+      setIsLoadingContent(true);
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
         try {
@@ -65,6 +68,10 @@ export default function JogadorReservas() {
         }
       }
     }
+     // Simula um tempo de carregamento para melhor experiência do usuário
+    setTimeout(() => {
+      setIsLoadingContent(false);
+    }, 1000);
   }, []);
 
   // Função para verificar se alguma reserva foi cancelada pelo proprietário
@@ -118,6 +125,17 @@ export default function JogadorReservas() {
     court.status !== "cancelado" && court.status !== "excluido"
   );
 
+  // Função para verificar se uma reserva já passou com base na hora atual
+  const isReservationPassed = (reservedDate: string, timeEnd: string): boolean => {
+    const now = new Date();
+    const [day, month, year] = reservedDate.split('/').map(Number);
+    const [hours, minutes] = timeEnd.split(':').map(Number);
+    
+    const reservationEndTime = new Date(year, month - 1, day, hours, minutes);
+    
+    return now > reservationEndTime;
+  };
+
   // Adicionar propriedade rating para reservas passadas
   const reservationsWithRating = [...(currentUser?.reserved_sports_location || [])].map(item => {
     if (isPastReservation(item.reserved_date) && item.status !== "cancelado" && item.status !== "excluido") {
@@ -131,8 +149,9 @@ export default function JogadorReservas() {
   const sortedReservations = [...reservationsWithRating]
     .filter((item: ReservedSportLocation & { status?: string; view?: boolean; rating?: string }) => 
       item.status !== "cancelado" && 
-      item.status !== "excluido"
-      // Não filtrar mais as reservas passadas para que apareçam com a propriedade rating
+      item.status !== "excluido" &&
+      // Não exibir reservas que já passaram no dia atual
+      !isReservationPassed(item.reserved_date, item.time_end)
     )
     .sort((a, b) => {
       // Converter as datas para objetos Date para comparação
@@ -153,7 +172,7 @@ export default function JogadorReservas() {
         
         return timeA - timeB;
       }
-      
+
       return dateComparison;
     });
 
@@ -169,7 +188,14 @@ export default function JogadorReservas() {
             <TitleWithButtons title='Minhas reservas' />
 
             <S.ContainerCard>
-              {hasEvents ? (
+              {isLoadingContent ? (
+              <S.LoadingContainer>
+                <Spinner 
+                  size="xl" 
+                  color={theme.colors.branco.principal}
+                />
+              </S.LoadingContainer>
+              ) : hasEvents ? (
                 sortedReservations.map((item: ReservedSportLocation & { status?: string; view?: boolean }) => (
                   <CardReserved
                     key={item.id}
