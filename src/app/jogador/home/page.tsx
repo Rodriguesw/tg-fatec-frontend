@@ -773,11 +773,13 @@ export default function JogadorHome() {
 
         <S.Content>
           <S.ContainerInput>
-            <Input 
+            <Input
+              id="Busca"
               type="text" 
               placeholder="Buscar"
               value={valueInputSearch}
               onChange={handleSearchChange}
+              icon="/images/svg/icon-lupa.svg"
               />
           </S.ContainerInput>
 
@@ -1328,7 +1330,54 @@ export default function JogadorHome() {
                 </S.ContainerModalFormReserva>
 
                 <S.ContainerButtonsAvaliacao>
-                  <S.Button onClick={() => {
+                  <S.ButtonSecondary onClick={() => {
+                    // Atualizar o rating para "nao-avaliado" quando o usuário clicar em "Não quero avaliar"
+                    const currentUserRaw = localStorage.getItem('currentUser');
+                    if (currentUserRaw && reservaParaAvaliar) {
+                      const currentUser = JSON.parse(currentUserRaw);
+                      
+                      if (currentUser.reserved_sports_location) {
+                        const updatedReservations = currentUser.reserved_sports_location.map((reserva: any) => {
+                          if (reserva.id === reservaParaAvaliar.id) {
+                            return {
+                              ...reserva,
+                              rating: "nao-avaliado"
+                            };
+                          }
+                          return reserva;
+                        });
+                        
+                        currentUser.reserved_sports_location = updatedReservations;
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                        
+                        // Atualizar também no infoUser
+                        const infoUserRaw = localStorage.getItem('infoUser');
+                        if (infoUserRaw) {
+                          const infoUser = JSON.parse(infoUserRaw);
+                          if (infoUser[currentUser.id]) {
+                            infoUser[currentUser.id].reserved_sports_location = updatedReservations;
+                            localStorage.setItem('infoUser', JSON.stringify(infoUser));
+                          }
+                        }
+                      }
+                    }
+                    
+                    showToast({
+                      type: 'info',
+                      message: `Você optou por não avaliar a reserva ${reservaParaAvaliar.name}.`,
+                    });
+                    setIsModalAvaliacao(false);
+                  }}>
+                    <LG 
+                      weight={700} 
+                      color={theme.colors.branco.principal} 
+                      family={theme.fonts.inter}
+                    >
+                      Ignorar
+                    </LG>
+                  </S.ButtonSecondary>
+
+                  <S.ButtonConfirm onClick={() => {
                     // Lógica para salvar a avaliação
                     if (avaliacao > 0) {
                       // Atualizar o currentUser no localStorage
@@ -1425,7 +1474,7 @@ export default function JogadorHome() {
                     } else {
                       showToast({
                         type: 'error',
-                        message: 'Por favor, dê uma nota para a sua experiência.',
+                        message: 'Avalie sua experiência ou ignore a avaliação.',
                       });
                     }
                   }}>
@@ -1434,56 +1483,9 @@ export default function JogadorHome() {
                       color={theme.colors.branco.principal} 
                       family={theme.fonts.inter}
                     >
-                      Enviar avaliação
+                      Avaliar
                     </LG>
-                  </S.Button>
-                  
-                  <S.ButtonSecondary onClick={() => {
-                    // Atualizar o rating para "nao-avaliado" quando o usuário clicar em "Não quero avaliar"
-                    const currentUserRaw = localStorage.getItem('currentUser');
-                    if (currentUserRaw && reservaParaAvaliar) {
-                      const currentUser = JSON.parse(currentUserRaw);
-                      
-                      if (currentUser.reserved_sports_location) {
-                        const updatedReservations = currentUser.reserved_sports_location.map((reserva: any) => {
-                          if (reserva.id === reservaParaAvaliar.id) {
-                            return {
-                              ...reserva,
-                              rating: "nao-avaliado"
-                            };
-                          }
-                          return reserva;
-                        });
-                        
-                        currentUser.reserved_sports_location = updatedReservations;
-                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                        
-                        // Atualizar também no infoUser
-                        const infoUserRaw = localStorage.getItem('infoUser');
-                        if (infoUserRaw) {
-                          const infoUser = JSON.parse(infoUserRaw);
-                          if (infoUser[currentUser.id]) {
-                            infoUser[currentUser.id].reserved_sports_location = updatedReservations;
-                            localStorage.setItem('infoUser', JSON.stringify(infoUser));
-                          }
-                        }
-                      }
-                    }
-                    
-                    showToast({
-                      type: 'info',
-                      message: 'Você optou por não avaliar esta reserva.',
-                    });
-                    setIsModalAvaliacao(false);
-                  }}>
-                    <LG 
-                      weight={700} 
-                      color={theme.colors.branco.principal} 
-                      family={theme.fonts.inter}
-                    >
-                      Não quero avaliar
-                    </LG>
-                  </S.ButtonSecondary>
+                  </S.ButtonConfirm>
                 </S.ContainerButtonsAvaliacao>
               </Dialog.Body>
             </S.ContainerModalReserva>

@@ -183,6 +183,8 @@ export default function JogadorCadastro() {
   
     try {
       setIsLoading(true);
+
+      await new Promise(resolve => setTimeout(resolve, 1600));
   
       const existingUsers: Record<number, User> = JSON.parse(localStorage.getItem("infoUser") || "{}");
       const emailExists = Object.values<User>(existingUsers).some(user => user.email === email);
@@ -216,7 +218,7 @@ export default function JogadorCadastro() {
         password: hashedPassword, // Senha criptografada
       };
   
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 750));
   
       existingUsers[newId] = payload;
       localStorage.setItem("infoUser", JSON.stringify(existingUsers));

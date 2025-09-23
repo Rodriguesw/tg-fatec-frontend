@@ -15,7 +15,7 @@ import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { LG, MD, SM } from '@/styles/typographStyles';
+import { H3, LG, MD, SM } from '@/styles/typographStyles';
 
 export default function ProprietarioRecuperarSenha() {
   const [emailRecover, setEmailRecover] = useState('');
@@ -215,7 +215,7 @@ export default function ProprietarioRecuperarSenha() {
   return (
     <S.Container>
       <S.Wrapper>
-        <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-proprietario.jpg'>
+        <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-senha-proprietario.jpg'>
           <S.Content>
             <S.ContentHeader>
               <TitleWithButtons title='Recuperar senha' buttonBack={true} onClick={handleClick}/>
@@ -271,11 +271,9 @@ export default function ProprietarioRecuperarSenha() {
           <S.ContainerModalCode>
             <Dialog.Header>
               <Dialog.Title textAlign="center">
-                <LG 
-                  color={theme.colors.branco.principal} 
-                  family={theme.fonts.inter}>
+                <H3 color={theme.colors.laranja}>
                   Digite seu código de recuperação
-                </LG>
+                </H3>
               </Dialog.Title>
             </Dialog.Header>
 
@@ -327,11 +325,9 @@ export default function ProprietarioRecuperarSenha() {
           <S.ContainerModalNewPassword>
             <Dialog.Header>
               <Dialog.Title textAlign="center">
-                <LG 
-                  color={theme.colors.branco.principal} 
-                  family={theme.fonts.inter}>
+                <H3 color={theme.colors.laranja}>
                   Redefina sua senha
-                </LG>
+                </H3>
               </Dialog.Title>
             </Dialog.Header>
             

@@ -11,7 +11,7 @@ import { Input } from '@/components/Input';
 import { showToast } from '@/components/ToastAlert';
 
 import { Dialog, Spinner, Button as ChakraButton } from "@chakra-ui/react"
-import { LG, MD, SM } from "@/styles/typographStyles";
+import { H3, LG, MD, SM } from "@/styles/typographStyles";
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
@@ -56,6 +56,7 @@ export default function JogadorPerfil() {
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingDeleteAccount, setLoadingDeleteAccount] = useState(false);
 
   const genderOptions = [
     { label: 'Masculino', value: 'male' },
@@ -213,7 +214,7 @@ export default function JogadorPerfil() {
     }
   };
 
-  const handleSavedChanges = () => {
+  const handleSavedChanges = async () => {
     if (!validateFields()) {
       return;
     }
@@ -234,6 +235,8 @@ export default function JogadorPerfil() {
         email,
         photo: photo || currentUser.photo // Manter a foto atual ou usar a nova
       };
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       setTimeout(() => {
         setIsLoading(false); 
@@ -260,8 +263,27 @@ export default function JogadorPerfil() {
     }
   };
 
+  const handleCloseModalUserEdit = () => {
+    setOpenMyData(false);
 
-  const handleDeleteAccount = () => {
+    setName(currentUser.name);
+    setBirthDate(currentUser.birth_date);
+    setGender(currentUser.gender);
+    setTeam(currentUser.team);
+    setEmail(currentUser.email);
+
+    setErrors({
+      name: false,
+      birthDate: false,
+      gender: false,
+      team: false,
+      email: false,
+    });
+  }
+
+  const handleDeleteAccount = async () => {
+    setLoadingDeleteAccount(true);
+
     const userIdToDelete = currentUser.id;
   
     const infoUserRaw = localStorage.getItem('infoUser');
@@ -272,11 +294,18 @@ export default function JogadorPerfil() {
       const infoUserParsed = JSON.parse(infoUserRaw);
   
       if (infoUserParsed[userIdToDelete]) {
+        await new Promise(resolve => setTimeout(resolve, 1200));
+
         delete infoUserParsed[userIdToDelete];
   
         localStorage.setItem('infoUser', JSON.stringify(infoUserParsed));
   
         localStorage.removeItem('currentUser');
+
+        showToast({
+          type: 'success',
+          message: 'Conta excluída com sucesso!'
+        });
   
         router.push('/jogador/login');
       } else {
@@ -284,6 +313,8 @@ export default function JogadorPerfil() {
       }
     } catch (error) {
       console.error('Erro ao fazer parse de infoUser:', error);
+    } finally {
+      setLoadingDeleteAccount(false);
     }
   
     setOpenSettings(false);
@@ -470,11 +501,9 @@ export default function JogadorPerfil() {
         <Modal isOpen={openMyData} onClose={() => setOpenMyData(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+              <H3 color={theme.colors.laranja}>
                   Meu cadastro
-                </LG>
-              </Dialog.Title>
+              </H3>
             </Dialog.Header>
 
             <Dialog.Body
@@ -538,7 +567,7 @@ export default function JogadorPerfil() {
               />
 
               <S.ContainerButtonModalRegister>
-                <S.ModalButton onClick={() => setOpenMyData(false)}>
+                <S.ModalButton onClick={handleCloseModalUserEdit}>
                   <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                     Cancelar
                   </MD>
@@ -561,11 +590,9 @@ export default function JogadorPerfil() {
         <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+              <H3 color={theme.colors.laranja}>
                   Segurança
-                </LG>
-              </Dialog.Title>
+              </H3>
             </Dialog.Header>
 
             <Dialog.Body
@@ -575,11 +602,9 @@ export default function JogadorPerfil() {
               alignItems="center"
               flexDirection="column"
             >
-              <SM
-                family={theme.fonts.inter}
-                color={theme.colors.branco.secundario}>
+              <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
                 Tem certeza de que deseja excluir permanente sua conta?
-              </SM>
+              </MD>
 
               <S.ContainerButtonModalSettings>
                 <S.ModalButton onClick={() => setOpenSettings(false)}>
@@ -589,9 +614,11 @@ export default function JogadorPerfil() {
                 </S.ModalButton>
 
                 <S.ModalButton onClick={handleDeleteAccount}>
-                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                    Confirmar
-                  </MD>
+                  {loadingDeleteAccount ? (<Spinner />) : (
+                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      Confirmar
+                    </MD>
+                  )}
                 </S.ModalButton>
               </S.ContainerButtonModalSettings>
             </Dialog.Body>

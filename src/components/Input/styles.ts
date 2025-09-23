@@ -76,6 +76,21 @@ export const InputWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+`;
+
+export const IconWrapper = styled.div`
+  position: absolute;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  
+  img {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 export const EyeButton = styled.button`
@@ -97,10 +112,11 @@ export const EyeButton = styled.button`
   }
 `;
 
-export const Input = styled(C.Input)<InputContainerProps>`
+export const Input = styled(C.Input)<InputContainerProps & { paddingLeft?: string }>`
     width: 100%;
     height: 46px;
     padding: 8px 12px;
+    padding-left: ${props => props.paddingLeft || '12px'};
 
     border-radius: 12px;
     background-color: transparent;

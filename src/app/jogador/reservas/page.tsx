@@ -179,6 +179,8 @@ export default function JogadorReservas() {
   //consoles para ver as reservas com a propriedade rating
   console.log("sortedReservations", sortedReservations);
 
+  console.log("hasEvents", hasEvents);
+
   return (
     <S.Container>
       <S.Wrapper>
@@ -195,7 +197,7 @@ export default function JogadorReservas() {
                   color={theme.colors.branco.principal}
                 />
               </S.LoadingContainer>
-              ) : hasEvents ? (
+              ) : hasEvents && sortedReservations.length !== 0 ? (
                 sortedReservations.map((item: ReservedSportLocation & { status?: string; view?: boolean }) => (
                   <CardReserved
                     key={item.id}

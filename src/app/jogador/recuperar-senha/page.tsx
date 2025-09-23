@@ -16,7 +16,8 @@ import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { LG, MD, SM } from '@/styles/typographStyles';
+import { H3, LG, MD, SM } from '@/styles/typographStyles';
+import { encryptPassword } from '@/utils/crypto';
 
 export default function JogadorRecuperarSenha() {
   const [emailRecover, setEmailRecover] = useState('');
@@ -24,6 +25,7 @@ export default function JogadorRecuperarSenha() {
   const [errors, setErrors] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingNewPassword, setIsLoadingNewPassword] = useState(false);
   const [isOpenModalCode, setIsOpenModalCode] = useState(false);
   const [isLoadingVerifyCode, setIsLoadingVerifyCode] = useState(false);
   const [isOpenModalNewPassword, setIsOpenModalNewPassword] = useState(false);
@@ -69,6 +71,8 @@ export default function JogadorRecuperarSenha() {
       const userExists = Object.values(users).some((user: any) => 
         user.email === emailRecover.trim()
       );
+
+      await new Promise(resolve => setTimeout(resolve, 700));
 
       if (!userExists) {
         setErrors(true);
@@ -125,6 +129,8 @@ export default function JogadorRecuperarSenha() {
     const userInput = userInputArray.join("");
 
     console.log("Valor inserido nos pins:", userInput);
+    
+    await new Promise(resolve => setTimeout(resolve, 850));
 
     if (userInput === verificationCode) {
       showToast({
@@ -132,7 +138,6 @@ export default function JogadorRecuperarSenha() {
         message: 'Código válido! Você pode redefinir sua senha.'
       });
       
-      await new Promise(resolve => setTimeout(resolve, 500));
 
       setIsLoadingVerifyCode(false);
       setIsOpenModalCode(false);
@@ -150,8 +155,10 @@ export default function JogadorRecuperarSenha() {
   };
 
   const handleNewPassword = async () => {
-    setIsLoading(true);
+    setIsLoadingNewPassword(true);
 
+    await new Promise(resolve => setTimeout(resolve, 1100));
+    
     try {
       if (!newPassword.trim()) {
         showToast({
@@ -169,6 +176,9 @@ export default function JogadorRecuperarSenha() {
         return;
       }
 
+
+      const encryptedPassword = await encryptPassword(newPassword);
+
       const infoUser = localStorage.getItem("infoUser");
       const users = infoUser ? JSON.parse(infoUser) : [];
 
@@ -176,7 +186,7 @@ export default function JogadorRecuperarSenha() {
         if (user.email === emailToRecover) {
           acc[key] = {
             ...user,
-            password: newPassword
+            password: encryptedPassword
           };
         } else {
           acc[key] = user;
@@ -200,7 +210,7 @@ export default function JogadorRecuperarSenha() {
         message: 'Erro ao redefinir a senha'
       });
     } finally {
-      setIsLoading(false);
+      setIsLoadingNewPassword(false);
     }
   }
 
@@ -209,7 +219,7 @@ export default function JogadorRecuperarSenha() {
   return (
     <S.Container>
         <S.Wrapper>
-          <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-login-jogador.jpg'>
+          <LoginWithBannerAndModal minHeight="560px" backgroundImage='/images/jpg/bk-jogador-senha.jpg'>
             <S.Content>
               <S.ContentHeader>
                 <TitleWithButtons title='Recuperar senha' buttonBack={true} onClick={handleClick}  />
@@ -264,13 +274,9 @@ export default function JogadorRecuperarSenha() {
           <Modal isOpen={isOpenModalCode} onClose={() => setIsOpenModalCode(false)}>
             <S.ContainerModalCode>
               <Dialog.Header>
-                  <Dialog.Title textAlign="center">
-                    <LG 
-                    color={theme.colors.branco.principal} 
-                    family={theme.fonts.inter}>
-                      Digite seu código de recuperação
-                    </LG>
-                  </Dialog.Title>
+                <H3 color={theme.colors.laranja}>
+                    Digite seu código de recuperação
+                </H3>
               </Dialog.Header>
 
               <Dialog.Body>
@@ -320,13 +326,9 @@ export default function JogadorRecuperarSenha() {
           <Modal isOpen={isOpenModalNewPassword} onClose={() => setIsOpenModalNewPassword(false)}>
             <S.ContainerModalNewPassword>
               <Dialog.Header>
-                  <Dialog.Title textAlign="center">
-                    <LG 
-                    color={theme.colors.branco.principal} 
-                    family={theme.fonts.inter}>
-                      Redefina sua senha
-                      </LG>
-                  </Dialog.Title>
+                <H3 color={theme.colors.laranja}>
+                    Redefina sua senha
+                </H3>
               </Dialog.Header>
               
               <Dialog.Body 
@@ -368,7 +370,7 @@ export default function JogadorRecuperarSenha() {
                       <MD 
                       color={theme.colors.branco.principal} 
                       family={theme.fonts.inter}>
-                        {isLoading ? <Spinner /> : 'Salvar'}
+                        {isLoadingNewPassword ? <Spinner /> : 'Salvar'}
                     </MD>
                   </S.Button>
                 </S.ContainerButtonModalNewPassword>

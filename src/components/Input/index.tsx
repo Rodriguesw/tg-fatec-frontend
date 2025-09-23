@@ -20,6 +20,7 @@ interface InputProps {
     hasError?: boolean
     hasvalue?: string
     options?: Option[]
+    icon?: string
 }
 
 export function Input({ 
@@ -32,7 +33,8 @@ export function Input({
     hasError = false, 
     hasvalue,
     disabled = false,
-    options 
+    options,
+    icon
 }: InputProps) {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -70,6 +72,11 @@ export function Input({
                 </S.Select>
             ) : (
                 <S.InputWrapper>
+                    {icon && (
+                        <S.IconWrapper>
+                            <img src={icon} alt="ícone" style={{opacity:`${id === "Busca" ? 0.7 : 1}`, height: '24px', width: '24px'}} />
+                        </S.IconWrapper>
+                    )}
                     <S.Input
                         id={id}
                         type={type === 'password' ? (showPassword ? 'text' : 'password') : (type === 'date' ? 'date' : type)}
@@ -80,6 +87,7 @@ export function Input({
                         $hasError={hasError}
                         disabled={disabled}
                         max={type === 'date' ? new Date().toISOString().split('T')[0] : undefined}
+                        paddingLeft={icon ? '40px' : '12px'}
                     />
                     {type === 'password' && (
                         <S.EyeButton type="button" onClick={handleTogglePassword} tabIndex={-1}>

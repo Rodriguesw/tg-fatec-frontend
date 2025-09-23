@@ -218,6 +218,7 @@ export const ContainerModalFormReserva = styled(C.Flex)`
 
     gap: 8px;
     display: flex;
+    align-items: center;
     flex-direction: column;
 `
 
@@ -241,11 +242,23 @@ export const Button = styled(C.Button)`
     background-color: ${theme.colors.verde.principal};
 `;
 
-export const ButtonSecondary = styled(Button)``;
+export const ButtonConfirm = styled(C.Button)`
+    width: auto;
+    height: auto;
+    max-width: 312px;
+    padding: 12px 24px;
+    
+    border-radius: 12px;
+    background-color: ${theme.colors.verde.secundario};
+`;
+
+export const ButtonSecondary = styled(Button)`
+    background-color: ${theme.colors.vermelho};
+`;
 
 export const ContainerButtonsAvaliacao = styled(C.Flex)`
     width: 100%;
-    flex-direction: column;
+    
     gap: 8px;
 `;
 
