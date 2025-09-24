@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+import { Spinner } from '@chakra-ui/react';
+
 import { defaultExtraMarkers } from '@/utils/MapConfig';
 
 import { LoginWithBannerAndModal } from '@/components/LoginWithBannerAndModal';
@@ -13,10 +15,33 @@ import { H3, LG, MD } from '@/styles/typographStyles';
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
+
+  const [loagingRedirectJogador, setLoagingRedirectJogador] = useState(false);
+  const [loagingRedirectProprietario, setLoagingRedirectProprietario] = useState(false);
         
   useEffect(() => {
     setIsMounted(true); 
   }, []);
+
+  const handleRedirectJogador = async () => {
+    setLoagingRedirectJogador(true);
+    
+    try {
+      window.location.href = '/jogador/login';
+    } catch (error) {
+      console.error('Erro ao redirecionar para o jogador:', error);
+    }
+  }
+
+  const handleRedirectProprietario = async () => {
+    setLoagingRedirectProprietario(true);
+    
+    try {
+      window.location.href = '/proprietario/login';
+    } catch (error) {
+      console.error('Erro ao redirecionar para o proprietário:', error);
+    }
+  }
 
   useEffect(() => {
     const storedMarkers = localStorage.getItem('mapMarkers');
@@ -42,19 +67,37 @@ export default function Home() {
               </S.ContentHeader>
   
               <S.ContentButtons>
-                <Link href="/jogador/login">
-                  <LG 
+                <S.Button onClick={handleRedirectJogador}>
+                  {loagingRedirectJogador ? 
+                    (
+                      <div style={{height: '27px', display: 'flex', alignItems: 'center'}}>
+                        <Spinner />
+                      </div>
+                    )
+                  : (
+                    <LG 
                     weight={700}
                     color={theme.colors.branco.principal} 
-                    family={theme.fonts.inter}>Sou jogador</LG>
-                </Link>
+                    family={theme.fonts.inter}>
+                      Sou jogador
+                    </LG>
+                  )}
+                </S.Button>
   
-                <Link href="/proprietario/login">
-                  <LG 
+                <S.Button onClick={handleRedirectProprietario}>
+                  {loagingRedirectProprietario ? (
+                    <div style={{height: '27px', display: 'flex', alignItems: 'center'}}>
+                      <Spinner />
+                    </div>
+                    ) : (
+                    <LG 
                     weight={700}
                     color={theme.colors.branco.principal} 
-                    family={theme.fonts.inter}>Sou proprietário</LG>
-                </Link>
+                    family={theme.fonts.inter}>
+                      Sou proprietário
+                    </LG>
+                  )}
+                </S.Button>
               </S.ContentButtons>
             </S.Content>
           </LoginWithBannerAndModal>

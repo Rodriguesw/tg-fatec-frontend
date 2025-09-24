@@ -92,3 +92,11 @@ export const ContentButtons = styled(C.Flex)`
     }
 `
 
+export const Button = styled(C.Button)`
+    width: 100%;
+    height: auto;
+    padding: 12px 24px;
+
+    border-radius: 12px;
+    background-color: ${theme.colors.verde.principal};
+`

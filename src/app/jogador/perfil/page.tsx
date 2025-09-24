@@ -70,6 +70,8 @@ export default function JogadorPerfil() {
     { label: 'Santos', value: 'santos' },
     { label: 'Outro', value: 'other' }
   ];
+
+  const [loadingPhoto, setLoadingPhoto] = useState(false);
   
   useEffect(() => {
     setIsMounted(true); 
@@ -171,7 +173,11 @@ export default function JogadorPerfil() {
   };
 
   // Função para salvar a imagem editada
-  const handleSaveImage = () => {
+  const handleSaveImage = async () => {
+    setLoadingPhoto(true);
+
+    await new Promise(resolve => setTimeout(resolve, 1350));
+
     if (editorRef.current) {
       const canvas = editorRef.current.getImageScaledToCanvas();
       const dataURL = canvas.toDataURL('image/png');
@@ -210,6 +216,8 @@ export default function JogadorPerfil() {
           type: 'error',
           message: 'Erro ao salvar a imagem'
         });
+      } finally {
+        setLoadingPhoto(false);
       }
     }
   };
@@ -423,12 +431,10 @@ export default function JogadorPerfil() {
         <Modal isOpen={openPhotoEditor} onClose={() => setOpenPhotoEditor(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                <H3 color={theme.colors.laranja}>
                   Editar foto
-                </LG>
-              </Dialog.Title>
-            </Dialog.Header>
+                </H3>
+              </Dialog.Header>
 
             <Dialog.Body
               gap="16px"
@@ -485,9 +491,9 @@ export default function JogadorPerfil() {
                     </S.ModalButton>
                     
                     <S.ModalButton onClick={handleSaveImage}>
-                      <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      {loadingPhoto ?  <Spinner /> : <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
                         Salvar
-                      </MD>
+                      </MD>}
                     </S.ModalButton>
                   </S.ContainerButtonModalRegister>
                 </>

@@ -14,7 +14,7 @@ import AvatarEditor from 'react-avatar-editor';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { LG, MD, SM } from '@/styles/typographStyles';
+import { H3, LG, MD, SM } from '@/styles/typographStyles';
 
 interface FormErrors {
   name: boolean;
@@ -56,6 +56,7 @@ export default function ProprietarioPerfil() {
   
   const [isLoading, setIsLoading] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [loadingPhoto, setLoadingPhoto] = useState(false);
 
   useEffect(() => {
     setIsMounted(true); 
@@ -190,7 +191,11 @@ export default function ProprietarioPerfil() {
   };
 
   // Função para salvar a imagem editada
-  const handleSaveImage = () => {
+  const handleSaveImage = async () => {
+    setLoadingPhoto(true);
+
+    await new Promise(resolve => setTimeout(resolve, 1350));
+
     if (editorRef.current) {
       const canvas = editorRef.current.getImageScaledToCanvas();
       const dataURL = canvas.toDataURL('image/png');
@@ -229,6 +234,8 @@ export default function ProprietarioPerfil() {
           type: 'error',
           message: 'Erro ao salvar a imagem'
         });
+      } finally {
+        setLoadingPhoto(false);
       }
     }
   };
@@ -523,11 +530,9 @@ export default function ProprietarioPerfil() {
         <Modal isOpen={openPhotoEditor} onClose={() => setOpenPhotoEditor(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                  Editar foto
-                </LG>
-              </Dialog.Title>
+              <H3 color={theme.colors.laranja}>
+                Editar foto
+              </H3>
             </Dialog.Header>
 
             <Dialog.Body
@@ -585,9 +590,13 @@ export default function ProprietarioPerfil() {
                     </S.ModalButton>
                     
                     <S.ModalButton onClick={handleSaveImage}>
-                      <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                        Salvar
-                      </MD>
+                      {loadingPhoto ? (
+                        <Spinner />
+                      ) : (
+                        <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                          Salvar
+                        </MD>
+                      )}
                     </S.ModalButton>
                   </S.ContainerButtonModalRegister>
                 </>
