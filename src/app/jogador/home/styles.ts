@@ -233,7 +233,7 @@ export const ContainerModalFormInputs = styled(C.Flex)`
 `
 
 export const Button = styled(C.Button)`
-    width: auto;
+    width: 100%;
     height: auto;
     max-width: 312px;
     padding: 12px 24px;

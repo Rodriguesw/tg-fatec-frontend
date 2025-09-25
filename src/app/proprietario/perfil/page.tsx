@@ -441,11 +441,9 @@ export default function ProprietarioPerfil() {
         <Modal isOpen={openMyData} onClose={() => setOpenMyData(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                  Meu cadastro
-                </LG>
-              </Dialog.Title>
+              <H3 color={theme.colors.laranja}>
+                Meu cadastro
+              </H3>
             </Dialog.Header>
 
             <Dialog.Body
@@ -610,11 +608,9 @@ export default function ProprietarioPerfil() {
         <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                  Segurança
-                </LG>
-              </Dialog.Title>
+              <H3 color={theme.colors.laranja}>
+                Segurança
+              </H3>
             </Dialog.Header>
 
             <Dialog.Body

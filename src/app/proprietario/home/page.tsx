@@ -427,8 +427,8 @@ export default function ProprietarioHome() {
       setValueInputStartHours('');
       setValueInputEndHours('');
       setValuePerHour('');
-      setPropertyImages([]) // Limpar as imagens
-      setCurrentImageIndex(0) // Resetar o índice da imagem
+      setPropertyImages([]) 
+      setCurrentImageIndex(0) 
     } catch (error) {
       console.error("Erro ao salvar quadra", error);
     } finally {
@@ -861,6 +861,8 @@ export default function ProprietarioHome() {
     setEditItem(null);
     setNewModalLocalSport(false);
     setNameLocalSport('');
+    setPropertyImages([]) 
+    setCurrentImageIndex(0) 
     setTypeLocalSport('');
     setCep('');
     setNumber('');
@@ -1182,11 +1184,9 @@ useEffect(() => {
           <Modal isOpen={openDeleteLocal} onClose={() => setOpenDeleteLocal(false)}>
             <S.ContainerModalDelete>
               <Dialog.Header>
-                <Dialog.Title textAlign="center">
-                  <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                    Deletar propriedade
-                  </LG>
-                </Dialog.Title>
+                <H3 color={theme.colors.laranja}>
+                  Deletar propriedade
+                </H3>
               </Dialog.Header>
   
               <Dialog.Body

@@ -9,7 +9,7 @@ import { Dialog, Spinner } from '@chakra-ui/react';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { LG, MD } from '@/styles/typographStyles';
+import { H3, LG, MD } from '@/styles/typographStyles';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { CardReservedProperty } from '@/components/CardReservedProperty';
 import { showToast } from '@/components/ToastAlert';
@@ -205,9 +205,9 @@ export default function ProprietarioReservados() {
           <S.ContainerModalEdit>
             <Dialog.Header>
               <Dialog.Title textAlign="center">
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                <H3 color={theme.colors.laranja}>
                   Excluir reserva
-                </LG>
+                </H3>
               </Dialog.Title>
             </Dialog.Header>
 

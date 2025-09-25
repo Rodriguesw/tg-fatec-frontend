@@ -9,7 +9,7 @@ import { TitleWithButtons } from '@/components/TitleWithButtons';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { MD, LG, SM } from '@/styles/typographStyles';
+import { MD, LG, SM, H3 } from '@/styles/typographStyles';
 import { CardReserved, isPastReservation } from '@/components/CardReserved';
 import { Modal } from '@/components/Modal';
 
@@ -291,13 +291,11 @@ export default function JogadorReservas() {
         <Modal isOpen={isOpenModalCancel} onClose={() => setIsOpenModalCancel(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-                <Dialog.Title textAlign="center">
-                  <LG 
-                  color={theme.colors.branco.principal} 
-                  family={theme.fonts.inter}>
-                    Cancelar 
-                    </LG>
-                </Dialog.Title>
+               <Dialog.Title textAlign="center">
+                <H3 color={theme.colors.laranja}>
+                  Cancelar 
+                </H3>
+              </Dialog.Title>
             </Dialog.Header>
             
             <Dialog.Body 
@@ -403,9 +401,9 @@ export default function JogadorReservas() {
           <S.ContainerModalEdit>
             <Dialog.Header>
               <Dialog.Title textAlign="center">
-                <LG color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                <H3 color={theme.colors.laranja}>
                   {reservaCancelada.status === "excluido" ? "Local Excluído" : "Reserva Cancelada"}
-                </LG>
+                </H3>
               </Dialog.Title>
             </Dialog.Header>
             

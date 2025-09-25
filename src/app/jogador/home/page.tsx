@@ -43,6 +43,7 @@ export default function JogadorHome() {
   const [isModalLocalization, setIsModalLocalization] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isMapLoading, setIsMapLoading] = useState(true);
   const [cepData, setCepData] = useState<any>(null);
 
   //Modal de Reserva
@@ -58,6 +59,9 @@ export default function JogadorHome() {
   const [hasErrorDate, setHasErrorDate] = useState(false);
   const [hasErrorStartHours, setHasErrorStartHours] = useState(false);
   const [hasErrorEndHours, setHasErrorEndHours] = useState(false);
+
+  //Loading do submit da reserva
+  const [isLoadingSubmitReserva, setIsLoadingSubmitReserva] = useState(false);
 
   //Modal de Pagamento Pix
   const [isModalPix, setIsModalPix] = useState(false);
@@ -528,7 +532,9 @@ export default function JogadorHome() {
     setHasErrorEndHours(false)
   }
 
-  const handleSubmitReserva = () => {
+  const handleSubmitReserva = async () => {
+    setIsLoadingSubmitReserva(true);
+
     const hasMethodPaymentMoneyError = methodPayment !== 'Dinheiro';
     const hasDateError = valueInputDate === '';
     const hasStartHourError = valueInputStartHours === '';
@@ -567,6 +573,8 @@ export default function JogadorHome() {
       });
       return;
     }
+
+    await new Promise(resolve => setTimeout(resolve, 1300));
 
     // Cria a nova reserva
     const novaReserva = {
@@ -664,6 +672,7 @@ export default function JogadorHome() {
 
     setIsModalReserva(false);
     setIsModalLocalization(false);
+    setIsLoadingSubmitReserva(false);
     clearInputs();
   };
 
@@ -747,24 +756,7 @@ export default function JogadorHome() {
 
   if (!isMounted || !userLocation) return null;
 
-  if (!userLocation) {
-    return (
-      <S.Container>
-        <S.Wrapper>
-          <Header />
-
-          <S.ContentWithLoading>
-            <S.ContainerLoading style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <Spinner size="xl" color={theme.colors.branco.principal} />
-              </div>
-            </S.ContainerLoading>
-          </S.ContentWithLoading>
-          <Navbar />
-        </S.Wrapper>
-      </S.Container>
-    );
-  }
+ 
 
   return (
     <S.Container>
@@ -784,12 +776,23 @@ export default function JogadorHome() {
           </S.ContainerInput>
 
           <S.ContainerMap>
+            {isMapLoading && (
+               <S.ContentWithLoading>
+                <S.ContainerLoading style={{display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                    <Spinner size="xl" color={theme.colors.branco.principal} />
+                  </div>
+                </S.ContainerLoading>
+              </S.ContentWithLoading> 
+            )}
+
             <LoadScriptNext googleMapsApiKey="AIzaSyAPxmDGktAh6A-WF8xcIkjz4568vuBa0n0">
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={searchLocation ? searchLocation : userLocation}
                 zoom={14}
                 options={mapOptions}
+                onLoad={() => setIsMapLoading(false)}
               >
                 <Marker 
                   position={userLocation} 
@@ -828,9 +831,7 @@ export default function JogadorHome() {
                   <Dialog.Header width="100%" display="flex" flexDirection="row" justifyContent="space-between">
                     
                   {isLoading ? (
-                      <S.ContainerLoading>
-                        <Spinner color={theme.colors.branco.principal} />
-                      </S.ContainerLoading>
+                      <S.ContainerLoading/>
                     ) : (
                       <H3
                         color={theme.colors.laranja}>
@@ -1192,7 +1193,7 @@ export default function JogadorHome() {
                       family={theme.fonts.inter}
                       onClick={() => setIsModalReserva(true)}
                       >
-                        Confirmar reserva
+                        {isLoadingSubmitReserva ? (<Spinner />) : 'Confirmar reserva'}
                     </LG>
                 </S.Button>
               </Dialog.Body>
