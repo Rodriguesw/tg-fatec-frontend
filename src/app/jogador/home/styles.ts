@@ -252,7 +252,7 @@ export const ButtonConfirm = styled(C.Button)`
     background-color: ${theme.colors.verde.secundario};
 `;
 
-export const ButtonSecondary = styled(Button)`
+export const ButtonSecondary = styled(ButtonConfirm)`
     background-color: ${theme.colors.vermelho};
 `;
 
