@@ -76,34 +76,30 @@ export default function JogadorHome() {
   // Função para verificar se uma reserva já passou
   const isReservationPassed = (reservedDate: string, timeEnd: string) => {
     const now = new Date();
-    const today = now.toLocaleDateString('pt-BR');
-    
-    // Converte a data da reserva para o formato Date
+
+    // Converte a data da reserva para Date (dia/mês/ano)
     const [day, month, year] = reservedDate.split('/');
-    const reservationDate = new Date(`${year}-${month}-${day}T${timeEnd}:00`);
-    
-    // Se a data da reserva é anterior à data atual, a reserva já passou
-    if (reservedDate < today) {
-      return true;
-    }
-    
-    // Se a data da reserva é igual à data atual, verifica se o horário já passou
-    if (reservedDate === today) {
-      return now > reservationDate;
-    }
+    const reservationDateOnly = new Date(Number(year), Number(month) - 1, Number(day));
 
-    //PARA TESTES
-    // if (reservedDate === today) {
-    //   const nowPlus5h = new Date(now);
-    //   nowPlus5h.setHours(now.getHours() + 5);
+    // Converte o horário de término para horas/minutos
+    const [endHourStr, endMinStr] = timeEnd.split(':');
+    const endHour = parseInt(endHourStr, 10) || 0;
+    const endMin = parseInt(endMinStr, 10) || 0;
 
-    //   console.log("nowPlus5h:", nowPlus5h)
-    //   console.log("reservationDate:", reservationDate)
-    //   console.log("nowPlus5h > reservationDate:", nowPlus5h > reservationDate)
-    //   return nowPlus5h > reservationDate;
-    // }
-    
-    return false;
+    // Cria um Date completo com data e horário de término
+    const reservationEnd = new Date(reservationDateOnly);
+    reservationEnd.setHours(endHour, endMin, 0, 0);
+
+    // Logs de debug
+    console.log("========================================");
+    console.log("now:", now);
+    console.log("today:", now.toLocaleDateString('pt-BR'));
+    console.log("reservedDate:", reservedDate);
+    console.log("reservationEnd:", reservationEnd);
+    console.log("hasPassed:", now > reservationEnd);
+
+    // A reserva passou se o momento atual é maior que o término da reserva
+    return now > reservationEnd;
   };
   
   // Função para atualizar reservas passadas
@@ -120,6 +116,12 @@ export default function JogadorHome() {
       let updated = false;
       const updatedReservations = currentUser.reserved_sports_location.map((reserva: any) => {
         // Verifica se a reserva já passou e está com status "ativo"
+        // console.log("========================================")
+        // console.log("reserva:", reserva.reserved_date)
+        // console.log("reserva.time_end:", reserva.time_end)
+        // console.log("isReservationPassed:", isReservationPassed(reserva.reserved_date, reserva.time_end))
+        // console.log("valida:", isReservationPassed(reserva.reserved_date, reserva.time_end) && reserva.status === 'ativo')
+
         if (isReservationPassed(reserva.reserved_date, reserva.time_end) && reserva.status === 'ativo') {
           updated = true;
           return {
