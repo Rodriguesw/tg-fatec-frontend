@@ -419,6 +419,7 @@ export default function JogadorHome() {
     // Gera todos os horários possíveis dentro do horário de funcionamento
     for (let hour = startHour; hour <= endHour; hour++) {
       const hourStr = `${hour.toString().padStart(2, '0')}:00`;
+      console.log("hourStr", hourStr)
       
       // Verifica se o horário está disponível
       if (isHourAvailable(hourStr, reservedHours)) {
@@ -433,65 +434,83 @@ export default function JogadorHome() {
   const isDayFullyBooked = (date: Date, locationName: string, locationCep: string, locationNumber: string) => {
     // Formata a data para o formato usado no sistema
     const formattedDate = format(date, "dd/MM/yyyy");
-    
+    console.log('[isDayFullyBooked] start', { formattedDate, locationName, locationCep, locationNumber });
+
     // Busca todas as reservas no localStorage
     const infoUsersRaw = localStorage.getItem("infoUser");
-    if (!infoUsersRaw) return false;
-    
+    if (!infoUsersRaw) {
+      console.log('[isDayFullyBooked] no infoUser in localStorage');
+      return false;
+    }
+
     const infoUsers = JSON.parse(infoUsersRaw);
     const reservedHours: {start: string, end: string}[] = [];
-    
+
     // Percorre todos os usuários para encontrar reservas para esta localização e data
     Object.values(infoUsers).forEach((user: any) => {
       if (Array.isArray(user.reserved_sports_location)) {
         user.reserved_sports_location.forEach((reservation: any) => {
           // Verifica se a reserva é para a mesma localização, data e está ativa
-          if (reservation.name === locationName && 
-              reservation.address?.cep === locationCep && 
-              reservation.address?.number === locationNumber && 
-              reservation.reserved_date === formattedDate && 
-              reservation.status === 'ativo') {
-            
-            reservedHours.push({
-              start: reservation.time_start,
-              end: reservation.time_end
-            });
+          if (
+            reservation.name === locationName &&
+            reservation.address?.cep === locationCep &&
+            reservation.address?.number === locationNumber &&
+            reservation.reserved_date === formattedDate &&
+            reservation.status === 'ativo'
+          ) {
+            reservedHours.push({ start: reservation.time_start, end: reservation.time_end });
           }
         });
       }
     });
-    
+
+    console.log('[isDayFullyBooked] reservedHours', reservedHours.length, reservedHours);
+
     // Se não há reservas, o dia não está ocupado
-    if (reservedHours.length === 0) return false;
-    
+    if (reservedHours.length === 0) {
+      console.log('[isDayFullyBooked] no reservations for date', formattedDate);
+      return false;
+    }
+
     // Busca o local no localStorage para obter o horário de funcionamento
     const markersRaw = localStorage.getItem('mapMarkers');
-    if (!markersRaw) return false;
-    
+    if (!markersRaw) {
+      console.log('[isDayFullyBooked] no mapMarkers in localStorage');
+      return false;
+    }
+
     const markers = JSON.parse(markersRaw);
-    const location = markers.find((marker: any) => 
-      marker.title === locationName && 
-      marker.address?.cep === locationCep && 
+    const location = markers.find((marker: any) =>
+      marker.title === locationName &&
+      marker.address?.cep === locationCep &&
       marker.address?.number === locationNumber
     );
-    
-    if (!location) return false;
-    
+
+    if (!location) {
+      console.log('[isDayFullyBooked] location not found', { locationName, locationCep, locationNumber });
+      return false;
+    }
+
     // Horário de funcionamento do local
     const startHour = getHourAsNumber(location.time_start);
     const endHour = getHourAsNumber(location.time_end);
-    
+    console.log('[isDayFullyBooked] operatingHours', { startHour, endHour });
+
     // Verifica se todas as horas do período de funcionamento estão ocupadas
     for (let hour = startHour; hour < endHour; hour++) {
       const hourStr = `${hour.toString().padStart(2, '0')}:00`;
-      
+      const available = isHourAvailable(hourStr, reservedHours);
+      console.log('[isDayFullyBooked] check hour', { hourStr, available });
+
       // Se encontrar pelo menos uma hora disponível, o dia não está totalmente ocupado
-      if (isHourAvailable(hourStr, reservedHours)) {
+      if (available) {
+        console.log('[isDayFullyBooked] day NOT fully booked due to', hourStr);
         return false;
       }
     }
-    
+
     // Se chegou até aqui, todas as horas estão ocupadas
+    console.log('[isDayFullyBooked] day fully booked', { formattedDate });
     return true;
   }
   
@@ -1131,8 +1150,8 @@ export default function JogadorHome() {
                       hasError={hasErrorDate}
                       availableDays={selectedMarker?.days} // Passa os dias disponíveis da propriedade
                       filterDate={(date) => !isDayFullyBooked(
-                        date,
-                        selectedMarker.title,
+                          date,
+                          selectedMarker.title,
                         cepData?.cep,
                         cepData?.numero
                       )}
