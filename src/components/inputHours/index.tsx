@@ -93,10 +93,9 @@ export function InputHours({
       if (id === 'start-hours') {
         return allPossibleHours.filter(hour => availableHours.includes(hour))
       } 
-      // Para o horário de término, a lógica é diferente - mostramos horários após o início selecionado
-      else if (id === 'end-hours' && value) {
-        // Se já temos um horário de início selecionado, mostramos apenas horários após ele
-        return allPossibleHours
+      // Para o horário de término, filtramos pelos horários de término válidos
+      else if (id === 'end-hours') {
+        return allPossibleHours.filter(hour => availableHours.includes(hour))
       }
     }
     

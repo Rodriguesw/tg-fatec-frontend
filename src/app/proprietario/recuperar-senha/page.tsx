@@ -270,11 +270,9 @@ export default function ProprietarioRecuperarSenha() {
         <Modal isOpen={isOpenModalCode} onClose={() => setIsOpenModalCode(false)}>
           <S.ContainerModalCode>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
                 <H3 color={theme.colors.laranja}>
                   Digite seu código de recuperação
                 </H3>
-              </Dialog.Title>
             </Dialog.Header>
 
             <Dialog.Body>
@@ -324,11 +322,9 @@ export default function ProprietarioRecuperarSenha() {
         <Modal isOpen={isOpenModalNewPassword} onClose={() => setIsOpenModalNewPassword(false)}>
           <S.ContainerModalNewPassword>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
                 <H3 color={theme.colors.laranja}>
                   Redefina sua senha
                 </H3>
-              </Dialog.Title>
             </Dialog.Header>
             
             <Dialog.Body 

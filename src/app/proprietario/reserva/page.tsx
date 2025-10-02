@@ -204,11 +204,9 @@ export default function ProprietarioReservados() {
         <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
                 <H3 color={theme.colors.laranja}>
                   Excluir reserva
                 </H3>
-              </Dialog.Title>
             </Dialog.Header>
 
             <Dialog.Body

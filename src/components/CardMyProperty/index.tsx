@@ -175,7 +175,7 @@ export function CardMyProperty({ onEdit }: { onEdit: (item: any) => void }) {
                     </SM>
 
                     <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
-                      Horários: {item.time_start} às {item.time_end}
+                      Horários: {item.time_start} / {item.time_end}
                     </SM>
 
                     <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>

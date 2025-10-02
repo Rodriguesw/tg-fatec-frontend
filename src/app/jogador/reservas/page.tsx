@@ -53,6 +53,130 @@ export default function JogadorReservas() {
   const [reservaCancelada, setReservaCancelada] = useState<ReservedSportLocation & { status?: string; view?: boolean } | null>(null);
 
   const [isLoadingContent, setIsLoadingContent] = useState(true);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+
+  // Reinicia o loading da página e recarrega as reservas do localStorage
+  const refreshReservationsWithLoading = () => {
+    setIsLoadingContent(true);
+    setTimeout(() => {
+      try {
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser) {
+          setCurrentUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error('Erro ao recarregar currentUser:', error);
+      } finally {
+        setIsLoadingContent(false);
+      }
+    }, 1000);
+  };
+
+  // Cancela a reserva selecionada e sincroniza o estado/localStorage
+  const handleCancelReservation = async () => {
+    setIsLoadingDelete(true);
+
+    await new Promise(resolve => setTimeout(resolve, 1250));
+    // Garantir que exista usuário atual e um ID de quadra selecionado
+    if (selectedCourtId === null || !currentUser) {
+      setIsOpenModalCancel(false);
+      return;
+    }
+
+    // Atualizar o currentUser marcando o status da reserva como "cancelado-jogador"
+    const updatedReservations = currentUser.reserved_sports_location?.map(
+      (item: ReservedSportLocation & { status?: string }) =>
+        item.id === selectedCourtId ? { ...item, status: 'cancelado-jogador' } : item
+    ) || [];
+
+    // Atualiza estado de forma type-safe sem invalidar a propriedade obrigatória `id`
+    setCurrentUser(prev => prev ? ({
+      ...prev,
+      reserved_sports_location: updatedReservations,
+    }) : prev);
+
+    // Persiste no localStorage com objeto concreto do usuário (com status atualizado)
+    const newUser = {
+      ...currentUser,
+      reserved_sports_location: updatedReservations,
+    } as CurrentUser;
+    localStorage.setItem('currentUser', JSON.stringify(newUser));
+
+    // Atualizar também o localStorage "infoUser" do respectivo usuário
+    try {
+      const infoUserRaw = localStorage.getItem('infoUser');
+      if (infoUserRaw && currentUser?.id) {
+        const infoUser = JSON.parse(infoUserRaw);
+        const existingUser = infoUser[currentUser.id];
+
+        if (existingUser) {
+          const updatedInfoUserReservas = (existingUser.reserved_sports_location || []).map(
+            (reserva: ReservedSportLocation & { status?: string; view?: boolean }) =>
+              reserva.id === selectedCourtId ? { ...reserva, status: 'cancelado-jogador' } : reserva
+          );
+
+          infoUser[currentUser.id] = {
+            ...existingUser,
+            reserved_sports_location: updatedInfoUserReservas,
+          };
+
+          localStorage.setItem('infoUser', JSON.stringify(infoUser));
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar infoUser:', error);
+    }
+
+      // Remover a reserva do localStorage "infoUserProprietario"
+      try {
+        const infoUserProprietarioRaw = localStorage.getItem('infoUserProprietario');
+        if (infoUserProprietarioRaw) {
+          const infoUserProprietario = JSON.parse(infoUserProprietarioRaw);
+
+          // Encontrar o proprietário que possui a quadra com o ID selecionado
+          const selectedCourt = currentUser?.reserved_sports_location?.find(
+            (court: any) => court.id === selectedCourtId
+          );
+
+          if (selectedCourt && infoUserProprietario) {
+            // infoUserProprietario é um objeto com chaves que são IDs de proprietários
+            Object.keys(infoUserProprietario).forEach(proprietarioId => {
+              const proprietario = infoUserProprietario[proprietarioId];
+
+              // Verificar se o proprietário tem a quadra com o mesmo nome e endereço
+              if (proprietario.my_sports_location) {
+                const hasMatchingLocation = proprietario.my_sports_location.some((location: any) =>
+                  location.name === selectedCourt.name &&
+                  location.address?.cep === selectedCourt.address.cep &&
+                  location.address?.number === selectedCourt.address.number
+                );
+
+                // Se encontrou a quadra correspondente, remover a reserva
+                if (hasMatchingLocation && proprietario.reservations) {
+                  proprietario.reservations = proprietario.reservations.map(
+                    (reservation: any) =>
+                      reservation.id === selectedCourtId
+                        ? { ...reservation, status: 'cancelado-jogador' }
+                        : reservation
+                  );
+                }
+              }
+            });
+
+            // Salvar as alterações de volta no localStorage
+            localStorage.setItem('infoUserProprietario', JSON.stringify(infoUserProprietario));
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar infoUserProprietario:', error);
+      } finally {
+        setIsOpenModalCancel(false);
+        setIsLoadingDelete(false);
+        // Simula um GET e reinicia o loading da tela de reservas
+        refreshReservationsWithLoading();
+      }
+    }
+
 
   useEffect(() => {
     setIsMounted(true);
@@ -68,7 +192,7 @@ export default function JogadorReservas() {
         }
       }
     }
-     // Simula um tempo de carregamento para melhor experiência do usuário
+
     setTimeout(() => {
       setIsLoadingContent(false);
     }, 1000);
@@ -115,14 +239,14 @@ export default function JogadorReservas() {
 
   if (!isMounted || !currentUser) return null;
 
-  // Verificar se há eventos não cancelados e não excluídos
+  // Verificar se há eventos com status "ativo"
   const hasEvents = (currentUser?.reserved_sports_location?.filter((item: ReservedSportLocation & { status?: string; view?: boolean }) => 
-    item.status !== "cancelado" && item.status !== "excluido"
+    item.status === "ativo"
   ) || [])?.length > 0;
   
   const selectedCourt = currentUser?.reserved_sports_location?.find(
     (court: ReservedSportLocation & { status?: string; view?: boolean }) => court.id === selectedCourtId && 
-    court.status !== "cancelado" && court.status !== "excluido"
+    court.status === "ativo"
   );
 
   // Função para verificar se uma reserva já passou com base na hora atual
@@ -148,8 +272,7 @@ export default function JogadorReservas() {
   // Se o dia for igual, ordenar pelo horário de início
   const sortedReservations = [...reservationsWithRating]
     .filter((item: ReservedSportLocation & { status?: string; view?: boolean; rating?: string }) => 
-      item.status !== "cancelado" && 
-      item.status !== "excluido" &&
+      item.status === "ativo" &&
       // Não exibir reservas que já passaram no dia atual
       !isReservationPassed(item.reserved_date, item.time_end)
     )
@@ -291,11 +414,9 @@ export default function JogadorReservas() {
         <Modal isOpen={isOpenModalCancel} onClose={() => setIsOpenModalCancel(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-               <Dialog.Title textAlign="center">
                 <H3 color={theme.colors.laranja}>
                   Cancelar 
                 </H3>
-              </Dialog.Title>
             </Dialog.Header>
             
             <Dialog.Body 
@@ -326,67 +447,16 @@ export default function JogadorReservas() {
                     <MD 
                     color={theme.colors.branco.principal} 
                     family={theme.fonts.inter}
-                    onClick={() => {
-                      if (selectedCourtId !== null) {
-                        // Atualizar o currentUser removendo a reserva
-                        const updatedReservations = currentUser?.reserved_sports_location?.filter(
-                          (item: ReservedSportLocation) => item.id !== selectedCourtId
-                        ) || [];
-
-                        const updatedUser = {
-                          ...currentUser,
-                          reserved_sports_location: updatedReservations,
-                        };
-
-                        setCurrentUser(updatedUser);
-                        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-                        
-                        // Remover a reserva do localStorage "infoUserProprietario"
-                        try {
-                          const infoUserProprietarioRaw = localStorage.getItem('infoUserProprietario');
-                          if (infoUserProprietarioRaw) {
-                            const infoUserProprietario = JSON.parse(infoUserProprietarioRaw);
-                            
-                            // Encontrar o proprietário que possui a quadra com o ID selecionado
-                            const selectedCourt = currentUser?.reserved_sports_location?.find(
-                              (court: any) => court.id === selectedCourtId
-                            );
-                            
-                            if (selectedCourt && infoUserProprietario) {
-                              // infoUserProprietario é um objeto com chaves que são IDs de proprietários
-                              Object.keys(infoUserProprietario).forEach(proprietarioId => {
-                                const proprietario = infoUserProprietario[proprietarioId];
-                                
-                                // Verificar se o proprietário tem a quadra com o mesmo nome e endereço
-                                if (proprietario.my_sports_location) {
-                                  const hasMatchingLocation = proprietario.my_sports_location.some((location: any) => 
-                                    location.name === selectedCourt.name && 
-                                    location.address?.cep === selectedCourt.address.cep && 
-                                    location.address?.number === selectedCourt.address.number
-                                  );
-                                  
-                                  // Se encontrou a quadra correspondente, remover a reserva
-                                  if (hasMatchingLocation && proprietario.reservations) {
-                                    proprietario.reservations = proprietario.reservations.filter(
-                                      (reservation: any) => reservation.id !== selectedCourtId
-                                    );
-                                  }
-                                }
-                              });
-                              
-                              // Salvar as alterações de volta no localStorage
-                              localStorage.setItem('infoUserProprietario', JSON.stringify(infoUserProprietario));
-                            }
-                          }
-                        } catch (error) {
-                          console.error('Erro ao atualizar infoUserProprietario:', error);
-                        }
-                      }
-
-                      setIsOpenModalCancel(false);
-                    }}
+                    onClick={handleCancelReservation}
                     >
-                      Confirmar
+                      {isLoadingDelete ? (
+                        <Spinner 
+                          size="md" 
+                          color={theme.colors.branco.principal}
+                        />
+                      ) : (
+                        "Confirmar"
+                      )}
                   </MD>
                 </S.Button>
               </S.ContainerButtonModalCancel>
@@ -400,11 +470,9 @@ export default function JogadorReservas() {
         <Modal isOpen={isModalCancelamentoProprietario} onClose={() => setIsModalCancelamentoProprietario(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <Dialog.Title textAlign="center">
                 <H3 color={theme.colors.laranja}>
                   {reservaCancelada.status === "excluido" ? "Local Excluído" : "Reserva Cancelada"}
                 </H3>
-              </Dialog.Title>
             </Dialog.Header>
             
             <Dialog.Body

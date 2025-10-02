@@ -429,10 +429,61 @@ export default function JogadorHome() {
     
     return availableHours;
   }
+
+  // Obtém os horários de término válidos, garantindo que o intervalo [início, término)
+  // não cruze nenhuma reserva existente e respeite o horário de funcionamento.
+  const getAvailableEndHoursForStart = (startHourStr: string) => {
+    if (!selectedMarker || !valueInputDate || !startHourStr) return [];
+
+    const reservedHours = getReservedHours(
+      valueInputDate,
+      selectedMarker.title,
+      cepData?.cep,
+      cepData?.numero
+    );
+
+    const startHour = getHourAsNumber(startHourStr);
+    // Para término, permitimos até 1h após o fechamento
+    const propertyEnd = getHourAsNumber(selectedMarker.time_end) + 1;
+
+    // Constrói um mapa de horas ocupadas (inteiras) baseado nas reservas existentes
+    const occupied = new Set<number>();
+    reservedHours.forEach(({ start, end }) => {
+      const s = getHourAsNumber(start);
+      const e = getHourAsNumber(end);
+      for (let h = s; h < e; h++) {
+        occupied.add(h);
+      }
+    });
+
+    // Se o horário de início já está dentro de uma reserva, não há término válido
+    if (occupied.has(startHour)) {
+      return [];
+    }
+
+    // Encontra a próxima hora ocupada a partir do início selecionado
+    let nextOccupied: number | null = null;
+    for (let h = startHour; h < propertyEnd; h++) {
+      if (occupied.has(h) && h >= startHour) {
+        nextOccupied = h;
+        break;
+      }
+    }
+
+    const maxEnd = nextOccupied ?? propertyEnd; // término máximo permitido
+
+    const endOptions: string[] = [];
+    for (let h = startHour + 1; h <= maxEnd; h++) {
+      endOptions.push(`${h.toString().padStart(2, '0')}:00`);
+    }
+
+    return endOptions;
+  }
   
   // Verifica se um dia específico está totalmente ocupado para um local
   const isDayFullyBooked = (date: Date, locationName: string, locationCep: string, locationNumber: string) => {
     // Formata a data para o formato usado no sistema
+    console.log("==========================isDayFullyBooked================================")
     const formattedDate = format(date, "dd/MM/yyyy");
     console.log('[isDayFullyBooked] start', { formattedDate, locationName, locationCep, locationNumber });
 
@@ -1199,7 +1250,7 @@ export default function JogadorHome() {
                       hasError={hasErrorEndHours}
                       propertyTimeStart={selectedMarker?.time_start}
                       propertyTimeEnd={selectedMarker?.time_end}
-                      availableHours={valueInputDate ? getAvailableHours() : []}
+                      availableHours={valueInputDate && valueInputStartHours ? getAvailableEndHoursForStart(valueInputStartHours) : []}
                       />
                       
                   </S.ContainerModalFormInputs>

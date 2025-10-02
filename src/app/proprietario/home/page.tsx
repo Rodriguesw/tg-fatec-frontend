@@ -19,6 +19,7 @@ import { fetchCEP } from '@/services/BuscaCep';
 import  { WeekdayMultiSelect } from '@/components/Multiple';
 import { InputHours } from '@/components/inputHours';
 import { showToast } from '@/components/ToastAlert';
+import { Tooltip } from 'react-tooltip';
 
 interface CEPData {
   logradouro: string;
@@ -1088,7 +1089,7 @@ useEffect(() => {
 
                 <S.ContainerWithTwoInputs>
                   <InputHours 
-                    label="Horário"
+                    label="Horário início"
                     disabled={false}
                     value={valueInputStartHours} 
                     onChange={handleHoursStartChange}  
@@ -1099,10 +1100,11 @@ useEffect(() => {
                   />
 
                   <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
-                    às
+                    /
                   </MD>
 
                   <InputHours 
+                    label="Último horário"
                     disabled={valueInputStartHours !== '' ? false : true}
                     value={valueInputEndHours} 
                     onChange={handleHoursEndChange}
@@ -1111,6 +1113,24 @@ useEffect(() => {
                     hasError={errors.valueInputEndHours}
                     width='100%'
                     />
+
+                    <S.ContainerModalFormTooltip>
+                      <img src="/images/png/icon-question-mark-1.png" alt=" Pagamento em dinheiro" data-tooltip-id="dinheiro-tooltip"/>
+
+                      <Tooltip 
+                        id="dinheiro-tooltip" 
+                        place="top"
+                        content="O último horário corresponde ao último período disponível para reserva antes do fechamento do local. Por exemplo, se o último horário for 19h, o funcionamento se encerrará às 20h, sendo das 19h às 20h o último intervalo possível para reserva."
+                        style={{ 
+                          backgroundColor: "#0D1321",
+                          color: theme.colors.branco.principal,
+                          borderRadius: '8px',
+                          padding: '8px',
+                          fontSize: '14px',
+                          maxWidth: '200px'
+                        }}
+                      />
+                    </S.ContainerModalFormTooltip>
                 </S.ContainerWithTwoInputs>
 
                 <Input 

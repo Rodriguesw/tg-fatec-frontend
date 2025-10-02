@@ -301,3 +301,18 @@ export const ContainerModalDelete = styled(C.Flex)`
 
     background-color: #0D1321;
 `
+
+export const ContainerModalFormTooltip = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+    max-width: 25px;
+
+    display: flex;
+    margin-bottom: 50px;
+    flex-direction: column;
+
+    >img{
+        width: 17px;
+        height: auto;
+    }
+`
