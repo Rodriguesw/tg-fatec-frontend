@@ -544,7 +544,7 @@ export default function JogadorHome() {
 
     // Horário de funcionamento do local
     const startHour = getHourAsNumber(location.time_start);
-    const endHour = getHourAsNumber(location.time_end);
+    const endHour = getHourAsNumber(location.time_end) + 1;
     console.log('[isDayFullyBooked] operatingHours', { startHour, endHour });
 
     // Verifica se todas as horas do período de funcionamento estão ocupadas

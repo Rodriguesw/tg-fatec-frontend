@@ -9,7 +9,7 @@ import { Dialog, Spinner } from '@chakra-ui/react';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
-import { H3, LG, MD } from '@/styles/typographStyles';
+import { H3, LG, MD, SM } from '@/styles/typographStyles';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { CardReservedProperty } from '@/components/CardReservedProperty';
 import { showToast } from '@/components/ToastAlert';
@@ -157,9 +157,9 @@ export default function ProprietarioReservados() {
                   color={theme.colors.branco.principal}
                 />
               </S.LoadingContainer>
-            ) : currentUserProprietario?.reservations?.filter((order: any) => order.status !== "cancelado" && order.status !== "excluido")?.length > 0 ? (
+            ) : currentUserProprietario?.reservations?.filter((order: any) => order.status === "ativo")?.length > 0 ? (
               currentUserProprietario.reservations
-                .filter((order: any) => order.status !== "cancelado" && order.status !== "excluido")
+                .filter((order: any) => order.status === "ativo")
                 .sort((a: any, b: any) => {
                   // Converter datas para formato comparável (assumindo formato DD/MM/YYYY)
                   const dateA = a.reserved_date.split('/').reverse().join('-');
@@ -216,9 +216,9 @@ export default function ProprietarioReservados() {
               alignItems="center"
               flexDirection="column"
             >
-              <LG family={theme.fonts.inter} color={theme.colors.branco.secundario}>
+              <SM color={theme.colors.branco.secundario} family={theme.fonts.inter}>
                 Tem certeza de que deseja excluir esta reserva?
-              </LG>
+              </SM>
 
               <S.ContainerButtonModalSettings>
                 <S.ModalButton onClick={() => setOpenSettings(false)}>
