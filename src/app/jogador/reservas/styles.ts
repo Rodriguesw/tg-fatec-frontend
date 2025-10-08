@@ -6,7 +6,7 @@ export const Container = styled(C.Flex)`
     width: 100%;
     height: 100dvh;
 
-    overflow-y: auto;
+    overflow-y: hidden;
     justify-content: center;
 
     background-color: #0D1321;
