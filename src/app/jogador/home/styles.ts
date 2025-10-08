@@ -13,7 +13,7 @@ interface modalReservaProps {
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
 
     overflow-y: auto;
     justify-content: center;

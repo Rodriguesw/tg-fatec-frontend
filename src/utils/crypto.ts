@@ -13,7 +13,7 @@ export async function encryptPassword(text: string): Promise<string> {
   const data = encoder.encode(text);
   
   // Gera o hash SHA-256
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashBuffer = await crypto?.subtle?.digest('SHA-256', data);
   
   // Converte o buffer para string hexadecimal
   const hashArray = Array.from(new Uint8Array(hashBuffer));
