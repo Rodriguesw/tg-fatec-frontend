@@ -35,7 +35,7 @@ export const Content = styled(C.Flex)`
 
 export const ContainerCard = styled(C.Flex)`
     width: 100%;
-    height: calc(100vh - 266.25px);
+    height: calc(100dvh - 266.25px);
 
     gap: 15px;
     flex-direction: column;
