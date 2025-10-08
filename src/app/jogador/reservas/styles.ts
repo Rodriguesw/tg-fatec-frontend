@@ -62,7 +62,7 @@ export const ContainerCard = styled(C.Flex)`
 
 export const NotFoundEvent = styled(C.Flex)`
     width: 100%;
-    height: calc(100vh - 266.25px);
+    height: calc(100dvh - 266.25px);
 
     gap: 16px;
     align-items: center;
