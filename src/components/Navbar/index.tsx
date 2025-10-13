@@ -17,7 +17,7 @@ export function Navbar() {
                         <SM family={theme.fonts.inter}>RESERVAS</SM>
                     </S.Button>
 
-                    <S.Button active={currentPath === '/jogador/home'} onClick={() => router.push('/jogador/home')}>
+                    <S.Button active={currentPath === '/jogador/home'} onClick={() => window.location.href = '/jogador/home'}>
                         <img src="/images/svg/icon-search.svg" alt=''/>
 
                         <SM family={theme.fonts.inter}>BUSCAR</SM>
@@ -33,7 +33,7 @@ export function Navbar() {
         } else if (currentPath.includes('/proprietario')) {
             return (
                 <>
-                     <S.Button active={currentPath === '/proprietario/home'} onClick={() => router.push('/proprietario/home')}>
+                     <S.Button active={currentPath === '/proprietario/home'} onClick={() => window.location.href = '/proprietario/home'}>
                         <img src="/images/svg/icon-home.svg" alt='' />
 
                         <SM family={theme.fonts.inter}>HOME</SM>
@@ -45,13 +45,13 @@ export function Navbar() {
                         <SM family={theme.fonts.inter}>PEDIDOS</SM>
                     </S.Button> */}
 
-                    <S.Button active={currentPath === '/proprietario/reserva'} onClick={() => router.push('/proprietario/reserva')}>
+                    <S.Button active={currentPath === '/proprietario/reserva'} onClick={() => window.location.href = '/proprietario/reserva'}>
                         <img src="/images/svg/icon-book-open.svg" alt=''/>
 
                         <SM family={theme.fonts.inter} weight={700}>RESERVA</SM>
                     </S.Button>
 
-                    <S.Button active={currentPath === '/proprietario/perfil'} onClick={() => router.push('/proprietario/perfil')}>
+                    <S.Button active={currentPath === '/proprietario/perfil'} onClick={() => window.location.href = '/proprietario/perfil'}>
                         <img src="/images/svg/icon-user.svg" alt=''/>
 
                         <SM family={theme.fonts.inter} weight={700}>PERFIL</SM>
