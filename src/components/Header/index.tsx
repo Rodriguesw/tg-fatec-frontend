@@ -3,10 +3,11 @@ import { theme } from '@/styles/theme'
 import { LG } from '@/styles/typographStyles'
 
 interface User {
+  id: number;
   name: string;
 }
 
-export function Header() {
+export function Header(props: { id?: string }) {
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
     const currentUser: User = JSON.parse(
       localStorage.getItem("currentUser") || 
@@ -21,7 +22,7 @@ export function Header() {
     const isSignupPage = currentPath === '/jogador/cadastro' || currentPath === '/proprietario/cadastro';
     
     return (
-         <S.Container>
+         <S.Container id={props.id}>
             <S.Wrapper>
                <img src="/images/logo/logo-playfut-white-fina.svg"/>
                

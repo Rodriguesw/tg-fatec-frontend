@@ -283,7 +283,10 @@ export default function JogadorLogin() {
           password: await encryptPassword(password) // Mantém a senha criptografada
         };
         localStorage.setItem("currentUser", JSON.stringify(userToStore));
-        router.push('/jogador/home');
+        // router.push('/jogador/home');
+
+        //TESTE
+        router.push('/jogador/perfil');
       } else {
         setErrors(prev => ({ ...prev, form: true }));
 
