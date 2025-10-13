@@ -8,7 +8,7 @@ interface ContainerPhotoProps {
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: 100dvh;
+    height: 100vh;
 
     overflow-y: auto;
     justify-content: center;
@@ -86,7 +86,7 @@ export const PhotoButton = styled(C.Button)`
 
 export const ContainerButtons = styled(C.Flex)`
     width: 100%;
-    height: calc(100dvh - 441px);
+    height: calc(100vh - 441px);
 
     gap: 24px;
     flex-direction: column;
