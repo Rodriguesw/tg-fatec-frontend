@@ -286,7 +286,7 @@ export default function JogadorLogin() {
         // router.push('/jogador/home');
 
         //TESTE
-        router.push('/jogador/perfil');
+        window.location.href = '/jogador/reservas';
       } else {
         setErrors(prev => ({ ...prev, form: true }));
 
