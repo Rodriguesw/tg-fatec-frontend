@@ -8,8 +8,7 @@ interface ContainerPhotoProps {
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: 100vh;
-    min-height: 100vh;
+    height: auto;
 
     justify-content: center;
     
@@ -18,7 +17,7 @@ export const Container = styled(C.Flex)`
 
 export const Wrapper = styled(C.Flex)`
     width: 100%;
-    height: 100%;
+    height: 100vh;
     max-width: 479px;       
 
     align-items: center;
@@ -28,7 +27,7 @@ export const Wrapper = styled(C.Flex)`
 
 export const Content = styled(C.Flex)`
     width: 100%;
-    height: calc(100vh - 176px);
+    /* height: calc(100vh - 176px); */
     padding: 40px;
 
     gap: 24px;
