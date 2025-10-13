@@ -8,7 +8,7 @@ interface ContainerPhotoProps {
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: 100dvh;
+    height: 100vh;
 
     overflow-y: auto;
     justify-content: center;
@@ -28,7 +28,7 @@ export const Wrapper = styled(C.Flex)`
 
 export const Content = styled(C.Flex)`
     width: 100%;
-    height: auto;
+    height: calc(100vh - 176px);
     padding: 40px;
 
     gap: 24px;
