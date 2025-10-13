@@ -85,8 +85,7 @@ export const PhotoButton = styled(C.Button)`
 
 export const ContainerButtons = styled(C.Flex)`
     width: 100%;
-    height: auto;
-    flex: 1;
+    height: calc(100vh - 440px);
 
     gap: 24px;
     flex-direction: column;
