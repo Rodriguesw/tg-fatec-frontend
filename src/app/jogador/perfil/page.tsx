@@ -74,7 +74,35 @@ export default function JogadorPerfil() {
   const [loadingPhoto, setLoadingPhoto] = useState(false);
   
   useEffect(() => {
-    setIsMounted(true); 
+    setIsMounted(true);
+    
+    // Função para ajustar o layout e evitar rolagem desnecessária
+    const adjustLayout = () => {
+      const body = document.body;
+      const html = document.documentElement;
+      
+      // Verifica se há rolagem vertical
+      const hasVerticalScroll = body.scrollHeight > window.innerHeight;
+      
+      if (hasVerticalScroll) {
+        // Ajusta o estilo para evitar a barra branca
+        body.style.backgroundColor = '#0D1321';
+        html.style.backgroundColor = '#0D1321';
+        body.style.height = '100%';
+        html.style.height = '100%';
+      }
+    };
+    
+    // Executa o ajuste quando o componente montar
+    adjustLayout();
+    
+    // Adiciona listener para redimensionamento da janela
+    window.addEventListener('resize', adjustLayout);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', adjustLayout);
+    };
   }, []);
 
 
