@@ -33,6 +33,8 @@ export default function JogadorPerfil() {
   const [openMyData, setOpenMyData] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [openPhotoEditor, setOpenPhotoEditor] = useState(false);
+
+  const [teste, setTeste] = useState(true);
   
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
@@ -75,6 +77,7 @@ export default function JogadorPerfil() {
   
   useEffect(() => {
     setIsMounted(true); 
+    setTeste(false);
   }, []);
 
 
@@ -592,44 +595,49 @@ export default function JogadorPerfil() {
         </Modal>
       }
 
-      {openSettings && 
-        <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
-          <S.ContainerModalEdit>
-            <Dialog.Header>
-              <H3 color={theme.colors.laranja}>
-                  Segurança
-              </H3>
-            </Dialog.Header>
+      {openSettings || teste === false ?
+        ( 
+          <>
+          {console.log("AAAQQ")}
+              <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
+                <S.ContainerModalEdit>
+                  <Dialog.Header>
+                    <H3 color={theme.colors.laranja}>
+                        Segurança
+                    </H3>
+                  </Dialog.Header>
 
-            <Dialog.Body
-              gap="16px"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              flexDirection="column"
-            >
-              <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
-                Tem certeza de que deseja excluir permanente sua conta?
-              </MD>
-
-              <S.ContainerButtonModalSettings>
-                <S.ModalButton onClick={() => setOpenSettings(false)}>
-                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                    Cancelar
-                  </MD>
-                </S.ModalButton>
-
-                <S.ModalButton onClick={handleDeleteAccount}>
-                  {loadingDeleteAccount ? (<Spinner />) : (
-                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                      Confirmar
+                  <Dialog.Body
+                    gap="16px"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    flexDirection="column"
+                  >
+                    <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
+                      Tem certeza de que deseja excluir permanente sua conta?
                     </MD>
-                  )}
-                </S.ModalButton>
-              </S.ContainerButtonModalSettings>
-            </Dialog.Body>
-          </S.ContainerModalEdit>
-        </Modal>
+
+                    <S.ContainerButtonModalSettings>
+                      <S.ModalButton onClick={() => setOpenSettings(false)}>
+                        <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                          Cancelar
+                        </MD>
+                      </S.ModalButton>
+
+                      <S.ModalButton onClick={handleDeleteAccount}>
+                        {loadingDeleteAccount ? (<Spinner />) : (
+                          <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                            Confirmar
+                          </MD>
+                        )}
+                      </S.ModalButton>
+                    </S.ContainerButtonModalSettings>
+                  </Dialog.Body>
+                </S.ContainerModalEdit>
+              </Modal>
+              </>
+        ) : null
       }
     </S.Container>
   );
