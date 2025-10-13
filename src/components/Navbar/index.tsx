@@ -11,7 +11,7 @@ export function Navbar() {
         if (currentPath.includes('/jogador')) {
             return (
                 <>
-                    <S.Button active={currentPath === '/jogador/reservas'} onClick={() => router.push('/jogador/reservas')}>
+                    <S.Button active={currentPath === '/jogador/reservas'} onClick={() => window.location.href = '/jogador/reservas'}>
                         <img src="/images/svg/icon-map.svg" alt='' />
 
                         <SM family={theme.fonts.inter}>RESERVAS</SM>
@@ -23,7 +23,7 @@ export function Navbar() {
                         <SM family={theme.fonts.inter}>BUSCAR</SM>
                     </S.Button>
 
-                    <S.Button active={currentPath === '/jogador/perfil'} onClick={() => router.push('/jogador/perfil')}>
+                    <S.Button active={currentPath === '/jogador/perfil'} onClick={() => window.location.href = '/jogador/perfil'}>
                         <img src="/images/svg/icon-user.svg" alt=''/>
 
                         <SM family={theme.fonts.inter}>PERFIL</SM>

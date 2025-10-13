@@ -356,14 +356,14 @@ export default function LoginProprietario() {
                 </SM>
               </Link>
 
-              <Link href="/proprietario/cadastro">
+              <S.ButtonLink onClick={() => window.location.href = '/proprietario/cadastro'}>
                 <SM
                   color={theme.colors.branco.principal}
                   family={theme.fonts.inter}
                 >
                   Cadastre-se
                 </SM>
-              </Link>
+              </S.ButtonLink>
             </S.ContentFooter>
           </S.Content>
         </LoginWithBannerAndModal>

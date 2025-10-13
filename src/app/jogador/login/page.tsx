@@ -377,11 +377,11 @@ export default function JogadorLogin() {
                 </SM>
               </Link>
 
-              <Link href="/jogador/cadastro">
+              <S.ButtonLink onClick={() => window.location.href = '/jogador/cadastro'}>
                 <SM color={theme.colors.branco.principal} family={theme.fonts.inter}>
                   Cadastre-se
                 </SM>
-              </Link>
+              </S.ButtonLink>
             </S.ContentFooter>
           </S.Content>
         </LoginWithBannerAndModal>

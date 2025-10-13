@@ -94,6 +94,16 @@ export const Button = styled(C.Button)`
     background-color: ${theme.colors.verde.principal};
 `
 
+export const ButtonLink = styled(C.Button)`
+    width: 100%;
+    height: auto;
+    max-width: 312px;
+    padding: 12px 24px;
+    
+    border-radius: 12px;
+    background-color: transparent;
+`
+
 export const ContentFooter = styled(C.Flex)`
     width: 100%;
     height: auto;
