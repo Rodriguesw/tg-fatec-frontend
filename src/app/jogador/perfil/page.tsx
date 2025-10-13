@@ -9,6 +9,7 @@ import { Navbar } from '@/components/Navbar';
 import { Modal } from '@/components/Modal';
 import { Input } from '@/components/Input';
 import { showToast } from '@/components/ToastAlert';
+import { setupViewportAdjustment } from '@/utils/viewportUtils';
 
 import { Dialog, Spinner, Button as ChakraButton } from "@chakra-ui/react"
 import { H3, LG, MD, SM } from "@/styles/typographStyles";
@@ -75,6 +76,14 @@ export default function JogadorPerfil() {
   
   useEffect(() => {
     setIsMounted(true); 
+    
+    // Configura o ajuste de viewport e obtém a função de limpeza
+    const cleanupViewport = setupViewportAdjustment();
+    
+    // Função de limpeza ao desmontar o componente
+    return () => {
+      cleanupViewport();
+    };
   }, []);
 
 
