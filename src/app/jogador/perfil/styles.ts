@@ -8,16 +8,16 @@ interface ContainerPhotoProps {
 
 export const Container = styled(C.Flex)`
     width: 100%;
-    height: auto;
+    height: 100vh;
+    min-height: 100vh;
 
     justify-content: center;
-    
     background-color: #0D1321;
 `;
 
 export const Wrapper = styled(C.Flex)`
     width: 100%;
-    height: 100vh;
+    height: 100%;
     max-width: 479px;       
 
     align-items: center;
@@ -27,7 +27,7 @@ export const Wrapper = styled(C.Flex)`
 
 export const Content = styled(C.Flex)`
     width: 100%;
-    /* height: calc(100vh - 176px); */
+    height: calc(100vh - 176px);
     padding: 40px;
 
     gap: 24px;
@@ -85,7 +85,8 @@ export const PhotoButton = styled(C.Button)`
 
 export const ContainerButtons = styled(C.Flex)`
     width: 100%;
-    height: calc(100vh - 440px);
+    height: auto;
+    flex: 1;
 
     gap: 24px;
     flex-direction: column;
