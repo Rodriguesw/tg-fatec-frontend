@@ -77,8 +77,14 @@ export default function JogadorPerfil() {
   
   useEffect(() => {
     setIsMounted(true); 
-    setTeste(false);
-  }, []);
+
+    console.log("Antes do setTimeout:", teste);
+    
+    if (teste) {
+      setTeste(false);
+      console.log("Depois do setTeste(false):", teste);
+    }
+  }, [teste]);
 
 
   useEffect(() => {
@@ -595,11 +601,11 @@ export default function JogadorPerfil() {
         </Modal>
       }
 
-      {openSettings || teste === false ?
+      {openSettings || teste ?
         ( 
           <>
           {console.log("AAAQQ")}
-              <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
+              <Modal isOpen={openSettings || teste} onClose={() => setOpenSettings(false)}>
                 <S.ContainerModalEdit>
                   <Dialog.Header>
                     <H3 color={theme.colors.laranja}>
