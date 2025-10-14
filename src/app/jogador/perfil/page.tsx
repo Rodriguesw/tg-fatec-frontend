@@ -34,7 +34,7 @@ export default function JogadorPerfil() {
   const [openSettings, setOpenSettings] = useState(false);
   const [openPhotoEditor, setOpenPhotoEditor] = useState(false);
 
-  const [teste, setTeste] = useState(true);
+  const [teste, setTeste] = useState(false);
   
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
@@ -76,15 +76,25 @@ export default function JogadorPerfil() {
   const [loadingPhoto, setLoadingPhoto] = useState(false);
   
   useEffect(() => {
-    setIsMounted(true); 
+    setIsMounted(true);
+  }, []);
 
-    console.log("Antes do setTimeout:", teste);
-    
-    if (teste) {
+  useEffect(() => {
+    if (!isMounted) return;
+
+    const openTimer = setTimeout(() => {
+      setTeste(true);
+    }, 1000);
+
+    const closeTimer = setTimeout(() => {
       setTeste(false);
-      console.log("Depois do setTeste(false):", teste);
-    }
-  }, [teste]);
+    }, 2000);
+
+    return () => {
+      clearTimeout(openTimer);
+      clearTimeout(closeTimer);
+    };
+  }, [isMounted]);
 
 
   useEffect(() => {
@@ -609,7 +619,7 @@ export default function JogadorPerfil() {
                 <S.ContainerModalEdit>
                   <Dialog.Header>
                     <H3 color={theme.colors.laranja}>
-                        Segurança
+                        Segurança Teste 16
                     </H3>
                   </Dialog.Header>
 
