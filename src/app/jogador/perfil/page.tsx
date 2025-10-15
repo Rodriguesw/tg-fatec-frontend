@@ -84,11 +84,11 @@ export default function JogadorPerfil() {
 
     const openTimer = setTimeout(() => {
       setTeste(true);
-    }, 1000);
+    }, 900);
 
     const closeTimer = setTimeout(() => {
       setTeste(false);
-    }, 2000);
+    }, 1000);
 
     return () => {
       clearTimeout(openTimer);
