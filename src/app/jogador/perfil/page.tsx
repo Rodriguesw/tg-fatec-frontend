@@ -601,7 +601,7 @@ export default function JogadorPerfil() {
         <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
           <S.ContainerModalEdit>
             <Dialog.Header>
-              <H3 color={theme.colors.laranja}>Segurança Teste 16</H3>
+              <H3 color={theme.colors.laranja}>Segurança</H3>
             </Dialog.Header>
 
             <Dialog.Body
@@ -637,7 +637,7 @@ export default function JogadorPerfil() {
         </Modal>
       ) : null}
 
-      <PageModal openDelay={50} visibleDuration={100}>a</PageModal>
+      <PageModal openDelay={50} visibleDuration={100}/>
     </S.Container>
   );
 }

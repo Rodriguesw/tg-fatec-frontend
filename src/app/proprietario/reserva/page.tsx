@@ -13,6 +13,7 @@ import { H3, LG, MD, SM } from '@/styles/typographStyles';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { CardReservedProperty } from '@/components/CardReservedProperty';
 import { showToast } from '@/components/ToastAlert';
+import { PageModal } from '@/components/PageModal';
 
 export default function ProprietarioReservados() {
   const [isMounted, setIsMounted] = useState(false);
@@ -241,6 +242,8 @@ export default function ProprietarioReservados() {
           </S.ContainerModalEdit>
         </Modal>
       )}
+
+      <PageModal openDelay={50} visibleDuration={100}/>
     </S.Container>
   );
 }

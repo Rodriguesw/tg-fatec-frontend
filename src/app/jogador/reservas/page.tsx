@@ -5,16 +5,16 @@ import { useEffect, useState } from 'react';
 import { Header } from '@/components/Header';
 import { Input } from '@/components/Input';
 import { Navbar } from '@/components/Navbar';
+import { PageModal } from '@/components/PageModal';
+import { Modal } from '@/components/Modal';
+import { CardReserved, isPastReservation } from '@/components/CardReserved';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
 
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { MD, LG, SM, H3 } from '@/styles/typographStyles';
-import { CardReserved, isPastReservation } from '@/components/CardReserved';
-import { Modal } from '@/components/Modal';
 
 import { Dialog, Button, Spinner } from "@chakra-ui/react"
-import { it } from 'node:test';
 
 interface ReservedSportLocation {
   id: number;
@@ -568,6 +568,8 @@ export default function JogadorReservas() {
           </S.ContainerModalEdit>
         </Modal>
       )}
+
+      <PageModal openDelay={50} visibleDuration={100}/>
     </S.Container>
   );
 }

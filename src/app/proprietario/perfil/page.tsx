@@ -15,6 +15,7 @@ import AvatarEditor from 'react-avatar-editor';
 import * as S from './styles';
 import { theme } from '@/styles/theme';
 import { H3, LG, MD, SM } from '@/styles/typographStyles';
+import { PageModal } from '@/components/PageModal';
 
 interface FormErrors {
   name: boolean;
@@ -647,6 +648,8 @@ export default function ProprietarioPerfil() {
           </S.ContainerModalEdit>
         </Modal>
       }
+
+      <PageModal openDelay={50} visibleDuration={100}/>
     </S.Container>
   );
 }

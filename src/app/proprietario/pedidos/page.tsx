@@ -11,6 +11,7 @@ import { theme } from '@/styles/theme';
 import { MD, LG, SM } from '@/styles/typographStyles';
 import { TitleWithButtons } from '@/components/TitleWithButtons';
 import { CardMyOrders } from '@/components/CardMyOrders';
+import { PageModal } from '@/components/PageModal';
 
 export default function ProprietarioPedidos() {
   const [isMounted, setIsMounted] = useState(false);
@@ -57,6 +58,8 @@ export default function ProprietarioPedidos() {
 
           <Navbar />
       </S.Wrapper>
+
+      <PageModal openDelay={50} visibleDuration={100}/>
     </S.Container>
   );
 }

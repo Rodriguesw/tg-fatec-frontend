@@ -20,6 +20,7 @@ import  { WeekdayMultiSelect } from '@/components/Multiple';
 import { InputHours } from '@/components/inputHours';
 import { showToast } from '@/components/ToastAlert';
 import { Tooltip } from 'react-tooltip';
+import { PageModal } from '@/components/PageModal';
 
 interface CEPData {
   logradouro: string;
@@ -1249,6 +1250,8 @@ useEffect(() => {
             </S.ContainerModalDelete>
           </Modal>
         }
+
+        <PageModal openDelay={50} visibleDuration={100}/>
     </S.Container>
   );
 }

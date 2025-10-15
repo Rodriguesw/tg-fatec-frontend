@@ -24,6 +24,7 @@ import  InputDays  from '@/components/inputDays';
 import { InputHours } from '@/components/inputHours';
 import { RatingStars } from '@/components/RatingStars';
 import { showToast } from '@/components/ToastAlert';
+import { PageModal } from '@/components/PageModal';
 
 import { Box, Dialog, Image, Spinner } from "@chakra-ui/react"
 
@@ -1565,6 +1566,8 @@ export default function JogadorHome() {
           </Modal>
         )}
       </S.Wrapper>
+
+      <PageModal openDelay={50} visibleDuration={100}/>
     </S.Container>
   );
 }
