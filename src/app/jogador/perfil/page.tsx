@@ -7,6 +7,7 @@ import AvatarEditor from 'react-avatar-editor';
 import { Header } from '@/components/Header';
 import { Navbar } from '@/components/Navbar';
 import { Modal } from '@/components/Modal';
+import { PageModal } from '@/components/PageModal';
 import { Input } from '@/components/Input';
 import { showToast } from '@/components/ToastAlert';
 
@@ -33,8 +34,6 @@ export default function JogadorPerfil() {
   const [openMyData, setOpenMyData] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [openPhotoEditor, setOpenPhotoEditor] = useState(false);
-
-  const [teste, setTeste] = useState(false);
   
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
@@ -81,19 +80,6 @@ export default function JogadorPerfil() {
 
   useEffect(() => {
     if (!isMounted) return;
-
-    const openTimer = setTimeout(() => {
-      setTeste(true);
-    }, 900);
-
-    const closeTimer = setTimeout(() => {
-      setTeste(false);
-    }, 1000);
-
-    return () => {
-      clearTimeout(openTimer);
-      clearTimeout(closeTimer);
-    };
   }, [isMounted]);
 
 
@@ -611,50 +597,47 @@ export default function JogadorPerfil() {
         </Modal>
       }
 
-      {openSettings || teste ?
-        ( 
-          <>
-          {console.log("AAAQQ")}
-              <Modal isOpen={openSettings || teste} onClose={() => setOpenSettings(false)}>
-                <S.ContainerModalEdit>
-                  <Dialog.Header>
-                    <H3 color={theme.colors.laranja}>
-                        Segurança Teste 16
-                    </H3>
-                  </Dialog.Header>
+      {openSettings ? (
+        <Modal isOpen={openSettings} onClose={() => setOpenSettings(false)}>
+          <S.ContainerModalEdit>
+            <Dialog.Header>
+              <H3 color={theme.colors.laranja}>Segurança Teste 16</H3>
+            </Dialog.Header>
 
-                  <Dialog.Body
-                    gap="16px"
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    flexDirection="column"
-                  >
-                    <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
-                      Tem certeza de que deseja excluir permanente sua conta?
+            <Dialog.Body
+              gap="16px"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              flexDirection="column"
+            >
+              <MD family={theme.fonts.inter} color={theme.colors.branco.secundario}>
+                Tem certeza de que deseja excluir permanente sua conta?
+              </MD>
+
+              <S.ContainerButtonModalSettings>
+                <S.ModalButton onClick={() => setOpenSettings(false)}>
+                  <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                    Cancelar
+                  </MD>
+                </S.ModalButton>
+
+                <S.ModalButton onClick={handleDeleteAccount}>
+                  {loadingDeleteAccount ? (
+                    <Spinner />
+                  ) : (
+                    <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
+                      Confirmar
                     </MD>
+                  )}
+                </S.ModalButton>
+              </S.ContainerButtonModalSettings>
+            </Dialog.Body>
+          </S.ContainerModalEdit>
+        </Modal>
+      ) : null}
 
-                    <S.ContainerButtonModalSettings>
-                      <S.ModalButton onClick={() => setOpenSettings(false)}>
-                        <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                          Cancelar
-                        </MD>
-                      </S.ModalButton>
-
-                      <S.ModalButton onClick={handleDeleteAccount}>
-                        {loadingDeleteAccount ? (<Spinner />) : (
-                          <MD color={theme.colors.branco.principal} family={theme.fonts.inter}>
-                            Confirmar
-                          </MD>
-                        )}
-                      </S.ModalButton>
-                    </S.ContainerButtonModalSettings>
-                  </Dialog.Body>
-                </S.ContainerModalEdit>
-              </Modal>
-              </>
-        ) : null
-      }
+      <PageModal openDelay={1000} visibleDuration={1000}>A</PageModal>
     </S.Container>
   );
 }
