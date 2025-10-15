@@ -39,5 +39,5 @@ export function PageModal({
     };
   }, [openDelay, visibleDuration, onOpen, onClose]);
 
-  return <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>{children}</Modal>;
+  return <Modal hideBackdrop isOpen={isOpen} onClose={() => setIsOpen(false)}>{children}</Modal>;
 }

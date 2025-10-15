@@ -11,9 +11,10 @@ import {
     isOpen: boolean;
     onClose: () => void;
     children: React.ReactNode;
+    hideBackdrop?: boolean;
   }
   
-  export const Modal = ({ isOpen, onClose, children, width }: ModalProps) => {
+  export const Modal = ({ isOpen, onClose, children, width, hideBackdrop }: ModalProps) => {
     return (
         <Dialog.Root 
         open={isOpen} 
@@ -22,7 +23,7 @@ import {
         closeOnInteractOutside={false}
         onOpenChange={(e) => !e.open && onClose()}>
             <Portal>
-                <Dialog.Backdrop />
+                { !hideBackdrop && <Dialog.Backdrop /> }
 
                 <Dialog.Positioner>
                     <S.Container width={width}>

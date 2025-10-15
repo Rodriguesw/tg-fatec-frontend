@@ -637,7 +637,7 @@ export default function JogadorPerfil() {
         </Modal>
       ) : null}
 
-      <PageModal openDelay={100} visibleDuration={200}>A</PageModal>
+      <PageModal openDelay={50} visibleDuration={100}>a</PageModal>
     </S.Container>
   );
 }
