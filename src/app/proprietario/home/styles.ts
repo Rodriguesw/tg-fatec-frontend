@@ -58,7 +58,7 @@ export const ContainerModalLocalSport = styled(C.Flex)<modalProps>`
     max-width: 420px;
     padding: 16px 16px 40px;
 
-    gap: 24px;
+    gap: 18px;
     align-items: center;
     flex-direction: column;
 
@@ -68,7 +68,7 @@ export const ContainerModalLocalSport = styled(C.Flex)<modalProps>`
 
 export const ContainerContentModalLocalSport = styled(C.Flex)`
     width: 100%;
-    height: 60vh;
+    height: 55dvh;
 
     gap: 24px;
     flex-direction: column;
@@ -240,7 +240,7 @@ export const ContainerWithTwoInputs = styled(C.Flex)`
 
 export const Button = styled(C.Button)`
     width: auto;
-    height: auto;
+    height: 52px;
     max-width: 312px;
     padding: 12px 24px;
     

@@ -1186,14 +1186,14 @@ useEffect(() => {
                         <Spinner />
                       ) : (
                         <LG 
-                        weight={700} 
-                        color={theme.colors.branco.principal} 
-                        family={theme.fonts.inter}
-                        >
-                          Criar quadra
-                      </LG>
-                 )}
-                 </S.Button>
+                          weight={700} 
+                          color={theme.colors.branco.principal} 
+                          family={theme.fonts.inter}
+                          >
+                            Criar quadra
+                        </LG>
+                      )}
+                    </S.Button>
                  )}
               </S.ContainerContentModalLocalSport>
             </Dialog.Body>
