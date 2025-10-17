@@ -102,6 +102,17 @@ export const ContainerModalRatingAndAdress = styled(C.Flex)`
     }
 `
 
+export const ContainerModalTitle = styled(C.Flex)`
+    width: 100%;
+    height: auto;
+
+    overflow-x: auto;
+
+    >h3{
+        white-space: nowrap;
+    }
+`
+
 export const ContainerModalReserva = styled(C.Flex)<modalProps>`
     width: 100%;
     height: auto;

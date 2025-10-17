@@ -906,10 +906,12 @@ export default function JogadorHome() {
                   {isLoading ? (
                       <S.ContainerLoading/>
                     ) : (
-                      <H3
-                        color={theme.colors.laranja}>
-                          {selectedMarker.title}
-                      </H3>
+                      <S.ContainerModalTitle>
+                        <H3
+                          color={theme.colors.laranja}>
+                            {selectedMarker.title}
+                        </H3>
+                      </S.ContainerModalTitle>
                     )}
 
                     <button
