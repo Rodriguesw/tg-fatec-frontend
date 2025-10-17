@@ -24,7 +24,7 @@ export const Wrapper = styled(C.Flex)`
 
 export const Content = styled(C.Flex)`
     width: 100%;
-    height: calc(100vh - 11rem);
+    height: calc(100dvh - 11.1rem);
     padding: 16px;
 
     gap: 16px;
