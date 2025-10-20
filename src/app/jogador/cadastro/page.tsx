@@ -287,7 +287,7 @@ export default function JogadorCadastro() {
                 id="team"
                 type='select' 
                 placeholder='Selecionar' 
-                label='Para que time torce?' 
+                label='Time do coração' 
                 onChange={handleTeamChange}
                 options={teamOptions}
                 value={team}

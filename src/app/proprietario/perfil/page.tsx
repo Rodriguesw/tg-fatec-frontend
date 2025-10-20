@@ -70,7 +70,7 @@ export default function ProprietarioPerfil() {
       const parsedUser = JSON.parse(storedUser);
       setCurrentUser(parsedUser);
 
-      setName(parsedUser.name)
+      setName(parsedUser.nome)
       setCnpj(parsedUser.cnpj)
       setRazaoSocial(parsedUser.razaoSocial);
       setPhone(parsedUser.phone)

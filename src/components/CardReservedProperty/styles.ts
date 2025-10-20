@@ -97,6 +97,10 @@ export const CardContentDataAndHours = styled(C.Flex)`
     gap: 6px;
     flex-direction: column;
     align-items: flex-start;
+
+    >p{
+        text-align: start;
+    }
 `
 
 export const Button = styled(C.Button)`
