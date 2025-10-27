@@ -73,6 +73,26 @@ export default function JogadorHome() {
   const [avaliacao, setAvaliacao] = useState(0);
 
   const initialLocationRef = useRef<{ lat: number; lng: number } | null>(null);
+  const bestPositionRef = useRef<GeolocationPosition | null>(null);
+  const watchIdRef = useRef<number | null>(null);
+
+  const getDistanceMeters = (
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number
+  ) => {
+    const toRad = (v: number) => (v * Math.PI) / 180;
+    const R = 6371000; // raio da Terra em metros
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
 
   // Função para verificar se uma reserva já passou
   const isReservationPassed = (reservedDate: string, timeEnd: string) => {
@@ -200,53 +220,66 @@ export default function JogadorHome() {
       }
     }
 
-    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+    navigator.permissions.query({ name: "geolocation" as any }).then((result) => {
       if (result.state === "granted" || result.state === "prompt") {
-        navigator.geolocation.getCurrentPosition(
+        const stopWatch = () => {
+          if (watchIdRef.current !== null) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
+          }
+        };
+
+        watchIdRef.current = navigator.geolocation.watchPosition(
           (position) => {
             const newCoords = {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             };
 
-            console.log('Nova localização:', newCoords);
-            console.log('Precisão estimada:', position.coords.accuracy, 'metros');
+            const accuracy = position.coords.accuracy ?? Infinity;
+            console.log('Nova localização (watch):', newCoords);
+            console.log('Precisão estimada:', accuracy, 'metros');
 
-            // Se ainda não temos uma localização inicial, salvamos
             if (!initialLocationRef.current) {
               initialLocationRef.current = newCoords;
-              setUserLocation(newCoords);
-              return;
             }
 
-            const isSameLocation =
-              initialLocationRef.current.lat === newCoords.lat &&
-              initialLocationRef.current.lng === newCoords.lng;
+            const prev = bestPositionRef.current;
+            const prevAcc = prev?.coords.accuracy ?? Infinity;
+            const prevCoords = prev
+              ? { lat: prev.coords.latitude, lng: prev.coords.longitude }
+              : null;
+            const distance = prevCoords
+              ? getDistanceMeters(prevCoords.lat, prevCoords.lng, newCoords.lat, newCoords.lng)
+              : Infinity;
 
-            if (isSameLocation) {
-              setUserLocation(newCoords); // atualiza normalmente
-            } else {
-              // Mantém a localização original (ignora a nova)
-              console.log('Localização ignorada — diferente da original');
-              setUserLocation(initialLocationRef.current);
+            // Atualiza quando a precisão melhora significativamente ou quando houve movimento relevante
+            const isBetter = accuracy < prevAcc - 10 || distance > 25 || !prev;
+            if (isBetter) {
+              bestPositionRef.current = position;
+              setUserLocation(newCoords);
+            }
+
+            // Encerra o watch quando atingimos boa precisão
+            if (accuracy <= 50) {
+              stopWatch();
             }
           },
           (error) => {
-            console.warn('Erro ao obter localização:', error.message);
-            // Se falhar, define fallback padrão
-            const fallbackCoords = {
-              lat: -23.600812,
-              lng: -48.051476,
-            };
+            console.warn('Erro ao obter localização (watch):', error.message);
+            const fallbackCoords = { lat: -23.600812, lng: -48.051476 };
             initialLocationRef.current = fallbackCoords;
             setUserLocation(fallbackCoords);
           },
           {
             enableHighAccuracy: true,
-            timeout: 5000, // aumenta o tempo para tentar pegar GPS
-            maximumAge: 0,
+            timeout: 20000,
+            maximumAge: 5000,
           }
         );
+
+        // Segurança: encerra o watch após 30s para evitar consumo desnecessário
+        setTimeout(stopWatch, 30000);
       }
     });
   }, []);
