@@ -18,7 +18,7 @@ interface Owner {
   razaoSocial: string;
   cnpj: string;
   phone: string;
-  nome: string;
+  name: string;
   email: string;
   password: string;
 }
@@ -157,7 +157,7 @@ export default function ProprietarioCadastroClient() {
         razaoSocial,
         cnpj,
         phone: telefone,
-        nome: responsavel,
+        name: responsavel,
         email,
         password: hashedPassword, // Senha criptografada
       };

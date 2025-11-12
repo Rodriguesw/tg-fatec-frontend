@@ -10,7 +10,11 @@ interface User {
 export function Header(props: { id?: string }) {
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
     const currentUser: User = JSON.parse(
-      localStorage.getItem("currentUser") || 
+      localStorage.getItem("currentUser") ||
+      "{}"
+    );
+    
+    const currentUserProprietario: User = JSON.parse(
       localStorage.getItem("currentUserProprietario") || 
       "{}"
     );
@@ -28,7 +32,7 @@ export function Header(props: { id?: string }) {
                
                {!isSignupPage && (
                  <LG color={theme.colors.branco.secundario}>
-                   Olá, {currentUser?.name ? getFirstName(currentUser.name) : 'Visitante'}!
+                   Olá, {currentUser?.name ? getFirstName(currentUser.name) :  currentUserProprietario?.name ? getFirstName(currentUserProprietario.name) : 'Visitante'}!
                  </LG>
                )}
             </S.Wrapper>
