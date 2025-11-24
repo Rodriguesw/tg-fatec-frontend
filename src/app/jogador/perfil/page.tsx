@@ -559,7 +559,7 @@ export default function JogadorPerfil() {
                 id="gender"
                 type='select' 
                 placeholder='Selecionar' 
-                label='Sexo' 
+                label='Gênero' 
                 onChange={handleGenderChange}
                 options={genderOptions}
                 value={gender}
