@@ -94,7 +94,7 @@ export default function ProprietarioRecuperarSenha() {
       };
 
       await emailjs.send(
-        'service_yi6goia',
+        'service_kquwgdu',
         'template_r40brri',
         templateParams,
         'Ur1rsXibVG5IklzEx'
